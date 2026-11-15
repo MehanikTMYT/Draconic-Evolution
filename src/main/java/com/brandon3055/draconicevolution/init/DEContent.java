@@ -40,7 +40,7 @@ import com.brandon3055.draconicevolution.world.EnderCometFeature;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.MenuType;
@@ -318,10 +318,10 @@ public class DEContent {
 
     //@formatter:on
 
-//        TierSortingRegistry.registerTier(WYVERN_TIER, new ResourceLocation(MODID, "wyvern_tier"), List.of(Tiers.NETHERITE), Collections.emptyList());
+//        TierSortingRegistry.registerTier(WYVERN_TIER, new Identifier(MODID, "wyvern_tier"), List.of(Tiers.NETHERITE), Collections.emptyList());
 //        if (DEConfig.useToolTierTags) {
-//        TierSortingRegistry.registerTier(DRACONIC_TIER, new ResourceLocation(MODID, "draconic_tier"), List.of(WYVERN_TIER), Collections.emptyList());
-//        TierSortingRegistry.registerTier(CHAOTIC_TIER, new ResourceLocation(MODID, "chaotic_tier"), List.of(DRACONIC_TIER), Collections.emptyList());
+//        TierSortingRegistry.registerTier(DRACONIC_TIER, new Identifier(MODID, "draconic_tier"), List.of(WYVERN_TIER), Collections.emptyList());
+//        TierSortingRegistry.registerTier(CHAOTIC_TIER, new Identifier(MODID, "chaotic_tier"), List.of(DRACONIC_TIER), Collections.emptyList());
 //    }
 
 
@@ -409,7 +409,7 @@ public class DEContent {
     // Enchantments
     //#################################################################
 
-    public static final ResourceKey<Enchantment> REAPER = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(MODID, "reaper"));
+    public static final ResourceKey<Enchantment> REAPER = ResourceKey.create(Registries.ENCHANTMENT, Identifier.fromNamespaceAndPath(MODID, "reaper"));
 
 
     //#################################################################
@@ -425,7 +425,7 @@ public class DEContent {
 
     static {
         DraconicAPI.FUSION_RECIPE_SERIALIZER = RECIPE_SERIAL.register("fusion_crafting", FusionRecipe.Serializer::new);
-        DraconicAPI.FUSION_RECIPE_TYPE = RECIPE_TYPES.register("fusion_crafting", () -> RecipeType.simple(ResourceLocation.fromNamespaceAndPath(MODID, "fusion_crafting")));
+        DraconicAPI.FUSION_RECIPE_TYPE = RECIPE_TYPES.register("fusion_crafting", () -> RecipeType.simple(Identifier.fromNamespaceAndPath(MODID, "fusion_crafting")));
     }
 
     public static final DeferredHolder<IngredientType<?>, IngredientType<StackIngredient>> STACK_INGREDIENT_TYPE = INGREDIENT_TYPES.register("stack", () -> new IngredientType<>(StackIngredient.CODEC));

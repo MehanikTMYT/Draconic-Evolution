@@ -1,19 +1,50 @@
 package com.brandon3055.draconicevolution.handlers.dislocator;
 
 import com.brandon3055.draconicevolution.items.tools.BoundDislocator;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.saveddata.SavedData;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
+
+import java.util.HashMap;
+
+import java.util.Map;
+
+import java.util.UUID;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.ListTag;
+
+import net.minecraft.nbt.Tag;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.saveddata.SavedData;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 28/8/21
@@ -84,12 +115,12 @@ public class DislocatorSaveData extends SavedData {
         ListTag linkList = nbt.getList("link_map", 10);
         for (Tag lnbt : linkList) {
             CompoundTag linkNBT = (CompoundTag) lnbt;
-            UUID linkID = linkNBT.getUUID("link_id");
+            UUID linkID = TagUtils26.getUUID(TagUtils26, linkNBT, "link_id");
             ListTag targetList = linkNBT.getList("targets", 10);
             Map<UUID, DislocatorTarget> targetMap = data.linkTargetMap.computeIfAbsent(linkID, uuid -> new HashMap<>());
             for (Tag tnbt : targetList) {
                 CompoundTag targetNBT = (CompoundTag) tnbt;
-                UUID targetID = targetNBT.getUUID("target_id");
+                UUID targetID = TagUtils26.getUUID(TagUtils26, targetNBT, "target_id");
                 DislocatorTarget target = DislocatorTarget.load(targetNBT);
                 targetMap.put(targetID, target);
             }
@@ -103,13 +134,13 @@ public class DislocatorSaveData extends SavedData {
         for (UUID linkID : linkTargetMap.keySet()) {
             Map<UUID, DislocatorTarget> targetMap = linkTargetMap.get(linkID);
             CompoundTag linkNBT = new CompoundTag();
-            linkNBT.putUUID("link_id", linkID);
+            TagUtils26.putUUID(TagUtils26, linkNBT, "link_id", linkID);
 
             ListTag targetList = new ListTag();
             for (UUID targetID : targetMap.keySet()) {
                 DislocatorTarget target = targetMap.get(targetID);
                 CompoundTag targetNBT = new CompoundTag();
-                targetNBT.putUUID("target_id", targetID);
+                TagUtils26.putUUID(TagUtils26, targetNBT, "target_id", targetID);
                 target.save(targetNBT);
                 targetList.add(targetNBT);
             }

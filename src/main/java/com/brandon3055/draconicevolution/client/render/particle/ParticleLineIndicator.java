@@ -1,7 +1,7 @@
 package com.brandon3055.draconicevolution.client.render.particle;
 
-import com.brandon3055.brandonscore.client.particle.IntParticleData;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
+import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;

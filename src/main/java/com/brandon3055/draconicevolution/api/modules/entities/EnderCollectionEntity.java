@@ -4,11 +4,11 @@ import codechicken.enderstorage.api.Frequency;
 import codechicken.enderstorage.manager.EnderStorageManager;
 import codechicken.enderstorage.storage.EnderItemStorage;
 import codechicken.lib.colour.EnumColour;
-import codechicken.lib.gui.modular.elements.GuiElement;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import codechicken.lib.gui.modular.sprite.Material;
+import com.brandon3055.brandonscore.client.gui.modular.elements.GuiElement;
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+import com.brandon3055.brandonscore.client.gui.modular.sprite.Material;
 import codechicken.lib.inventory.InventoryUtils;
-import com.brandon3055.brandonscore.api.BCStreamCodec;
+import com.brandon3055.draconicevolution.lib.DEStreamCodecs; // port-26.1.2: BCStreamCodec удалён из BC-26
 import com.brandon3055.brandonscore.api.TechLevel;
 import com.brandon3055.brandonscore.api.power.IOPStorage;
 import com.brandon3055.brandonscore.client.BCGuiTextures;
@@ -59,7 +59,7 @@ public class EnderCollectionEntity extends FilteredModuleEntity<NoData> {
             BooleanProperty.CODEC.fieldOf("enabled").forGetter(e -> e.filterEnabled)
     ).apply(builder, EnderCollectionEntity::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, EnderCollectionEntity> STREAM_CODEC = BCStreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, EnderCollectionEntity> STREAM_CODEC = DEStreamCodecs.composite(
             DEModules.streamCodec(), ModuleEntity::getModule,
             ByteBufCodecs.INT, ModuleEntity::getGridX,
             ByteBufCodecs.INT, ModuleEntity::getGridY,

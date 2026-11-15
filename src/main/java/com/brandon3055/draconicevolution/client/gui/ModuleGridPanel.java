@@ -1,10 +1,10 @@
 package com.brandon3055.draconicevolution.client.gui;
 
-import codechicken.lib.gui.modular.elements.GuiElement;
-import codechicken.lib.gui.modular.lib.BackgroundRender;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import codechicken.lib.gui.modular.lib.geometry.GuiParent;
+import com.brandon3055.brandonscore.client.gui.modular.elements.GuiElement;
+import com.brandon3055.brandonscore.client.gui.modular.lib.BackgroundRender;
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GuiParent;
 import codechicken.lib.math.MathHelper;
 import com.brandon3055.brandonscore.api.TechLevel;
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleGrid;
@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
 
 /**
  * Created by brandon3055 on 13/06/2024

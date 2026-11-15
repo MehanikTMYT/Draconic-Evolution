@@ -1,6 +1,6 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
-import com.brandon3055.brandonscore.api.BCStreamCodec;
+import com.brandon3055.draconicevolution.lib.DEStreamCodecs; // port-26.1.2: BCStreamCodec удалён из BC-26
 import com.brandon3055.brandonscore.api.TechLevel;
 import com.brandon3055.brandonscore.api.power.IOPStorage;
 import com.brandon3055.draconicevolution.api.config.BooleanProperty;
@@ -86,7 +86,7 @@ public class ShieldControlEntity extends ModuleEntity<ShieldControlData> {
             BooleanProperty.CODEC.fieldOf("always_visible").forGetter(e -> e.alwaysVisible)
     ).apply(builder, ShieldControlEntity::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, ShieldControlEntity> STREAM_CODEC = BCStreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, ShieldControlEntity> STREAM_CODEC = DEStreamCodecs.composite(
             DEModules.streamCodec(), ModuleEntity::getModule,
             ByteBufCodecs.INT, ModuleEntity::getGridX,
             ByteBufCodecs.INT, ModuleEntity::getGridY,
@@ -278,7 +278,7 @@ public class ShieldControlEntity extends ModuleEntity<ShieldControlData> {
                 data.shieldCoolDown = getMaxShieldCoolDown();
                 if (data.envDmgCoolDown == 0) {
                     float hitPitch = 0.7F + (float) (Math.min(1, getShieldPoints() / ((data.shieldCapacity + getMaxShieldBoost()) * 0.1)) * 0.3);
-                    entity.level().playSound(null, entity.blockPosition(), DESounds.SHIELD_STRIKE.get(), SoundSource.PLAYERS, 0.25F, (0.95F + (entity.level().random.nextFloat() * 0.1F)) * hitPitch);
+                    entity.level().playSound(null, entity.blockPosition(), DESounds.SHIELD_STRIKE.get(), SoundSource.PLAYERS, 0.25F, (0.95F + (entity.level().getRandom().nextFloat() * 0.1F)) * hitPitch);
                     data.envDmgCoolDown = 40;
                 }
                 markDirty();
@@ -323,7 +323,7 @@ public class ShieldControlEntity extends ModuleEntity<ShieldControlData> {
         if (damageBlocked && (data.shieldCapacity + getMaxShieldBoost()) > 0) {
             data.shieldCoolDown = getMaxShieldCoolDown();
             float hitPitch = 0.7F + (float) (Math.min(1, getShieldPoints() / ((data.shieldCapacity + getMaxShieldBoost()) * 0.1)) * 0.3);
-            entity.level().playSound(null, entity.blockPosition(), DESounds.SHIELD_STRIKE.get(), SoundSource.PLAYERS, 1F, (0.95F + (entity.level().random.nextFloat() * 0.1F)) * hitPitch);
+            entity.level().playSound(null, entity.blockPosition(), DESounds.SHIELD_STRIKE.get(), SoundSource.PLAYERS, 1F, (0.95F + (entity.level().getRandom().nextFloat() * 0.1F)) * hitPitch);
         }
         markDirty();
     }
@@ -454,7 +454,7 @@ public class ShieldControlEntity extends ModuleEntity<ShieldControlData> {
                 Codec.BOOL.fieldOf("shield_visible").forGetter(e -> e.shieldVisible)
         ).apply(builder, ShieldSaveData::new));
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, ShieldSaveData> STREAM_CODEC = BCStreamCodec.composite(
+        public static final StreamCodec<RegistryFriendlyByteBuf, ShieldSaveData> STREAM_CODEC = DEStreamCodecs.composite(
                 ByteBufCodecs.DOUBLE, e -> e.shieldPoints,
                 ByteBufCodecs.DOUBLE, e -> e.shieldBoost,
                 ByteBufCodecs.DOUBLE, e -> e.maxBoost,

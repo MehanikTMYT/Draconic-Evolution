@@ -1,49 +1,93 @@
 package com.brandon3055.draconicevolution.handlers;
 
 import com.brandon3055.brandonscore.api.TimeKeeper;
+
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.api.capability.DECapabilities;
+
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
+
 import com.brandon3055.draconicevolution.api.capability.PropertyProvider;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleTypes;
+
 import com.brandon3055.draconicevolution.api.modules.data.FlightData;
+
 import com.brandon3055.draconicevolution.api.modules.data.JumpData;
+
 import com.brandon3055.draconicevolution.api.modules.data.SpeedData;
+
 import com.brandon3055.draconicevolution.api.modules.entities.FlightEntity;
+
 import com.brandon3055.draconicevolution.api.modules.entities.ShieldControlEntity;
+
 import com.brandon3055.draconicevolution.api.modules.entities.UndyingEntity;
+
 import com.brandon3055.draconicevolution.init.DEDamage;
+
 import com.brandon3055.draconicevolution.init.EquipCfg;
+
 import com.brandon3055.draconicevolution.integration.equipment.EquipmentManager;
+
 import com.brandon3055.draconicevolution.items.equipment.IModularArmor;
+
 import com.brandon3055.draconicevolution.items.equipment.IModularItem;
+
 import com.brandon3055.draconicevolution.items.equipment.IModularMiningTool;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.living.*;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
+
 import java.util.HashMap;
+
 import java.util.Map;
+
 import java.util.WeakHashMap;
+
 import java.util.function.Supplier;
+
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.core.NonNullList;
+
+import net.minecraft.resources.Identifier;
+
+import net.minecraft.world.damagesource.DamageTypes;
+
+import net.minecraft.world.entity.EquipmentSlot;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+
+import net.minecraft.world.entity.ai.attributes.Attributes;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.neoforged.bus.api.EventPriority;
+
+import net.neoforged.neoforge.common.NeoForge;
+
+import net.neoforged.neoforge.event.entity.living.*;
+
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+
+import net.neoforged.neoforge.event.level.BlockEvent;
+
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
+
+import org.jetbrains.annotations.Nullable;
+
+
+
 
 /**
  * Created by Brandon on 13/11/2014.
@@ -51,10 +95,10 @@ import java.util.function.Supplier;
 public class ModularArmorEventHandler {
     private static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
 
-    public static final ResourceLocation WALK_SPEED_ID = ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "walk_speed");
-    public static final ResourceLocation STEP_HEIGHT_ID = ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "step_height");
-    public static final ResourceLocation FLY_SPEED_ID = ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "fly_speed");
-    public static final ResourceLocation SUBMERGED_MINE_SPEED_ID = ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "aqua_speed");
+    public static final Identifier WALK_SPEED_ID = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "walk_speed");
+    public static final Identifier STEP_HEIGHT_ID = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "step_height");
+    public static final Identifier FLY_SPEED_ID = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "fly_speed");
+    public static final Identifier SUBMERGED_MINE_SPEED_ID = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "aqua_speed");
 
     public static final EntityAttributeHandler<ArmorAbilities> ATTRIBUTE_HANDLER = new EntityAttributeHandler<>();
 
@@ -183,7 +227,7 @@ public class ModularArmorEventHandler {
 
     private static void onEntityAttacked(LivingIncomingDamageEvent event) {
         LivingEntity entity = event.getEntity();
-        if (event.isCanceled() || event.getAmount() <= 0 || entity.level().isClientSide || event.getSource().is(DEDamage.KILL)) {
+        if (event.isCanceled() || event.getAmount() <= 0 || entity.level().isClientSide() || event.getSource().is(DEDamage.KILL)) {
             return;
         }
 
@@ -215,7 +259,7 @@ public class ModularArmorEventHandler {
 
     private static void onEntityDamaged(LivingDamageEvent.Pre event) {
         LivingEntity entity = event.getEntity();
-        if (event.getNewDamage() <= 0 || entity.level().isClientSide || event.getSource().is(DEDamage.KILL)) {
+        if (event.getNewDamage() <= 0 || entity.level().isClientSide() || event.getSource().is(DEDamage.KILL)) {
             return;
         }
 
@@ -250,7 +294,7 @@ public class ModularArmorEventHandler {
 
     private static void onEntityDeath(LivingDeathEvent event) {
         LivingEntity entity = event.getEntity();
-        if (event.isCanceled() || entity.level().isClientSide) {
+        if (event.isCanceled() || entity.level().isClientSide()) {
             return;
         }
 
@@ -347,7 +391,7 @@ public class ModularArmorEventHandler {
             if (armorAbilities.creativeFlight && armorAbilities.flightPower != null && !player.getAbilities().instabuild && !player.isSpectator()) {
                 canFly = armorAbilities.flightPower.get().getOPStored() >= EquipCfg.creativeFlightEnergy;
                 noPower = !canFly;
-                if (canFly && player.getAbilities().flying && !entity.level().isClientSide) {
+                if (canFly && player.getAbilities().flying && !entity.level().isClientSide()) {
                     armorAbilities.flightPower.get().modifyEnergyStored(-EquipCfg.creativeFlightEnergy);
                 }
             }
@@ -359,7 +403,7 @@ public class ModularArmorEventHandler {
                     playersWithFlight.put(player, false);
                 }
 
-                if (playersWithFlight.get(player) && !entity.level().isClientSide) {
+                if (playersWithFlight.get(player) && !entity.level().isClientSide()) {
                     playersWithFlight.put(player, false);
 
                     if (!player.getAbilities().instabuild && !player.isSpectator()) {
@@ -373,7 +417,7 @@ public class ModularArmorEventHandler {
                     }
                 }
 
-                if (player.level().isClientSide && playersWithFlight.get(player)) {
+                if (player.level().isClientSide() && playersWithFlight.get(player)) {
                     playersWithFlight.put(player, false);
                     if (!player.getAbilities().instabuild) {
                         player.getAbilities().mayfly = false;

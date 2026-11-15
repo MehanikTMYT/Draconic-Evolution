@@ -1,65 +1,123 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
 import codechicken.lib.data.MCDataByteBuf;
-import codechicken.lib.data.MCDataInput;
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import codechicken.lib.gui.modular.lib.TextState;
-import codechicken.lib.gui.modular.lib.geometry.Align;
-import codechicken.lib.gui.modular.lib.geometry.Axis;
-import codechicken.lib.gui.modular.sprite.Material;
-import codechicken.lib.math.MathHelper;
-import com.brandon3055.brandonscore.BCConfig;
-import com.brandon3055.brandonscore.api.BCStreamCodec;
-import com.brandon3055.brandonscore.api.TimeKeeper;
-import com.brandon3055.brandonscore.client.BCGuiTextures;
-import com.brandon3055.brandonscore.client.gui.GuiToolkit;
-import com.brandon3055.brandonscore.client.gui.modulargui.GuiDialogBase;
-import com.brandon3055.brandonscore.utils.Utils;
-import com.brandon3055.draconicevolution.api.config.BooleanProperty;
-import com.brandon3055.draconicevolution.api.config.ConfigProperty;
-import com.brandon3055.draconicevolution.api.modules.Module;
-import com.brandon3055.draconicevolution.api.modules.data.ModuleData;
-import com.brandon3055.draconicevolution.api.modules.lib.ModuleContext;
-import com.brandon3055.draconicevolution.api.modules.lib.ModuleEntity;
-import com.brandon3055.draconicevolution.client.ModuleTextures;
-import com.brandon3055.draconicevolution.init.ItemData;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.covers1624.quack.collection.FastStream;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-import javax.annotation.Nullable;
+import codechicken.lib.data.MCDataInput;
+
+import codechicken.lib.math.MathHelper;
+
+import com.brandon3055.brandonscore.BCConfig;
+
+import com.brandon3055.brandonscore.api.TimeKeeper;
+
+import com.brandon3055.brandonscore.client.BCGuiTextures;
+
+import com.brandon3055.brandonscore.client.gui.GuiToolkit;
+
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.TextState;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Align;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Axis;
+
+import com.brandon3055.brandonscore.client.gui.modular.sprite.Material;
+
+import com.brandon3055.brandonscore.client.gui.modulargui.GuiDialogBase;
+
+import com.brandon3055.brandonscore.utils.Utils;
+
+import com.brandon3055.draconicevolution.api.config.BooleanProperty;
+
+import com.brandon3055.draconicevolution.api.config.ConfigProperty;
+
+import com.brandon3055.draconicevolution.api.modules.Module;
+
+import com.brandon3055.draconicevolution.api.modules.data.ModuleData;
+
+import com.brandon3055.draconicevolution.api.modules.lib.ModuleContext;
+
+import com.brandon3055.draconicevolution.api.modules.lib.ModuleEntity;
+
+import com.brandon3055.draconicevolution.client.ModuleTextures;
+
+import com.brandon3055.draconicevolution.init.ItemData;
+
+import com.mojang.serialization.Codec;
+
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
 import java.util.*;
+
 import java.util.function.Function;
+
 import java.util.function.Predicate;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import javax.annotation.Nullable;
+
+import net.covers1624.quack.collection.FastStream;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.gui.screens.Screen;
+
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+
+import net.minecraft.core.Holder;
+
+import net.minecraft.core.RegistryAccess;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+
+import net.minecraft.core.registries.Registries;
+
+import net.minecraft.network.RegistryFriendlyByteBuf;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.network.chat.MutableComponent;
+
+import net.minecraft.network.codec.ByteBufCodecs;
+
+import net.minecraft.network.codec.StreamCodec;
+
+import net.minecraft.resources.Identifier;
+
+import net.minecraft.tags.ItemTags;
+
+import net.minecraft.tags.TagKey;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.Item;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.TooltipFlag;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
+
 import static com.brandon3055.draconicevolution.DraconicEvolution.MODID;
+
+
+import com.brandon3055.draconicevolution.lib.DEStreamCodecs; // port-26.1.2: BCStreamCodec удалён из BC-26
+
+
 
 /**
  * Created by brandon3055 on 25/01/2023
@@ -228,7 +286,7 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
             return super.renderModuleOverlay(parent, context, render, x, y, width, height, mouseX, mouseY, partialTicks, hoverTicks);
         }
 
-        if (Screen.hasShiftDown()) {
+        if (Minecraft.getInstance().hasShiftDown()) {
             if (hoverTicks <= 10) return false;
             Minecraft mc = Minecraft.getInstance();
             Item item = getModule().getItem();
@@ -285,7 +343,7 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
         ItemStack carrying = player.containerMenu.getCarried();
 
         //Clear Filter
-        if (button == 1 && Screen.hasShiftDown()) {
+        if (button == 1 && Minecraft.getInstance().hasShiftDown()) {
             filters.removeIf(filter -> filter.slot() == index);
             sendConfigToServer(player.registryAccess());
             markDirty();
@@ -422,7 +480,7 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
         }
 
         textField.setTextState(TextState.simpleState("", s -> {
-            ResourceLocation location = ResourceLocation.tryParse(s);
+            Identifier location = Identifier.tryParse(s);
             TagKey<Item> key = getTagFilter(index);
             if (s.isEmpty() && key == null) return;
 
@@ -588,10 +646,10 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
                         ).apply(instance, Filter::new)
         );
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, Filter> STREAM_CODEC = BCStreamCodec.composite(
+        public static final StreamCodec<RegistryFriendlyByteBuf, Filter> STREAM_CODEC = DEStreamCodecs.composite(
                 ByteBufCodecs.INT, Filter::slot,
                 ByteBufCodecs.optional(ItemStack.STREAM_CODEC), Filter::stackFilter,
-                ByteBufCodecs.optional( BCStreamCodec.tagKeyCodec(Registries.ITEM)), Filter::tagFilter,
+                ByteBufCodecs.optional( TagKey.streamCodec(Registries.ITEM)), Filter::tagFilter,
                 Filter::new
         );
 

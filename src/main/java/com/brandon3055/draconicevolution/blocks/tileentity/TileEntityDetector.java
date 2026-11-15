@@ -1,52 +1,99 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import codechicken.lib.data.MCDataInput;
+
 import codechicken.lib.math.MathHelper;
+
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.api.power.OPStorage;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
-import com.brandon3055.brandonscore.client.particle.IntParticleData;
+
+import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.IRedstoneEmitter;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedBool;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedByte;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedShort;
+
 import com.brandon3055.brandonscore.lib.entityfilter.EntityFilter;
+
 import com.brandon3055.brandonscore.lib.entityfilter.FilterType;
+
 import com.brandon3055.brandonscore.utils.MathUtils;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModularOPStorage;
+
 import com.brandon3055.draconicevolution.client.DEParticles;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.inventory.EntityDetectorMenu;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+import java.util.ArrayList;
+
+import java.util.List;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.ListTag;
+
+import net.minecraft.nbt.StringTag;
+
+import net.minecraft.server.MinecraftServer;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.util.Mth;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.MenuProvider;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.player.Inventory;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.inventory.AbstractContainerMenu;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.AABB;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.Vec3;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.capabilities.Capabilities;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+
+
 
 /**
  * Created by brandon3055 on 28/09/2016.
@@ -98,7 +145,7 @@ public class TileEntityDetector extends TileBCore implements MenuProvider, IInte
     public void tick() {
         super.tick();
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             updateAnimation();
             return;
         }
@@ -191,15 +238,15 @@ public class TileEntityDetector extends TileBCore implements MenuProvider, IInte
 
         IntParticleData data = new IntParticleData(DEParticles.SPARK.get(),
                 0, 255, 255, //Colour
-                (int) (0.4F * (level.random.nextFloat() + 0.1) * 100), //Scale
+                (int) (0.4F * (level.getRandom().nextFloat() + 0.1) * 100), //Scale
                 (int) (0.15F*100), //Spark scale
                 30, 10, //Max Age, Additional random age
                 (int) (-0.005*1000) //Gravity
         );
-        Vector3 pos = Vector3.fromTileCenter(this).add((-0.5 + level.random.nextDouble()) * 0.1, 0.005, (-0.5 + level.random.nextDouble()) * 0.1);
+        Vector3 pos = Vector3.fromTileCenter(this).add((-0.5 + level.getRandom().nextDouble()) * 0.1, 0.005, (-0.5 + level.getRandom().nextDouble()) * 0.1);
         level.addParticle(data, pos.x, pos.y, pos.z, 0.02D, 0, 0.02D);
 
-        int i = level.random.nextInt(4);
+        int i = level.getRandom().nextInt(4);
         double x = i / 2;
         double z = i % 2;
 
@@ -208,7 +255,7 @@ public class TileEntityDetector extends TileBCore implements MenuProvider, IInte
                 advanced ? 255 : 76, //R
                 advanced ? 178 : 0,  //G
                 advanced ? 0 : 255,  //B
-                (int) (0.4F * (level.random.nextFloat() + 0.1) * 100), //Scale
+                (int) (0.4F * (level.getRandom().nextFloat() + 0.1) * 100), //Scale
                 (int) (0.15F*100), //Spark scale
                 30, 10, //Max Age, Additional random age
                 (int) (-0.005*1000) //Gravity

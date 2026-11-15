@@ -1,26 +1,47 @@
 package com.brandon3055.draconicevolution.entity.guardian.control;
 
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.brandonscore.utils.MathUtils;
+
 import com.brandon3055.draconicevolution.entity.guardian.DraconicGuardianEntity;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianFightManager;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianProjectileEntity;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianWither;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+
 import java.util.List;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.particles.ParticleTypes;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.util.Mth;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.Mob;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.phys.Vec3;
+
+
+
 
 public class GroundEffectPhase extends ChargeUpPhase {
 
@@ -153,7 +174,7 @@ public class GroundEffectPhase extends ChargeUpPhase {
 
 
         GuardianProjectileEntity projectile = new GuardianProjectileEntity(guardian.level(), guardian, aim.x, aim.y, aim.z, null, 25, GuardianFightManager.PROJECTILE_POWER);
-        projectile.moveTo(headPos.x, headPos.y, headPos.z, 0.0F, 0.0F);
+        projectile.snapTo(headPos.x, headPos.y, headPos.z, 0.0F, 0.0F);
         guardian.level().addFreshEntity(projectile);
         BCoreNetwork.sendSound(guardian.level(), guardian, SoundEvents.ENDER_DRAGON_SHOOT, SoundSource.HOSTILE, 32.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
         BCoreNetwork.sendParticle(guardian.level(), ParticleTypes.EXPLOSION, headPos, Vector3.ZERO, true);
@@ -169,7 +190,7 @@ public class GroundEffectPhase extends ChargeUpPhase {
 //        float aimPitch = perimeterHit ? 10 + random.nextInt(30) : 20 + random.nextInt(70);
 //        Vector3d aim = calculateViewVector(145 - 90 - aimPitch, guardian.yRot);
 //        GuardianProjectileEntity projectile = new GuardianProjectileEntity(guardian.level, guardian, aim.x, aim.y, aim.z, null, 25, GuardianFightManager.PROJECTILE_POWER);
-//        projectile.moveTo(headPos.x, headPos.y, headPos.z, 0.0F, 0.0F);
+//        projectile.snapTo(headPos.x, headPos.y, headPos.z, 0.0F, 0.0F);
 //        guardian.level.addFreshEntity(projectile);
 //        BCoreNetwork.sendSound(guardian.level, guardian, SoundEvents.ENDER_DRAGON_SHOOT, SoundCategory.HOSTILE, 32.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
 //        BCoreNetwork.sendParticle(guardian.level, ParticleTypes.EXPLOSION, headPos, Vector3.ZERO, true);
@@ -189,7 +210,7 @@ public class GroundEffectPhase extends ChargeUpPhase {
             }
             Vector3 aim = target.subtract(headPos).normalize().multiply(3);
             GuardianProjectileEntity projectile = new GuardianProjectileEntity(guardian.level(), guardian, aim.x, aim.y, aim.z, null, 25, GuardianFightManager.PROJECTILE_POWER);
-            projectile.moveTo(headPos.x, headPos.y, headPos.z, 0.0F, 0.0F);
+            projectile.snapTo(headPos.x, headPos.y, headPos.z, 0.0F, 0.0F);
             guardian.level().addFreshEntity(projectile);
         }
 

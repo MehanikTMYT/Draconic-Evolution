@@ -1,32 +1,59 @@
 package com.brandon3055.draconicevolution.client.render.effect;
 
 import codechicken.lib.math.MathHelper;
+
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.draconicevolution.blocks.energynet.tileentity.TileCrystalWirelessIO;
+
 import com.brandon3055.draconicevolution.client.AtlasTextureHelper;
+
 import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
-import com.mojang.blaze3d.platform.GlStateManager;
+
+import com.mojang.blaze3d.opengl.GlStateManager;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
+
 import java.util.Iterator;
+
 import java.util.List;
+
+import net.minecraft.client.Camera;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+
+import net.minecraft.client.particle.ParticleRenderType;
+
+import net.minecraft.client.renderer.GameRenderer;
+
+import net.minecraft.client.renderer.texture.TextureAtlas;
+
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+
+import net.minecraft.client.renderer.texture.TextureManager;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.AABB;
+
+import net.minecraft.world.phys.Vec3;
+
+import net.minecraft.world.phys.shapes.Shapes;
+
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import org.joml.Vector3f;
+
+
+
 
 /**
  * Created by brandon3055 on 29/11/2016.
@@ -40,7 +67,7 @@ public class CrystalFXWireless extends CrystalFXBase<TileCrystalWirelessIO> {
 
     public CrystalFXWireless(ClientLevel worldIn, TileCrystalWirelessIO tile, BlockPos linkTarget) {
         super(worldIn, tile);
-        this.age = worldIn.random.nextInt(1024);
+        this.age = worldIn.getRandom().nextInt(1024);
         this.setPosition(tile.getBeamLinkPos(linkTarget));
         this.linkTarget = linkTarget;
         BlockState state = worldIn.getBlockState(linkTarget);
@@ -94,7 +121,7 @@ public class CrystalFXWireless extends CrystalFXBase<TileCrystalWirelessIO> {
         float scale = 0.08F;
         boolean output = !tile.inputMode.get();
 
-        Vec3 view = renderInfo.getPosition();
+        Vec3 view = renderInfo.position();
         Vector3 source = new Vector3(x - view.x, y - view.y, z - view.z);
         Vector3 target = Vector3.fromBlockPos(linkTarget).subtract(view.x, view.y, view.z);
 

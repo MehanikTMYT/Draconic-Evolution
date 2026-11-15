@@ -1,8 +1,8 @@
 package com.brandon3055.draconicevolution.client.gui;
 
-import codechicken.lib.gui.modular.ModularGui;
-import codechicken.lib.gui.modular.ModularGuiScreen;
-import codechicken.lib.gui.modular.lib.GuiProvider;
+import com.brandon3055.brandonscore.client.gui.modular.ModularGui;
+import com.brandon3055.brandonscore.client.gui.modular.ModularGuiScreen;
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiProvider;
 
 /**
  * Created by brandon3055 on 24/12/20

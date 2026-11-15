@@ -1,68 +1,194 @@
 package com.brandon3055.draconicevolution.entity.guardian;
 
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.brandonscore.worldentity.WorldEntityHandler;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.entity.GuardianCrystalEntity;
+
 import com.brandon3055.draconicevolution.entity.guardian.control.IPhase;
+
 import com.brandon3055.draconicevolution.entity.guardian.control.PhaseManager;
+
 import com.brandon3055.draconicevolution.entity.guardian.control.PhaseType;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.init.DEDamage;
+
 import com.google.common.collect.Lists;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerEntity;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeMap;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.effects.AllOf;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.pathfinder.BinaryHeap;
-import net.minecraft.world.level.pathfinder.Node;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.level.portal.DimensionTransition;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.Tags;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
+
 import java.util.List;
+
 import java.util.Optional;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.particles.ParticleTypes;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.NbtUtils;
+
+import net.minecraft.network.protocol.Packet;
+
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+
+import net.minecraft.network.syncher.EntityDataAccessor;
+
+import net.minecraft.network.syncher.EntityDataSerializers;
+
+import net.minecraft.network.syncher.SynchedEntityData;
+
+import net.minecraft.server.level.ServerEntity;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.sounds.SoundEvent;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.tags.BlockTags;
+
+import net.minecraft.tags.ItemTags;
+
+import net.minecraft.util.Mth;
+
+import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.damagesource.DamageTypes;
+
+import net.minecraft.world.effect.MobEffectInstance;
+
+import net.minecraft.world.entity.*;
+
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+
+import net.minecraft.world.entity.ai.attributes.Attributes;
+
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+
+import net.minecraft.world.entity.monster.Enemy;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+
+import net.minecraft.world.item.enchantment.effects.AllOf;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.Block;
+
+import net.minecraft.world.level.block.Blocks;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.level.gamerules.GameRules;
+
+import net.minecraft.world.level.levelgen.Heightmap;
+
+import net.minecraft.world.level.pathfinder.BinaryHeap;
+
+import net.minecraft.world.level.pathfinder.Node;
+
+import net.minecraft.world.level.pathfinder.Path;
+
+import net.minecraft.world.level.portal.TeleportTransition;
+
+import net.minecraft.world.phys.AABB;
+
+import net.minecraft.world.phys.Vec3;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.common.CommonHooks;
+
+import net.neoforged.neoforge.common.Tags;
+
+import org.apache.logging.log4j.Logger;
+
+import org.jetbrains.annotations.Nullable;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class DraconicGuardianEntity extends Mob implements Enemy {
     private static final Logger LOGGER = DraconicEvolution.LOGGER;
@@ -176,7 +302,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
     @Override
     public void tick() {
         super.tick();
-        if (!level().isClientSide && getShieldPower() < DEConfig.guardianShield) {
+        if (!level().isClientSide() && getShieldPower() < DEConfig.guardianShield) {
             GuardianFightManager manager = getFightManager();
             if (manager != null && manager.getNumAliveCrystals() > 0) {
                 setShieldPower(Math.min(DEConfig.guardianShield, getShieldPower() + (DEConfig.guardianShield / (20F * 10F))));
@@ -209,27 +335,27 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
     @Override
     public void aiStep() {
         speedMult = codechicken.lib.math.MathHelper.approachLinear(speedMult, phaseManager.getCurrentPhase().getGuardianSpeed(), 0.1);
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.setHealth(this.getHealth());
             if (!this.isSilent()) {
                 float f = Mth.cos(this.flapTime * ((float) Math.PI * 2F));
                 float f1 = Mth.cos(this.oFlapTime * ((float) Math.PI * 2F));
                 if (f1 <= -0.3F && f >= -0.3F) {
-                    this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENDER_DRAGON_FLAP, this.getSoundSource(), 5.0F, 0.8F + this.random.nextFloat() * 0.3F, false);
+                    this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENDER_DRAGON_FLAP, this.getSoundSource(), 5.0F, 0.8F + this.getRandom().nextFloat() * 0.3F, false);
                 }
 
                 if (!this.phaseManager.getCurrentPhase().getIsStationary() && --this.growlTime < 0) {
-                    this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENDER_DRAGON_GROWL, this.getSoundSource(), 2.5F, 0.8F + this.random.nextFloat() * 0.3F, false);
-                    this.growlTime = 200 + this.random.nextInt(200);
+                    this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.ENDER_DRAGON_GROWL, this.getSoundSource(), 2.5F, 0.8F + this.getRandom().nextFloat() * 0.3F, false);
+                    this.growlTime = 200 + this.getRandom().nextInt(200);
                 }
             }
         }
 
         this.oFlapTime = this.flapTime;
         if (this.isDeadOrDying()) {
-            float randX = (this.random.nextFloat() - 0.5F) * 8.0F;
-            float randY = (this.random.nextFloat() - 0.5F) * 4.0F;
-            float randZ = (this.random.nextFloat() - 0.5F) * 8.0F;
+            float randX = (this.getRandom().nextFloat() - 0.5F) * 8.0F;
+            float randY = (this.getRandom().nextFloat() - 0.5F) * 4.0F;
+            float randZ = (this.getRandom().nextFloat() - 0.5F) * 8.0F;
             this.level().addParticle(ParticleTypes.EXPLOSION, this.getX() + (double) randX, this.getY() + 2.0D + (double) randY, this.getZ() + (double) randZ, 0.0D, 0.0D, 0.0D);
         } else {
             this.updateDragonEnderCrystal();
@@ -261,7 +387,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
 
                 this.ringBuffer[this.ringBufferIndex][0] = this.getYRot();
                 this.ringBuffer[this.ringBufferIndex][1] = this.getY();
-                if (this.level().isClientSide) {
+                if (this.level().isClientSide()) {
                     if (this.lerpSteps > 0) {
                         double d7 = this.getX() + (this.lerpX - this.getX()) / (double) this.lerpSteps;
                         double d0 = this.getY() + (this.lerpY - this.getY()) / (double) this.lerpSteps;
@@ -387,7 +513,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
                     this.setPartPosition(enderdragonpartentity, -(f3 * 1.5F + f20 * f23) * f16, adouble1[1] - adouble[1] - (double) ((f23 + 1.5F) * f2) + 1.5D, (f18 * 1.5F + f21 * f23) * f16);
                 }
 
-                if (!this.level().isClientSide) {
+                if (!this.level().isClientSide()) {
                     this.slowed = this.destroyBlocksInAABB(this.dragonPartHead.getBoundingBox()) | this.destroyBlocksInAABB(this.dragonPartNeck.getBoundingBox()) | this.destroyBlocksInAABB(this.dragonPartBody.getBoundingBox());
                     if (this.fightManager != null) {
                         this.fightManager.guardianUpdate(this);
@@ -430,7 +556,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
             }
         }
 
-        if (this.random.nextInt(10) == 0 && !level().isClientSide) {
+        if (this.getRandom().nextInt(10) == 0 && !level().isClientSide()) {
             if (fightManager != null) {
                 closestGuardianCrystal = fightManager.getCrystals().stream().min(Comparator.comparingDouble(this::distanceToSqr)).orElse(null);
             } else {
@@ -513,7 +639,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
         }
 
         if (flag1) {
-            BlockPos blockpos1 = new BlockPos(i + this.random.nextInt(l - i + 1), j + this.random.nextInt(i1 - j + 1), k + this.random.nextInt(j1 - k + 1));
+            BlockPos blockpos1 = new BlockPos(i + this.getRandom().nextInt(l - i + 1), j + this.getRandom().nextInt(i1 - j + 1), k + this.getRandom().nextInt(j1 - k + 1));
             this.level().levelEvent(2008, blockpos1, 0);
         }
 
@@ -575,12 +701,12 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        return level().isClientSide ? false : this.attackEntityPartFrom(this.dragonPartBody, source, amount);
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) { // port-26.1.2: Entity.hurt -> hurtServer
+        return level().isClientSide() ? false : this.attackEntityPartFrom(this.dragonPartBody, source, amount);
     }
 
     protected boolean attackDragonFrom(DamageSource source, float amount) {
-        return super.hurt(source, amount);
+        return super.hurtServer(level, source, amount);
     }
 
     @Override
@@ -600,16 +726,16 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
 
         ++this.deathTicks;
         if (this.deathTicks >= 180 && this.deathTicks <= 200) {
-            float f = (this.random.nextFloat() - 0.5F) * 8.0F;
-            float f1 = (this.random.nextFloat() - 0.5F) * 4.0F;
-            float f2 = (this.random.nextFloat() - 0.5F) * 8.0F;
+            float f = (this.getRandom().nextFloat() - 0.5F) * 8.0F;
+            float f1 = (this.getRandom().nextFloat() - 0.5F) * 4.0F;
+            float f2 = (this.getRandom().nextFloat() - 0.5F) * 8.0F;
             this.level().addParticle(ParticleTypes.EXPLOSION_EMITTER, this.getX() + (double) f, this.getY() + 2.0D + (double) f1, this.getZ() + (double) f2, 0.0D, 0.0D, 0.0D);
         }
 
-        boolean flag = this.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT);
+        boolean flag = this.level().getGameRules().get(GameRules.MOB_DROPS);
         int xpAmount = 24000;
 
-        if (!this.level().isClientSide) {
+        if (!this.level().isClientSide()) {
             if (this.deathTicks > 150 && this.deathTicks % 5 == 0 && flag) {
                 this.dropExperience(Mth.floor((float) xpAmount * 0.08F));
             }
@@ -622,7 +748,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
         this.move(MoverType.SELF, new Vec3(0.0D, 0.1F, 0.0D));
         this.setYRot(this.getYRot() + 20.0F);
         this.yBodyRot = this.getYRot();
-        if (this.deathTicks == 200 && !this.level().isClientSide) {
+        if (this.deathTicks == 200 && !this.level().isClientSide()) {
             if (flag) {
                 this.dropExperience(Mth.floor((float) xpAmount * 0.2F));
             }
@@ -882,9 +1008,9 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
 
     @Override
     public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
-        if (PHASE.equals(key) && this.level().isClientSide) {
+        if (PHASE.equals(key) && this.level().isClientSide()) {
             this.phaseManager.setPhase(PhaseType.getById(getEntityData().get(PHASE)));
-        } else if (CRYSTAL_ID.equals(key) && level().isClientSide) {
+        } else if (CRYSTAL_ID.equals(key) && level().isClientSide()) {
             int id = getEntityData().get(CRYSTAL_ID);
             if (id == -1) {
                 closestGuardianCrystal = null;
@@ -921,7 +1047,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
     }
 
     @Override
-    public @Nullable Entity changeDimension(DimensionTransition p_350951_) {
+    public @Nullable Entity changeDimension(TeleportTransition p_350951_) {
         return null;
     }
 

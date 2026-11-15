@@ -1,59 +1,167 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import codechicken.lib.data.MCDataInput;
+
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
-import com.brandon3055.brandonscore.client.particle.IntParticleData;
+
+import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
+
 import com.brandon3055.brandonscore.inventory.ItemHandlerIOControl;
+
 import com.brandon3055.brandonscore.inventory.TileItemStackHandler;
+
 import com.brandon3055.brandonscore.lib.IChangeListener;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.lib.datamanager.*;
+
 import com.brandon3055.brandonscore.utils.FacingUtils;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.api.DraconicAPI;
+
 import com.brandon3055.draconicevolution.api.crafting.IFusionInjector;
+
 import com.brandon3055.draconicevolution.api.crafting.IFusionInventory;
+
 import com.brandon3055.draconicevolution.api.crafting.IFusionRecipe;
+
 import com.brandon3055.draconicevolution.api.crafting.IFusionStateMachine;
+
 import com.brandon3055.draconicevolution.client.DEParticles;
+
 import com.brandon3055.draconicevolution.client.render.tile.fxhandlers.ITileFXHandler;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.inventory.FusionCraftingCoreMenu;
+
 import com.google.common.collect.Streams;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+import java.util.ArrayList;
+
+import java.util.Arrays;
+
+import java.util.Comparator;
+
+import java.util.List;
+
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.core.particles.ParticleTypes;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.MenuProvider;
+
+import net.minecraft.world.entity.player.Inventory;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.inventory.AbstractContainerMenu;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.crafting.RecipeHolder;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.neoforged.neoforge.capabilities.Capabilities;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 11/06/2016.
@@ -99,7 +207,7 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
         }
 
         updateInjectors();
-        RecipeHolder<IFusionRecipe> holder = level.getRecipeManager().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), this, level).orElse(null);
+        RecipeHolder<IFusionRecipe> holder = level.recipeAccess().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), this, level).orElse(null);
         IFusionRecipe recipe = holder == null ? null : holder.value();
         setActiveRecipe(holder);
         if (recipe == null || !recipe.canStartCraft(this, level, null)) {
@@ -127,13 +235,13 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
             injectorCache = null;
         } else if (id == 1) {// Craft Complete
             level.addParticle(ParticleTypes.EXPLOSION, getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5, 1.0D, 0.0D, 0.0D);
-//            level.playLocalSound(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5, SoundEvents.GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
-            level.playLocalSound(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5, DESounds.FUSION_COMPLETE.get(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
+//            level.playLocalSound(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5, SoundEvents.GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F, (1.0F + (this.level.getRandom().nextFloat() - this.level.getRandom().nextFloat()) * 0.2F) * 0.7F, false);
+            level.playLocalSound(getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5, DESounds.FUSION_COMPLETE.get(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.getRandom().nextFloat() - this.level.getRandom().nextFloat()) * 0.2F) * 0.7F, false);
 
             for (int i = 0; i < 100; i++) {
-                double velX = (level.random.nextDouble() - 0.5) * 0.1;
-                double velY = (level.random.nextDouble() - 0.5) * 0.1;
-                double velZ = (level.random.nextDouble() - 0.5) * 0.1;
+                double velX = (level.getRandom().nextDouble() - 0.5) * 0.1;
+                double velY = (level.getRandom().nextDouble() - 0.5) * 0.1;
+                double velZ = (level.getRandom().nextDouble() - 0.5) * 0.1;
                 level.addParticle(new IntParticleData(DEParticles.ENERGY_BASIC.get(), 0, 255, 255, 64), getBlockPos().getX() + 0.5, getBlockPos().getY() + 0.5, getBlockPos().getZ() + 0.5, velX, velY, velZ);
             }
         }
@@ -142,11 +250,11 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
     @Override
     public void tick() {
         super.tick();
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             fxHandler.tick();
         }
 
-        if (crafting.get() && !level.isClientSide) {
+        if (crafting.get() && !level.isClientSide()) {
             RecipeHolder<IFusionRecipe> recipe = getActiveRecipe();
             if (recipe != null) {
                 recipe.value().tickFusionState(this, this, level);
@@ -158,7 +266,7 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
 
     public boolean updateInjectors() {
         minTierCache = null;
-        if (isCrafting() || level.isClientSide) {
+        if (isCrafting() || level.isClientSide()) {
             return true;
         }
 
@@ -228,8 +336,8 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
             if (recipe == null || !recipe.value().matches(this, level)) {
                 cancelCraft();
             }
-        } else if (!level.isClientSide) {
-            RecipeHolder<IFusionRecipe> recipe = level.getRecipeManager().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), this, level).orElse(null);
+        } else if (!level.isClientSide()) {
+            RecipeHolder<IFusionRecipe> recipe = level.recipeAccess().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), this, level).orElse(null);
             if (recipe != null) {
                 recipe.value().canStartCraft(this, level, e -> setFusionStatus(-1, e));
             } else {
@@ -350,7 +458,7 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
         crafting.set(false);
         getInjectors().forEach(e -> e.setEnergyRequirement(0, 0));
         setFusionStatus(-1, Component.translatable("fusion_status.draconicevolution.canceled"));
-        level.playSound(null, getBlockPos(), DESounds.FUSION_COMPLETE.get(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F);
+        level.playSound(null, getBlockPos(), DESounds.FUSION_COMPLETE.get(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.getRandom().nextFloat() - this.level.getRandom().nextFloat()) * 0.2F) * 0.7F);
         inventoryChanged();
     }
 
@@ -384,7 +492,7 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
     public RecipeHolder<IFusionRecipe> getActiveRecipe() {
         if (recipeCache == null) {
             if (activeRecipe.get() != null) {
-                RecipeHolder<?> recipe = level.getRecipeManager().byKey(activeRecipe.get()).orElse(null);
+                RecipeHolder<?> recipe = level.recipeAccess().byKey(activeRecipe.get()).orElse(null);
                 if (recipe != null && recipe.value() instanceof IFusionRecipe fusionRecipe) {
                     recipeCache = (RecipeHolder<IFusionRecipe>) recipe;
                 }
@@ -404,7 +512,7 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
         } else if (crafting.get()) {
             return 1 + getFusionState().ordinal();
         } else {
-            RecipeHolder<IFusionRecipe> recipe = level.getRecipeManager().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), this, level).orElse(null);
+            RecipeHolder<IFusionRecipe> recipe = level.recipeAccess().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), this, level).orElse(null);
             if (recipe != null && recipe.value().canStartCraft(this, level, null)) {
                 return 1;
             }

@@ -1,8 +1,8 @@
 package com.brandon3055.draconicevolution.client.render.hud;
 
-import codechicken.lib.gui.modular.elements.GuiContextMenu;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import codechicken.lib.gui.modular.sprite.Material;
+import com.brandon3055.brandonscore.client.gui.modular.elements.GuiContextMenu;
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+import com.brandon3055.brandonscore.client.gui.modular.sprite.Material;
 import com.brandon3055.brandonscore.api.hud.AbstractHudElement;
 import com.brandon3055.brandonscore.api.math.Vector2;
 import com.brandon3055.brandonscore.api.power.IOPStorage;
@@ -81,7 +81,7 @@ public class ShieldHudElement extends AbstractHudElement {
     public void popTotem() {
         totemEffect = TOTEM_EFFECT_TIME;
         if (mc.level != null) {
-            totemEffectSeed = mc.level.random.nextLong();
+            totemEffectSeed = mc.level.getRandom().nextLong();
         }
         totemEffectIndex = 0;
         for (double totem : totemStatus) {

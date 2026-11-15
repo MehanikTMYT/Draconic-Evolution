@@ -1,39 +1,145 @@
 package com.brandon3055.draconicevolution.entity;
 
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.brandonscore.worldentity.WorldEntity;
+
 import com.brandon3055.brandonscore.worldentity.WorldEntityHandler;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianFightManager;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseFireBlock;
-import net.minecraft.world.level.material.PushReaction;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.CommonHooks;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
+
+import java.util.Optional;
+
+import java.util.UUID;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
-import java.util.UUID;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.particles.ParticleTypes;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.NbtUtils;
+
+import net.minecraft.network.protocol.Packet;
+
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+
+import net.minecraft.network.syncher.EntityDataAccessor;
+
+import net.minecraft.network.syncher.EntityDataSerializers;
+
+import net.minecraft.network.syncher.SynchedEntityData;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.tags.DamageTypeTags;
+
+import net.minecraft.util.Mth;
+
+import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.EntityType;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.BaseFireBlock;
+
+import net.minecraft.world.level.material.PushReaction;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.common.CommonHooks;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class GuardianCrystalEntity extends Entity {
     private static final EntityDataAccessor<Optional<BlockPos>> BEAM_TARGET = SynchedEntityData.defineId(GuardianCrystalEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
@@ -48,7 +154,7 @@ public class GuardianCrystalEntity extends Entity {
     public GuardianCrystalEntity(EntityType<?> type, Level world) {
         super(type, world);
         this.blocksBuilding = true;
-        this.time = this.random.nextInt(100000);
+        this.time = this.getRandom().nextInt(100000);
     }
 
     public GuardianCrystalEntity(Level worldIn, double x, double y, double z, UUID managerId) {
@@ -118,7 +224,7 @@ public class GuardianCrystalEntity extends Entity {
                             BCoreNetwork.sendSound(level(), this, DESounds.CRYSTAL_UNSTABLE.get(), SoundSource.HOSTILE, 6F, 0.9F + (random.nextFloat() * 0.2F), false);
                         }
                     } else {
-                        BCoreNetwork.sendSound(level(), this, DESounds.CRYSTAL_RESTORE.get(), SoundSource.HOSTILE, 8, 0.5F + level().random.nextFloat() * 0.2F, false);
+                        BCoreNetwork.sendSound(level(), this, DESounds.CRYSTAL_RESTORE.get(), SoundSource.HOSTILE, 8, 0.5F + level().getRandom().nextFloat() * 0.2F, false);
                     }
                 } else if (getShieldPower() < DEConfig.guardianCrystalShield) {
                     setShieldPower(Math.min(DEConfig.guardianCrystalShield, getShieldPower() + (DEConfig.guardianCrystalShield / 1200.0f)));
@@ -146,7 +252,7 @@ public class GuardianCrystalEntity extends Entity {
         }
 
         compound.putBoolean("ShowBottom", showsBottom());
-        compound.putUUID("manager_id", managerId);
+        TagUtils26.putUUID(TagUtils26, compound, "manager_id", managerId);
     }
 
     @Override
@@ -159,7 +265,7 @@ public class GuardianCrystalEntity extends Entity {
             setShowBottom(compound.getBoolean("ShowBottom"));
         }
         if (compound.contains("manager_id")) {
-            managerId = compound.getUUID("manager_id");
+            managerId = TagUtils26.getUUID(TagUtils26, compound, "manager_id");
         }
     }
 
@@ -169,11 +275,11 @@ public class GuardianCrystalEntity extends Entity {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) { // port-26.1.2: Entity.hurt -> hurtServer
         if (isInvulnerableTo(source)) {
             return false;
         } else {
-            if (!isRemoved() && !level().isClientSide) {
+            if (!isRemoved() && !level().isClientSide()) {
                 GuardianFightManager manager = getManager();
                 float shield = getShieldPower() / (float) DEConfig.guardianCrystalShield;
                 if (shield > 0) {
@@ -264,7 +370,7 @@ public class GuardianCrystalEntity extends Entity {
 
     public void destabilize() {
         if (getUnstableTime() == 0) {
-            BCoreNetwork.sendSound(level(), this, DESounds.CRYSTAL_DESTABILIZE.get(), SoundSource.HOSTILE, 8, 0.5F + level().random.nextFloat() * 0.2F, false);
+            BCoreNetwork.sendSound(level(), this, DESounds.CRYSTAL_DESTABILIZE.get(), SoundSource.HOSTILE, 8, 0.5F + level().getRandom().nextFloat() * 0.2F, false);
         }
         setUnstableTime(DEConfig.guardianCrystalUnstableWindow);
     }

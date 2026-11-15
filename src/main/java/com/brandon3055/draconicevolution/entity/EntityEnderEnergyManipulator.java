@@ -12,7 +12,7 @@
 //import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 //import net.minecraft.world.item.ItemStack;
 //import net.minecraft.world.level.Level;
-//import net.minecraft.world.level.dimension.end.EndDragonFight;
+//import net.minecraft.world.level.dimension.end.EnderDragonFight;
 //
 //import javax.annotation.Nullable;
 //import java.util.Collections;
@@ -27,7 +27,7 @@
 //    private int soulsCollected = 0;
 //    private int stageTime = 0;
 //    public EnderDragon dragon = null;
-//    private EndDragonFight fightManager = null;
+//    private EnderDragonFight fightManager = null;
 //    private LinkedList<BlockPos> deadCrystals = new LinkedList<>();
 //    public static final EntityDataAccessor<Integer> STAGE = SynchedEntityData.defineId(EntityEnderEnergyManipulator.class, EntityDataSerializers.INT);
 //    private BlockPos exitPortalLocation = null;

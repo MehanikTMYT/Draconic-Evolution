@@ -1,32 +1,63 @@
 package com.brandon3055.draconicevolution.client.gui.modular.itemconfig;
 
 import codechicken.lib.data.MCDataInput;
+
 import codechicken.lib.data.MCDataOutput;
+
 import codechicken.lib.math.MathHelper;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.api.capability.PropertyProvider;
+
 import com.brandon3055.draconicevolution.api.config.*;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty.BooleanFormatter;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty.DecimalFormatter;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty.IntegerFormatter;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty.Type;
+
 import com.brandon3055.draconicevolution.inventory.ConfigurableItemMenu;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
+
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
+
 import com.google.gson.JsonParseException;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.contents.TranslatableContents;
-import org.apache.commons.lang3.NotImplementedException;
+
+import java.util.*;
+
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
-import java.util.*;
-import java.util.stream.Collectors;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.gui.screens.Screen;
+
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.core.RegistryAccess;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.IntTag;
+
+import net.minecraft.nbt.ListTag;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.network.chat.contents.TranslatableContents;
+
+import org.apache.commons.lang3.NotImplementedException;
+
+
+
 
 /**
  * Created by brandon3055 on 9/5/20.
@@ -207,10 +238,10 @@ public class PropertyData {
 
     public void increment(int dir) {
         if (type == Type.INTEGER) {
-            int inc = (int) (Math.max(1, getInc(maxValue - minValue)) * dir * (Screen.hasShiftDown() ? 2 : 1));
+            int inc = (int) (Math.max(1, getInc(maxValue - minValue)) * dir * (Minecraft.getInstance().hasShiftDown() ? 2 : 1));
             integerValue = (int) MathHelper.clip(integerValue + inc, minValue, maxValue);
         } else if (type == Type.DECIMAL) {
-            double inc = getInc(maxValue - minValue) * dir * (Screen.hasShiftDown() ? 2 : 1);
+            double inc = getInc(maxValue - minValue) * dir * (Minecraft.getInstance().hasShiftDown() ? 2 : 1);
             decimalValue = MathHelper.clip(decimalValue + inc, minValue, maxValue);
         }
 //        else if (type == Type.ENUM && enumValueOptions != null && enumValueOptions.contains(enumValueIndex)) {
@@ -307,10 +338,10 @@ public class PropertyData {
     public CompoundTag serialize(HolderLookup.Provider provider) {
         CompoundTag nbt = new CompoundTag();
         nbt.putByte("type", (byte) type.ordinal());
-        nbt.putUUID("prov_id", providerID);
+        TagUtils26.putUUID(nbt, "prov_id", providerID);
         nbt.putString("prov_name", providerName);
         if (propUniqueName != null) {
-            nbt.putUUID("prop_name", propUniqueName);
+            TagUtils26.putUUID(nbt, "prop_name", propUniqueName);
         } else {
             nbt.putString("prop_name", propName);
         }
@@ -355,17 +386,17 @@ public class PropertyData {
 
     @Nullable
     public static PropertyData deserialize(CompoundTag nbt, HolderLookup.Provider provider) {
-        if (!nbt.hasUUID("prov_id") || !nbt.contains("prov_name") || (!nbt.contains("prop_name") && !nbt.hasUUID("prop_name")) || !nbt.contains("type")) {
+        if (!TagUtils26.hasUUID(nbt, "prov_id") || !nbt.contains("prov_name") || (!nbt.contains("prop_name") && !TagUtils26.hasUUID(nbt, "prop_name")) || !nbt.contains("type")) {
             return null;
         }
 
         PropertyData data = new PropertyData(
-                nbt.getUUID("prov_id"),
+                TagUtils26.getUUID(nbt, "prov_id"),
                 nbt.getString("prov_name"),
                 Type.getSafe(nbt.getByte("type")));
 
-        if (nbt.hasUUID("prop_name")) {
-            data.propUniqueName = nbt.getUUID("prop_name");
+        if (TagUtils26.hasUUID(nbt, "prop_name")) {
+            data.propUniqueName = TagUtils26.getUUID(nbt, "prop_name");
         } else {
             data.propName = nbt.getString("prop_name");
         }

@@ -1,46 +1,28 @@
 package com.brandon3055.draconicevolution.client.shader;
 
-import codechicken.lib.render.shader.CCUniform;
 import com.brandon3055.brandonscore.client.shader.BCShader;
+import com.brandon3055.brandonscore.client.shader.BCUniform;
 import com.brandon3055.draconicevolution.DraconicEvolution;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
-import java.util.Objects;
-
-/**
- * Created by covers1624 on 1/10/22.
- */
+// port-26.1.2: CCL CCUniform/CCShaderInstance удалены. Шейдеры портированы на BC-26 BCShader (BCParams uniform-block,
+// смещения как в ContribShader: UV1=80, UV2=88, BaseColor=64). GLSL у DE уже в shaders/core/ — требуется перевод
+// на bc_params.glsl-блок в этапе рендер-шейдеров (см. stage2-отчёт).
 public final class ToolShader extends BCShader<ToolShader> {
 
-    private CCUniform uv1OverrideUniform;
-    private CCUniform uv2OverrideUniform;
-
-    private CCUniform baseColorUniform;
-
     public ToolShader(String path, VertexFormat format) {
-        super(ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, path), format);
+        this(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, path), format);
     }
 
-    public ToolShader(ResourceLocation location, VertexFormat format) {
+    public ToolShader(Identifier location, VertexFormat format) {
         super(location, format);
     }
 
-    // @formatter:off
-    public final CCUniform getUv1OverrideUniform() { return Objects.requireNonNull(uv1OverrideUniform, missingUniformMessage("UV1Override")); }
-    public final boolean hasUv1OverrideUniform() { return uv1OverrideUniform != null; }
-    public final CCUniform getUv2OverrideUniform() { return Objects.requireNonNull(uv2OverrideUniform, missingUniformMessage("UV2Override")); }
-    public final boolean hasUv2OverrideUniform() { return uv2OverrideUniform != null; }
-    public final CCUniform getBaseColorUniform() { return Objects.requireNonNull(baseColorUniform, missingUniformMessage("BaseColor")); }
-    public final boolean hasBaseColorUniform() { return baseColorUniform != null; }
-    // @formatter:on
-
-    @Override
-    protected void onShaderLoaded() {
-        super.onShaderLoaded();
-        uv1OverrideUniform = shaderInstance.getUniform("UV1Override");
-        uv2OverrideUniform = shaderInstance.getUniform("UV2Override");
-
-        baseColorUniform = shaderInstance.getUniform("BaseColor");
-    }
+    public BCUniform getUv1OverrideUniform() { return uniform(80); }
+    public BCUniform getUv2OverrideUniform() { return uniform(88); }
+    public BCUniform getBaseColorUniform() { return uniform(64); }
+    public boolean hasUv1OverrideUniform() { return true; }
+    public boolean hasUv2OverrideUniform() { return true; }
+    public boolean hasBaseColorUniform() { return true; }
 }

@@ -5,11 +5,11 @@ import codechicken.lib.render.item.IItemRenderer;
 import codechicken.lib.render.shader.ShaderProgram;
 import codechicken.lib.util.TransformUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.SkullModel;
+import net.minecraft.client.model.object.skull.SkullModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.resources.model.cuboid.ItemTransforms;
+import net.minecraft.client.renderer.block.dispatch.ModelState;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 public class RenderItemEnderEnergyManipulator implements IItemRenderer {
 
 //    private final SkullModel skeletonHead = new SkullModel(0, 0, 64, 32);
-//    private static final ResourceLocation WITHER_SKELETON_TEXTURES = new ResourceLocation("textures/entity/skeleton/wither_skeleton.png");
+//    private static final Identifier WITHER_SKELETON_TEXTURES = new Identifier("textures/entity/skeleton/wither_skeleton.png");
 //    private static ItemStack stack = new ItemStack(Items.SKULL, 1, 1);
 
     private static ShaderProgram shaderProgram;

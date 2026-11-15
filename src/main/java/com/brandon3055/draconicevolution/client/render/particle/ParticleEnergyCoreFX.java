@@ -1,23 +1,41 @@
 package com.brandon3055.draconicevolution.client.render.particle;
 
-import com.brandon3055.brandonscore.client.particle.IntParticleData;
+import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.utils.BCProfiler;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
-import com.mojang.blaze3d.platform.GlStateManager;
+
+import com.mojang.blaze3d.opengl.GlStateManager;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import com.mojang.blaze3d.vertex.BufferBuilder;
+
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+
 import com.mojang.blaze3d.vertex.Tesselator;
+
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.core.Direction;
 
 import java.util.List;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+
+import net.minecraft.client.particle.*;
+
+import net.minecraft.client.renderer.texture.TextureAtlas;
+
+import net.minecraft.client.renderer.texture.TextureManager;
+
+import net.minecraft.core.Direction;
+
+
+
 
 /**
  * Created by brandon3055 on 2/5/2016.
@@ -55,7 +73,7 @@ public class ParticleEnergyCoreFX extends TextureSheetParticle {
         super(world, xPos, yPos, zPos);
         this.targetPos = targetPos;
         this.spriteSet = spriteSet;
-        setSprite(spriteSet.get(world.random));
+        setSprite(spriteSet.get(world.getRandom()));
         hasPhysics = false;
         Vec3D dir = Vec3D.getDirectionVec(new Vec3D(xPos, yPos, zPos), targetPos);
         this.direction = Direction.getNearest((float) dir.x, (float) dir.y, (float) dir.z).getAxis();
@@ -80,7 +98,7 @@ public class ParticleEnergyCoreFX extends TextureSheetParticle {
         this.zo = this.z;
 
         Vec3D tPos = this.targetPos.copy();
-        setSprite(spriteSet.get(level.random));
+        setSprite(spriteSet.get(level.getRandom()));
 
         if (toCore) {
             double rotation = ClientEventHandler.elapsedTicks;

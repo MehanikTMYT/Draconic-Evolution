@@ -1,51 +1,95 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import codechicken.lib.colour.Colour;
+
 import codechicken.lib.data.MCDataInput;
+
 import com.brandon3055.brandonscore.api.power.IOTracker;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.datamanager.*;
+
 import com.brandon3055.brandonscore.multiblock.*;
+
 import com.brandon3055.brandonscore.utils.FacingUtils;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.blocks.machines.EnergyCore;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.inventory.EnergyCoreMenu;
+
 import com.brandon3055.draconicevolution.lib.MultiBlockBuilder;
+
 import com.brandon3055.draconicevolution.lib.OPStorageOP;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+
 import java.util.List;
+
 import java.util.Map;
+
 import java.util.UUID;
 
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.resources.Identifier;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.MenuProvider;
+
+import net.minecraft.world.entity.player.Inventory;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.inventory.AbstractContainerMenu;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.shapes.CollisionContext;
+
+import net.minecraft.world.phys.shapes.Shapes;
+
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+import org.jetbrains.annotations.Nullable;
+
 import static com.brandon3055.brandonscore.lib.datamanager.DataFlags.*;
+
+
+import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent; // port-26.1.2: RenderHighlightEvent удалён
+
+
 
 
 /**
@@ -114,7 +158,7 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
     @Override
     public void tick() {
         super.tick();
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             if (activeBuilder != null) {
                 if (activeBuilder.isDead()) {
                     activeBuilder = null;
@@ -173,7 +217,7 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
     // ### Form/Revert Multi-block
 
     public void toggleActivation() {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             if (active.get()) {
                 deactivateCore();
                 return;
@@ -234,7 +278,7 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
     }
 
     public void deactivateCore() {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         linkUUID.set(null);
@@ -284,7 +328,7 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
      */
     @Override
     public boolean validateStructure() {
-        if (level == null || level.isClientSide) return true;
+        if (level == null || level.isClientSide()) return true;
         coreValid.set(isCoreValidForTier(tier.get()));
         checkStabilizers();
         boolean structureValid = isStructureValid();
@@ -406,7 +450,7 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
     public MultiBlockDefinition getMultiBlockDef() {
         if (definitionCache == null || defCacheLastTier != tier.get()) {
             defCacheLastTier = tier.get();
-            definitionCache = MultiBlockManager.getDefinition(ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "energy_core_" + tier.get()));
+            definitionCache = MultiBlockManager.getDefinition(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "energy_core_" + tier.get()));
         }
         return definitionCache;
     }
@@ -434,7 +478,7 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
     }
 
     @Override
-    public boolean renderSelectionBox(RenderHighlightEvent.Block event) {
+    public boolean renderSelectionBox(ExtractBlockOutlineRenderStateEvent event) {
         return false;
     }
 

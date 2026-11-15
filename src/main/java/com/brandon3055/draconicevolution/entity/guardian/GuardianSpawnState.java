@@ -1,15 +1,25 @@
 package com.brandon3055.draconicevolution.entity.guardian;
 
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.entity.GuardianCrystalEntity;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.world.ChaosIslandFeature;
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 
 import java.util.List;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
+
+
+
 
 public enum GuardianSpawnState {
     START_WAIT_FOR_PLAYER {
@@ -49,7 +59,7 @@ public enum GuardianSpawnState {
                         level.removeBlock(blockpos, false);
                     }
 
-                    ChaosIslandFeature.generateObelisk(level, nextSpawn, level.random);
+                    ChaosIslandFeature.generateObelisk(level, nextSpawn, level.getRandom());
                     level.setBlock(nextSpawn, DEContent.INFUSED_OBSIDIAN.get().defaultBlockState(), 3);
                     GuardianCrystalEntity crystal = new GuardianCrystalEntity(level.getLevel(), nextSpawn.getX() + 0.5, nextSpawn.getY() + 1, nextSpawn.getZ() + 0.5, manager.getUniqueID());
                     crystal.setInvulnerable(true);

@@ -1,6 +1,6 @@
 package com.brandon3055.draconicevolution.inventory;
 
-import codechicken.lib.gui.modular.lib.container.SlotGroup;
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.SlotGroup;
 import com.brandon3055.draconicevolution.blocks.tileentity.TileEntityDetector;
 import com.brandon3055.draconicevolution.blocks.tileentity.flowgate.TileFlowGate;
 import com.brandon3055.draconicevolution.init.DEContent;

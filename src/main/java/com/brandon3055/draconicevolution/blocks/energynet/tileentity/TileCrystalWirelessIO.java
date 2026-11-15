@@ -1,45 +1,85 @@
 package com.brandon3055.draconicevolution.blocks.energynet.tileentity;
 
 import codechicken.lib.data.MCDataInput;
+
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.brandonscore.lib.ChatHelper;
+
 import com.brandon3055.brandonscore.lib.Vec3B;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedBool;
+
 import com.brandon3055.brandonscore.utils.EnergyUtils;
+
 import com.brandon3055.draconicevolution.api.energy.ICrystalLink;
+
 import com.brandon3055.draconicevolution.blocks.energynet.EnergyCrystal;
+
 import com.brandon3055.draconicevolution.blocks.energynet.rendering.ENetFXHandler;
+
 import com.brandon3055.draconicevolution.blocks.energynet.rendering.ENetFXHandlerClientWireless;
+
 import com.brandon3055.draconicevolution.blocks.energynet.rendering.ENetFXHandlerServerWireless;
+
 import com.brandon3055.draconicevolution.client.render.effect.CrystalFXBase;
+
 import com.brandon3055.draconicevolution.client.render.effect.CrystalFXRing;
+
 import com.brandon3055.draconicevolution.handlers.DEEventHandler;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerListener;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 import java.util.*;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.ListTag;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.inventory.ContainerListener;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+
+
 
 /**
  * Created by brandon3055 on 19/11/2016.
@@ -73,7 +113,7 @@ public class TileCrystalWirelessIO extends TileCrystalBase {
 
     @Override
     public void tick() {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             updateEnergyFlow();
         }
 
@@ -123,7 +163,7 @@ public class TileCrystalWirelessIO extends TileCrystalBase {
             fastList.removeAll(moveToSlow);
         }
 
-        if (!level.isClientSide && DEEventHandler.serverTicks % 10 == 0) {
+        if (!level.isClientSide() && DEEventHandler.serverTicks % 10 == 0) {
             receiverFlowRates.clear();
             for (int i = 0; i < linkedReceivers.size(); i++) {
                 receiverFlowRates.add(flowConversion(receiverTransfer(i)));
@@ -219,7 +259,7 @@ public class TileCrystalWirelessIO extends TileCrystalBase {
             return super.binderUsed(player, linkTarget, sideClicked);
         }
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return true;
         }
 
@@ -416,7 +456,7 @@ public class TileCrystalWirelessIO extends TileCrystalBase {
     @Override
     public void detectAndSendContainerChanges(List<ContainerListener> listeners) {
         super.detectAndSendContainerChanges(listeners);
-        if (linkedReceivers.size() != receiverTransferRates.size() && !level.isClientSide) {
+        if (linkedReceivers.size() != receiverTransferRates.size() && !level.isClientSide()) {
             rebuildReceiverTransferList();
         }
 

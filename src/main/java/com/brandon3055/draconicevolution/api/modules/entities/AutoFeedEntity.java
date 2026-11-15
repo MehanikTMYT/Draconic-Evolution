@@ -1,41 +1,79 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
-import codechicken.lib.gui.modular.elements.GuiElement;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import com.brandon3055.brandonscore.api.BCStreamCodec;
+import net.minecraft.core.component.DataComponents;
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.brandonscore.client.BCGuiTextures;
+
+import com.brandon3055.brandonscore.client.gui.modular.elements.GuiElement;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+
 import com.brandon3055.draconicevolution.api.config.BooleanProperty;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty;
+
 import com.brandon3055.draconicevolution.api.modules.Module;
+
 import com.brandon3055.draconicevolution.api.modules.data.AutoFeedData;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleContext;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleEntity;
+
 import com.brandon3055.draconicevolution.api.modules.lib.StackModuleContext;
+
 import com.brandon3055.draconicevolution.init.DEModules;
+
 import com.brandon3055.draconicevolution.init.ItemData;
+
 import com.mojang.serialization.Codec;
+
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.food.FoodData;
-import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.List;
+
 import java.util.Objects;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.gui.screens.Screen;
+
+import net.minecraft.network.RegistryFriendlyByteBuf;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.network.codec.ByteBufCodecs;
+
+import net.minecraft.network.codec.StreamCodec;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.food.FoodData;
+
+import net.minecraft.world.food.FoodProperties;
+
+import net.minecraft.world.item.Item;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.TooltipFlag;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+
+import com.brandon3055.draconicevolution.lib.DEStreamCodecs; // port-26.1.2: BCStreamCodec удалён из BC-26
+
 
 public class AutoFeedEntity extends ModuleEntity<AutoFeedData> {
 
@@ -50,7 +88,7 @@ public class AutoFeedEntity extends ModuleEntity<AutoFeedData> {
             BooleanProperty.CODEC.fieldOf("consume_food").forGetter(e -> e.consumeFood)
     ).apply(builder, AutoFeedEntity::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, AutoFeedEntity> STREAM_CODEC = BCStreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, AutoFeedEntity> STREAM_CODEC = DEStreamCodecs.composite(
             DEModules.streamCodec(), ModuleEntity::getModule,
             ByteBufCodecs.INT, ModuleEntity::getGridX,
             ByteBufCodecs.INT, ModuleEntity::getGridY,
@@ -100,14 +138,14 @@ public class AutoFeedEntity extends ModuleEntity<AutoFeedData> {
                 if (getStoredFood() < data.foodStorage() && consumeFood.getValue()) {
                     //Do food consumption
                     for (ItemStack stack : player.getInventory().items) {
-                        FoodProperties food = stack.getFoodProperties(player);
+                        FoodProperties food = stack.get(DataComponents.FOOD); // port-26.1.2: getFoodProperties удалён
                         if (!stack.isEmpty() && food != null) {
-                            if (food.nutrition() > 0 && food.effects().isEmpty()) {
+                            if (food != null && food.nutrition() > 0) { // port-26.1.2: FoodProperties.effects удалены (CONSUMABLE-компонент)
                                 double val = food.nutrition() + food.saturation();
                                 double rem = getStoredFood() + val - data.foodStorage();
                                 if (rem <= val * 0.25) {
                                     setStoredFood((float) Math.min(getStoredFood() + val, data.foodStorage()));
-                                    entity.level().playSound(null, entity.blockPosition(), SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 0.25F, (0.95F + (entity.level().random.nextFloat() * 0.1F)));
+                                    entity.level().playSound(null, entity.blockPosition(), SoundEvents.GENERIC_EAT, SoundSource.PLAYERS, 0.25F, (0.95F + (entity.level().getRandom().nextFloat() * 0.1F)));
                                     stack.shrink(1);
                                     break;
                                 }
@@ -165,7 +203,7 @@ public class AutoFeedEntity extends ModuleEntity<AutoFeedData> {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void addHostHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (Screen.hasShiftDown()) {
+        if (Minecraft.getInstance().hasShiftDown()) {
             tooltip.add(Component.translatable("module.draconicevolution.auto_feed.stored").withStyle(ChatFormatting.GRAY).append(" ").append(Component.translatable("module.draconicevolution.auto_feed.stored.value", (int)getStoredFood()).withStyle(ChatFormatting.DARK_GREEN)));
         }
     }

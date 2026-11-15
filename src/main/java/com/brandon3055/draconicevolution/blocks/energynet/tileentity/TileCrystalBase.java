@@ -1,52 +1,99 @@
 package com.brandon3055.draconicevolution.blocks.energynet.tileentity;
 
 import codechicken.lib.data.MCDataInput;
+
 import codechicken.lib.packet.PacketCustom;
+
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.brandonscore.api.power.OPStorage;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.brandonscore.lib.ChatHelper;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.ITilePlaceListener;
+
 import com.brandon3055.brandonscore.lib.Vec3B;
+
 import com.brandon3055.brandonscore.utils.MathUtils;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.api.energy.ICrystalLink;
+
 import com.brandon3055.draconicevolution.api.energy.IENetEffectTile;
+
 import com.brandon3055.draconicevolution.blocks.energynet.EnergyCrystal.CrystalType;
+
 import com.brandon3055.draconicevolution.blocks.energynet.rendering.ENetFXHandler;
+
 import com.brandon3055.draconicevolution.blocks.energynet.rendering.ENetFXHandlerClient;
+
 import com.brandon3055.draconicevolution.blocks.energynet.rendering.ENetFXHandlerServer;
+
 import com.brandon3055.draconicevolution.client.render.effect.CrystalFXBase;
+
 import com.brandon3055.draconicevolution.handlers.DEEventHandler;
-import com.brandon3055.draconicevolution.network.CrystalUpdateBatcher;
+
 import com.brandon3055.draconicevolution.network.CrystalUpdateBatcher.BatchedCrystalUpdate;
+
+import com.brandon3055.draconicevolution.network.CrystalUpdateBatcher;
+
 import io.netty.buffer.ByteBuf;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.ByteArrayTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerListener;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.*;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.nbt.ByteArrayTag;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.ListTag;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.inventory.ContainerListener;
+
+import net.minecraft.world.item.context.BlockPlaceContext;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.AABB;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+
+
 
 /**
  * Created by brandon3055 on 21/11/2016.
@@ -94,14 +141,14 @@ public abstract class TileCrystalBase extends TileBCore implements ITilePlaceLis
     @Override
     public void tick() {
         super.tick();
-        if (linkedCrystals.size() != transferRatesArrays.size() && !level.isClientSide) {
+        if (linkedCrystals.size() != transferRatesArrays.size() && !level.isClientSide()) {
             rebuildTransferList();
         }
 
         balanceLinkedDevices();
         fxHandler.update();
 
-        if (!level.isClientSide && DEEventHandler.serverTicks % 10 == 0) {
+        if (!level.isClientSide() && DEEventHandler.serverTicks % 10 == 0) {
             flowRates.clear();
             for (int i = 0; i < linkedCrystals.size(); i++) {
                 flowRates.add(calculateFlow(i));
@@ -113,7 +160,7 @@ public abstract class TileCrystalBase extends TileBCore implements ITilePlaceLis
     }
 
     public void balanceLinkedDevices() {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         for (BlockPos linkedPos : getLinks()) {
@@ -536,7 +583,7 @@ public abstract class TileCrystalBase extends TileBCore implements ITilePlaceLis
 //    public Map<Integer, String> tileNamesMap = new HashMap<>();
 
     public void detectAndSendContainerChanges(List<ContainerListener> listeners) {
-        if (linkedCrystals.size() != transferRatesArrays.size() && !level.isClientSide) {
+        if (linkedCrystals.size() != transferRatesArrays.size() && !level.isClientSide()) {
             rebuildTransferList();
         }
 

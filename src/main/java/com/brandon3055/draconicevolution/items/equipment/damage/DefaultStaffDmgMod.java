@@ -1,29 +1,53 @@
 package com.brandon3055.draconicevolution.items.equipment.damage;
 
 import codechicken.lib.data.MCDataInput;
+
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.draconicevolution.api.modules.lib.IDamageModifier;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleContext;
+
 import com.brandon3055.draconicevolution.client.render.effect.StaffBeamEffect;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.Map;
 
 import javax.annotation.Nullable;
-import java.util.Map;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.sounds.SoundEvent;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.phys.EntityHitResult;
+
+import net.minecraft.world.phys.HitResult;
+
+import net.minecraft.world.phys.Vec3;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+
+
 
 /**
  * Created by brandon3055 on 11/4/21
@@ -73,7 +97,7 @@ public class DefaultStaffDmgMod implements IDamageModifier {
         Vector3 pos = data.readVector();
         ClientLevel world = (ClientLevel) source.level();
         Minecraft mc = Minecraft.getInstance();
-        mc.getSoundManager().play(new SimpleSoundInstance(DESounds.STAFF_HIT_DEFAULT.get(), SoundSource.PLAYERS, 10, 1, world.random, pos.pos()));
+        mc.getSoundManager().play(new SimpleSoundInstance(DESounds.STAFF_HIT_DEFAULT.get(), SoundSource.PLAYERS, 10, 1, world.getRandom(), pos.pos()));
         mc.particleEngine.add(new StaffBeamEffect(world, source, pos));
     }
 }

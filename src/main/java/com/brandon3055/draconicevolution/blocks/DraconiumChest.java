@@ -8,7 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty; // port-26.1.2: DirectionProperty удалён
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class DraconiumChest extends EntityBlockBCore {
 
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
     protected static final VoxelShape SHAPE = Block.box(1.0, 0.0D, 1.0, 15.0, 14.0, 15.0);
 
@@ -54,7 +54,7 @@ public class DraconiumChest extends EntityBlockBCore {
 
     public static boolean isStackValid(ItemStack stack) {
         if (!stack.isEmpty()) {
-            ResourceLocation name = BuiltInRegistries.ITEM.getKey(stack.getItem());
+            Identifier name = BuiltInRegistries.ITEM.getKey(stack.getItem());
             for (String key : DEConfig.chestBlacklist) {
                 if (key.contains(":") ? name.toString().contains(key) : name.getPath().contains(key)) {
                     return false;

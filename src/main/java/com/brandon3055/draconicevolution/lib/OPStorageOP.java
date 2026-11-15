@@ -14,7 +14,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.brandon3055.draconicevolution.lib.INBTSerializable; // port-26.1.2: neoforge INBTSerializable удалён
 import org.jetbrains.annotations.VisibleForTesting;
 
 import javax.annotation.Nullable;

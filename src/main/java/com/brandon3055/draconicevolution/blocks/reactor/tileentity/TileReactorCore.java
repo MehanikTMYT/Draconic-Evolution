@@ -1,57 +1,109 @@
 package com.brandon3055.draconicevolution.blocks.reactor.tileentity;
 
 import codechicken.lib.data.MCDataInput;
+
 import codechicken.lib.math.MathHelper;
+
 import com.brandon3055.brandonscore.BrandonsCore;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.handlers.ProcessHandler;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.lib.Vec3I;
+
 import com.brandon3055.brandonscore.lib.datamanager.*;
+
 import com.brandon3055.brandonscore.utils.FacingUtils;
+
 import com.brandon3055.brandonscore.utils.HolidayHelper;
+
 import com.brandon3055.brandonscore.utils.MathUtils;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.blocks.reactor.ProcessExplosion;
+
 import com.brandon3055.draconicevolution.blocks.reactor.ReactorEffectHandler;
+
 import com.brandon3055.draconicevolution.client.gui.ReactorGui;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.inventory.ReactorMenu;
+
 import com.brandon3055.draconicevolution.utils.LogHelper;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Axis;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.HashMap;
+
+import java.util.Iterator;
+
+import java.util.Locale;
+
+import java.util.Map;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.gui.screens.Screen;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction.Axis;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.core.particles.ParticleTypes;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.MenuProvider;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.item.FallingBlockEntity;
+
+import net.minecraft.world.entity.player.Inventory;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.inventory.AbstractContainerMenu;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.Block;
+
+import net.minecraft.world.level.block.Blocks;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.AABB;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+
+
 
 /**
  * Created by brandon3055 on 6/11/2016.
@@ -187,14 +239,14 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
         isFrameMoving = false;
         moveBlocksProvided = false;
 
-        if (level.isClientSide && effectHandler != null) {
+        if (level.isClientSide() && effectHandler != null) {
             effectHandler.updateEffects();
 
             if (HolidayHelper.isAprilFools()) {
                 if (inView) {
                     viewTicks++;
                     if (viewTicks > 100 && roller == null) {
-                        if (level.random.nextInt(25) == 0) {
+                        if (level.getRandom().nextInt(25) == 0) {
                             roller = new Roller(Vec3D.getCenter(this), level, getCoreDiameter());
                         } else {
                             viewTicks = 0;
@@ -222,7 +274,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
     //region ################# Core Logic ##################
 
     private void updateCoreLogic() {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             checkPlayerCollision();
             coreAnimation += shaderAnimationState.get();
             if (maxShieldCharge.get() == 0) {
@@ -234,7 +286,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
             }
 
             if (reactorState.get() == ReactorState.BEYOND_HOPE) {
-                shieldAnimationState = level.random.nextInt(10) == 0 ? 0 : 1;
+                shieldAnimationState = level.getRandom().nextInt(10) == 0 ? 0 : 1;
                 shieldAnimation += shieldAnimationState;
             }
             return;
@@ -295,12 +347,12 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
             temperature.subtract(0.5);
         }
         if (shieldCharge.get() > 0) {
-            shieldCharge.subtract(maxShieldCharge.get() * 0.0005 * level.random.nextDouble());
+            shieldCharge.subtract(maxShieldCharge.get() * 0.0005 * level.getRandom().nextDouble());
         } else if (shieldCharge.get() < 0) {
             shieldCharge.zero();
         }
         if (saturation.get() > 0) {
-            saturation.subtract((int) (maxSaturation.get() * 0.000002D * level.random.nextDouble()));
+            saturation.subtract((int) (maxSaturation.get() * 0.000002D * level.getRandom().nextDouble()));
         } else if (saturation.get() < 0) {
             saturation.zero();
         }
@@ -418,13 +470,13 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
             return;
         }
 
-        shieldCharge.set((double) level.random.nextInt(Math.max(1, (int) (maxShieldCharge.get() * 0.01))));
+        shieldCharge.set((double) level.getRandom().nextInt(Math.max(1, (int) (maxShieldCharge.get() * 0.01))));
         animExtractState.set(1D);
         temperature.set(MathHelper.approachExp(temperature.get(), MAX_TEMPERATURE * 1.2, 0.0005));
 
         if (DEConfig.disableLargeReactorBoom) {
             if (explosionCountdown.get() == -1) {
-                explosionCountdown.set(1200 + level.random.nextInt(2400));
+                explosionCountdown.set(1200 + level.getRandom().nextInt(2400));
             }
 
             if (explosionCountdown.dec() <= 0) {
@@ -439,7 +491,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
             explosionProcess = new ProcessExplosion(worldPosition, (int) radius, (ServerLevel) level, -1);
             ProcessHandler.addProcess(explosionProcess);
             explosionCountdown.set(-1);
-            minExplosionDelay = 1200 + level.random.nextInt(2400);
+            minExplosionDelay = 1200 + level.getRandom().nextInt(2400);
             return;
         }
 
@@ -462,7 +514,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
     }
 
     public boolean canCharge() {
-        if (!level.isClientSide && !validateStructure()) {
+        if (!level.isClientSide() && !validateStructure()) {
             return false;
         } else if (reactorState.get() == ReactorState.BEYOND_HOPE) {
             return false;
@@ -472,7 +524,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
     }
 
     public boolean canActivate() {
-        if (!level.isClientSide && !validateStructure()) {
+        if (!level.isClientSide() && !validateStructure()) {
             return false;
         } else if (reactorState.get() == ReactorState.BEYOND_HOPE) {
             return false;
@@ -517,7 +569,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
     public static final byte ID_FAIL_SAFE = 3;
 
     public void chargeReactor() {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             LogHelper.dev("Reactor: Start Charging");
             sendPacketToServer(output -> output.writeByte(ID_CHARGE), 0);
         } else if (!level.getServer().isSameThread()) {
@@ -529,7 +581,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
     }
 
     public void activateReactor() {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             LogHelper.dev("Reactor: Activate");
             sendPacketToServer(output -> output.writeByte(ID_ACTIVATE), 0);
         } else if (!level.getServer().isSameThread()) {
@@ -541,7 +593,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
     }
 
     public void shutdownReactor() {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             LogHelper.dev("Reactor: Shutdown");
             sendPacketToServer(output -> output.writeByte(ID_SHUTDOWN), 0);
         } else if (canStop()) {
@@ -551,7 +603,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
     }
 
     public void toggleFailSafe() {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             sendPacketToServer(output -> output.writeByte(ID_FAIL_SAFE), 0);
         } else {
             failSafeMode.set(!failSafeMode.get());
@@ -559,7 +611,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
     }
 
     public void onComponentClicked(Player player, TileReactorComponent component) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             player.openMenu(this, worldPosition);
             sendPacketToClient((ServerPlayer) player, output -> output.writePos(component.getBlockPos()), 1);
         }
@@ -716,7 +768,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
                 Map.Entry<BlockPos, Integer> entry = i.next();
                 final Vec3D iPos = new Vec3D(entry.getKey());
 
-                if (level.random.nextInt(10) == 0) {
+                if (level.getRandom().nextInt(10) == 0) {
                     ((ServerLevel) level).sendParticles(ParticleTypes.FLAME, iPos.x + 0.5, iPos.y + 0.5, iPos.z + 0.5, 5, 0.5, 0.5, 0.5, 0.01D);
                 }
 
@@ -728,8 +780,8 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
                 }
             }
 
-            if (tick % 20 == 0 || level.random.nextInt(40) == 0) {
-                level.playSound(null, worldPosition, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1, 0.9F + level.random.nextFloat() * 0.2F);
+            if (tick % 20 == 0 || level.getRandom().nextInt(40) == 0) {
+                level.playSound(null, worldPosition, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1, 0.9F + level.getRandom().nextFloat() * 0.2F);
             }
         }
     }
@@ -910,13 +962,13 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
         Vec3D vec = Vec3D.getCenter(worldPosition);
         level.removeBlock(worldPosition, false);
         level.explode(null, vec.x, vec.y, vec.z, 8, Level.ExplosionInteraction.BLOCK);
-        int c = 25 + level.random.nextInt(25);
+        int c = 25 + level.getRandom().nextInt(25);
         for (int i = 0; i < c; i++) {
             FallingBlockEntity entity = FallingBlockEntity.fall(level, vec.getPos(), lava);
             entity.time = 1;
             entity.dropItem = false;
-            double vMod = 0.5 + (2 * level.random.nextDouble());
-            entity.push((level.random.nextDouble() - 0.5) * vMod, (level.random.nextDouble() / 1.5) * vMod, (level.random.nextDouble() - 0.5) * vMod);
+            double vMod = 0.5 + (2 * level.getRandom().nextDouble());
+            entity.push((level.getRandom().nextDouble() - 0.5) * vMod, (level.getRandom().nextDouble() / 1.5) * vMod, (level.getRandom().nextDouble() - 0.5) * vMod);
             level.addFreshEntity(entity);
         }
     }
@@ -1017,7 +1069,7 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
         public Roller(Vec3D pos, Level world, double diameter) {
             this.pos = pos;
             this.lastPos = pos.copy();
-            this.direction = world.random.nextDouble() * Math.PI * 2;
+            this.direction = world.getRandom().nextDouble() * Math.PI * 2;
             this.world = world;
             this.diameter = (diameter / 2) + 1;
             this.speed = -0.3;

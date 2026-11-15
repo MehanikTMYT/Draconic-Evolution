@@ -1,39 +1,70 @@
 package com.brandon3055.draconicevolution.blocks.machines;
 
 import codechicken.lib.inventory.InventoryUtils;
+
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.brandonscore.api.hud.IHudBlock;
+
 import com.brandon3055.brandonscore.blocks.EntityBlockBCore;
+
 import com.brandon3055.brandonscore.lib.ChatHelper;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileFusionCraftingInjector;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.List;
+
 import java.util.UUID;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.context.BlockPlaceContext;
+
+import net.minecraft.world.level.BlockGetter;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.LevelAccessor;
+
+import net.minecraft.world.level.block.Block;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.level.block.state.StateDefinition;
+
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.shapes.CollisionContext;
+
+import net.minecraft.world.phys.shapes.Shapes;
+
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+
+import net.minecraft.world.level.block.state.properties.EnumProperty; // port-26.1.2: DirectionProperty удалён
+
 
 /**
  * Created by brandon3055 on 10/06/2016.
@@ -42,7 +73,7 @@ public class CraftingInjector extends EntityBlockBCore implements IHudBlock {
 
     public static final UUID MSG_ID = UUID.fromString("3b0a968f-b0f6-4969-b00f-a49a2a36d40b");
 
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     private static VoxelShape SHAPE_DOWN = Shapes.box(0.0625, 0.375, 0.0625, 0.9375, 1, 0.9375);
     private static VoxelShape SHAPE_UP = Shapes.box(0.0625, 0, 0.0625, 0.9375, 0.625, 0.9375);
     private static VoxelShape SHAPE_NORTH = Shapes.box(0.0625, 0.0625, 0.375, 0.9375, 0.9375, 1);
@@ -88,7 +119,7 @@ public class CraftingInjector extends EntityBlockBCore implements IHudBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 

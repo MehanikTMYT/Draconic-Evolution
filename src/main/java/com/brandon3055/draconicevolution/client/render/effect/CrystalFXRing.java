@@ -1,21 +1,40 @@
 package com.brandon3055.draconicevolution.client.render.effect;
 
 import com.brandon3055.draconicevolution.blocks.energynet.EnergyCrystal;
+
 import com.brandon3055.draconicevolution.blocks.energynet.tileentity.TileCrystalBase;
+
 import com.brandon3055.draconicevolution.client.AtlasTextureHelper;
+
 import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
-import com.mojang.blaze3d.platform.GlStateManager;
+
+import com.mojang.blaze3d.opengl.GlStateManager;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import com.mojang.blaze3d.vertex.*;
+
 import net.minecraft.client.Camera;
+
+import net.minecraft.client.Minecraft;
+
 import net.minecraft.client.multiplayer.ClientLevel;
+
 import net.minecraft.client.particle.ParticleRenderType;
+
 import net.minecraft.client.renderer.GameRenderer;
+
 import net.minecraft.client.renderer.texture.TextureAtlas;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+
 import net.minecraft.client.renderer.texture.TextureManager;
+
 import net.minecraft.world.phys.Vec3;
+
 import org.joml.Vector3f;
+
+
 
 /**
  * Created by brandon3055 on 29/11/2016.
@@ -26,7 +45,7 @@ public class CrystalFXRing extends CrystalFXBase<TileCrystalBase> {
 
     public CrystalFXRing(ClientLevel worldIn, TileCrystalBase tile) {
         super(worldIn, tile);
-        this.age = worldIn.random.nextInt(1024);
+        this.age = worldIn.getRandom().nextInt(1024);
         this.rSeed = tile.getBlockPos().asLong();
     }
 
@@ -59,7 +78,7 @@ public class CrystalFXRing extends CrystalFXBase<TileCrystalBase> {
 
         //region variables
 
-        Vec3 view = camera.getPosition();
+        Vec3 view = camera.position();
         float viewX = (float) (this.x - view.x());
         float viewY = (float) (this.y - view.y());
         float viewZ = (float) (this.z - view.z());

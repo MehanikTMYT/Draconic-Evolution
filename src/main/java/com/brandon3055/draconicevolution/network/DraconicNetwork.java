@@ -18,11 +18,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
@@ -38,7 +38,7 @@ import java.util.function.Consumer;
 public class DraconicNetwork {
     private static final CrashLock LOCK = new CrashLock("Already Initialized.");
 
-    public static final ResourceLocation CHANNEL_NAME = ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "network");
+    public static final Identifier CHANNEL_NAME = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "network");
     public static final PacketCustomChannel CHANNEL = new PacketCustomChannel(CHANNEL_NAME)
             .optional()
             .versioned(BrandonsCore.container().getModInfo().getVersion().toString())
@@ -106,7 +106,7 @@ public class DraconicNetwork {
         packet.sendToServer();
     }
 
-    public static void sendModuleContainerClick(RegistryAccess registryAccess, ModuleGrid.GridPos cell, float mouseX, float mouseY, int mouseButton, ClickType type) {
+    public static void sendModuleContainerClick(RegistryAccess registryAccess, ModuleGrid.GridPos cell, float mouseX, float mouseY, int mouseButton, ContainerInput type) {
         PacketCustom packet = new PacketCustom(CHANNEL_NAME, S_MODULE_CONTAINER_CLICK, registryAccess);
         packet.writeByte(cell.getGridX());
         packet.writeByte(cell.getGridY());
@@ -191,12 +191,6 @@ public class DraconicNetwork {
         packet.sendToChunk((ServerLevel)source.level(), source.blockPosition());
     }
 
-    public static void sendFusionRecipeMove(RegistryAccess registryAccess, RecipeHolder<IFusionRecipe> recipe, boolean maxTransfer) {
-        PacketCustom packet = new PacketCustom(CHANNEL_NAME, S_JEI_FUSION_TRANSFER, registryAccess);
-        packet.writeResourceLocation(recipe.id());
-        packet.writeBoolean(maxTransfer);
-        packet.sendToServer();
-    }
 
     public static void sendGuardianBeam(Level level, Vector3 source, Vector3 target, float power) {
         PacketCustom packet = new PacketCustom(CHANNEL_NAME, C_GUARDIAN_BEAM, level.registryAccess());

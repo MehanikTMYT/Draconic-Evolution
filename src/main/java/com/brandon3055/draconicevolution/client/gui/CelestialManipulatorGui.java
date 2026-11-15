@@ -1,13 +1,13 @@
 package com.brandon3055.draconicevolution.client.gui;
 
-import codechicken.lib.gui.modular.ModularGui;
-import codechicken.lib.gui.modular.ModularGuiContainer;
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.container.ContainerGuiProvider;
-import codechicken.lib.gui.modular.lib.container.ContainerScreenAccess;
-import codechicken.lib.gui.modular.lib.geometry.Borders;
-import codechicken.lib.gui.modular.lib.geometry.ConstraintImpl.BetweenOffsetDynamic;
+import com.brandon3055.brandonscore.client.gui.modular.ModularGui;
+import com.brandon3055.brandonscore.client.gui.modular.ModularGuiContainer;
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerGuiProvider;
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerScreenAccess;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Borders;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.ConstraintImpl.BetweenOffsetDynamic;
 import com.brandon3055.brandonscore.client.gui.GuiToolkit;
 import com.brandon3055.brandonscore.client.gui.modulargui.ShaderEnergyBar.EnergyBar;
 import com.brandon3055.draconicevolution.DraconicEvolution;
@@ -16,11 +16,11 @@ import com.brandon3055.draconicevolution.client.DEGuiTextures;
 import com.brandon3055.draconicevolution.inventory.CelestialManipulatorMenu;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
 
 /**
  * Created by FoxMcloud5655 on 28/03/2024.
@@ -176,7 +176,7 @@ public class CelestialManipulatorGui extends ContainerGuiProvider<CelestialManip
 
         String[] rsButtonNames = {"clear", "rain", "storm", "sunrise", "noon", "sunset", "moonrise", "midnight", "moonset"};
         GuiRectangle rsBackground = new GuiRectangle(root).setSize(18, 18);
-        GuiItemStack rsItem = new GuiItemStack(rsBackground, BuiltInRegistries.ITEM.get(ResourceLocation.parse("minecraft:redstone")).getDefaultInstance())
+        GuiItemStack rsItem = new GuiItemStack(rsBackground, BuiltInRegistries.ITEM.get(Identifier.parse("minecraft:redstone")).getDefaultInstance())
                 .enableStackToolTip(false);
         GuiButton rsButton = new GuiButton(rsBackground)
                 .onPress(() -> isRSActive = !isRSActive)

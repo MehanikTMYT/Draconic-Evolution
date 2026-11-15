@@ -1,9 +1,9 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
-import codechicken.lib.gui.modular.elements.GuiElement;
-import codechicken.lib.gui.modular.lib.GuiRender;
+import com.brandon3055.brandonscore.client.gui.modular.elements.GuiElement;
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
 import codechicken.lib.math.MathHelper;
-import com.brandon3055.brandonscore.api.BCStreamCodec;
+import com.brandon3055.draconicevolution.lib.DEStreamCodecs; // port-26.1.2: BCStreamCodec удалён из BC-26
 import com.brandon3055.brandonscore.api.power.IOPStorage;
 import com.brandon3055.draconicevolution.api.config.BooleanProperty;
 import com.brandon3055.draconicevolution.api.config.ConfigProperty;
@@ -61,7 +61,7 @@ public class EnergyLinkEntity extends ModuleEntity<EnergyLinkData> {
             BooleanProperty.CODEC.fieldOf("enabled").forGetter(e -> e.enabled)
             ).apply(builder, EnergyLinkEntity::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, EnergyLinkEntity> STREAM_CODEC = BCStreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, EnergyLinkEntity> STREAM_CODEC = DEStreamCodecs.composite(
             DEModules.streamCodec(), EnergyLinkEntity::getModule,
             ByteBufCodecs.INT, ModuleEntity::getGridX,
             ByteBufCodecs.INT, ModuleEntity::getGridY,

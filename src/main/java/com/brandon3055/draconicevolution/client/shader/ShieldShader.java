@@ -1,41 +1,22 @@
 package com.brandon3055.draconicevolution.client.shader;
 
-import codechicken.lib.render.shader.CCUniform;
 import com.brandon3055.brandonscore.client.shader.BCShader;
+import com.brandon3055.brandonscore.client.shader.BCUniform;
 import com.brandon3055.draconicevolution.DraconicEvolution;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
-import java.util.Objects;
-
-/**
- * Created by brandon3055 on 13/11/2022
- */
-public class ShieldShader extends BCShader<ShieldShader> {
-
-    private CCUniform activationUniform;
-    private CCUniform baseColourUniform;
+// port-26.1.2: портирован на BCShader (BCParams); смещения: Activation=104, BaseColor=64 (как ContribShader.transition/baseColor).
+public final class ShieldShader extends BCShader<ShieldShader> {
 
     public ShieldShader(String path, VertexFormat format) {
-        super(ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, path), format);
+        this(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, path), format);
     }
 
-    public ShieldShader(ResourceLocation location, VertexFormat format) {
+    public ShieldShader(Identifier location, VertexFormat format) {
         super(location, format);
     }
 
-    public CCUniform getActivationUniform() {
-        return Objects.requireNonNull(activationUniform, missingUniformMessage("Activation"));
-    }
-
-    public CCUniform getBaseColourUniform() {
-        return Objects.requireNonNull(baseColourUniform, missingUniformMessage("BaseColor"));
-    }
-
-    @Override
-    protected void onShaderLoaded() {
-        super.onShaderLoaded();
-        activationUniform = shaderInstance.getUniform("Activation");
-        baseColourUniform = shaderInstance.getUniform("BaseColor");
-    }
+    public BCUniform getActivationUniform() { return uniform(104); }
+    public BCUniform getBaseColourUniform() { return uniform(64); }
 }

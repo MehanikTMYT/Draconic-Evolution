@@ -1,17 +1,31 @@
 package com.brandon3055.draconicevolution.api.modules.items;
 
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.api.modules.Module;
+
 import com.brandon3055.draconicevolution.api.modules.data.EnergyData;
+
 import com.brandon3055.draconicevolution.init.ItemData;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 
 import java.util.List;
+
 import java.util.function.Supplier;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.gui.screens.Screen;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.TooltipFlag;
+
+
+
 
 public class EnergyModuleItem extends ModuleItem<EnergyData> {
 
@@ -34,7 +48,7 @@ public class EnergyModuleItem extends ModuleItem<EnergyData> {
                     .append(": ")
                     .append(Utils.formatNumber(energy))
                     .append(" ")
-                    .append(Component.translatable("op.brandonscore." + (Screen.hasShiftDown() ? "operational_potential" : "op")))
+                    .append(Component.translatable("op.brandonscore." + (Minecraft.getInstance().hasShiftDown() ? "operational_potential" : "op")))
                     .withStyle(ChatFormatting.GRAY));
         }
     }

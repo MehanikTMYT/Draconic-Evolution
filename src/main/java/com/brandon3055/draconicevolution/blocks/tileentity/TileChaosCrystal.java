@@ -1,31 +1,58 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.handlers.ProcessHandler;
+
 import com.brandon3055.brandonscore.lib.DelayedTask;
+
 import com.brandon3055.brandonscore.lib.datamanager.*;
+
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.DEOldConfig;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import net.minecraft.core.BlockPos;
+
 import net.minecraft.core.HolderLookup;
+
 import net.minecraft.nbt.CompoundTag;
+
 import net.minecraft.server.level.ServerLevel;
+
 import net.minecraft.sounds.SoundSource;
+
 import net.minecraft.world.entity.Entity;
+
 import net.minecraft.world.entity.EntityType;
+
 import net.minecraft.world.entity.LightningBolt;
+
 import net.minecraft.world.entity.player.Player;
+
 import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.world.level.Level;
+
 import net.minecraft.world.level.block.Block;
+
 import net.minecraft.world.level.block.Blocks;
+
 import net.minecraft.world.level.block.entity.BlockEntity;
+
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.minecraft.world.level.levelgen.Heightmap;
+
 import net.minecraft.world.phys.AABB;
+
+
 
 /**
  * Created by brandon3055 on 24/9/2015.
@@ -66,19 +93,19 @@ public class TileChaosCrystal extends TileBCore {
         if (!getBlockState().is(DEContent.CHAOS_CRYSTAL.get())) return;
         tick++;
 
-        if (tick > 1 && !level.isClientSide && hasBeenMoved()) {
+        if (tick > 1 && !level.isClientSide() && hasBeenMoved()) {
             level.removeBlock(worldPosition, false);
         }
 
-        if (!level.isClientSide && soundTimer-- <= 0) {
-            soundTimer = 3600 + level.random.nextInt(1200);
+        if (!level.isClientSide() && soundTimer-- <= 0) {
+            soundTimer = 3600 + level.getRandom().nextInt(1200);
 //            world.playSound(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, DESounds.chaosChamberAmbient, SoundCategory.AMBIENT, 1F, world.rand.nextFloat() * 0.4F + 0.8F, false);
-            BCoreNetwork.sendSound(level, worldPosition, DESounds.CHAOS_CHAMBER_AMBIENT.get(), SoundSource.AMBIENT, 1.5F, level.random.nextFloat() * 0.4F + 0.8F, false);
+            BCoreNetwork.sendSound(level, worldPosition, DESounds.CHAOS_CHAMBER_AMBIENT.get(), SoundSource.AMBIENT, 1.5F, level.getRandom().nextFloat() * 0.4F + 0.8F, false);
         }
 
-        if (!level.isClientSide && level instanceof ServerLevel && guardianDefeated.get() && level.random.nextInt(50) == 0) {
-            int x = 5 - level.random.nextInt(11);
-            int z = 5 - level.random.nextInt(11);
+        if (!level.isClientSide() && level instanceof ServerLevel && guardianDefeated.get() && level.getRandom().nextInt(50) == 0) {
+            int x = 5 - level.getRandom().nextInt(11);
+            int z = 5 - level.getRandom().nextInt(11);
             LightningBolt bolt = new LightningBolt(EntityType.LIGHTNING_BOLT, level);
             bolt.setPos(worldPosition.getX() + x, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, worldPosition).getY(), worldPosition.getZ() + z);
             bolt.noCulling = true;
@@ -89,7 +116,7 @@ public class TileChaosCrystal extends TileBCore {
     private boolean removing = false;
 
     public void detonate(Entity entity) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
 

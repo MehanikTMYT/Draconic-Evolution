@@ -10,13 +10,13 @@ import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -24,7 +24,7 @@ import org.joml.Quaternionf;
 
 @OnlyIn(Dist.CLIENT)
 public class GuardianCrystalRenderer extends EntityRenderer<GuardianCrystalEntity> {
-    private static ResourceLocation ENDER_CRYSTAL_TEXTURES = ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/entity/guardian_crystal.png");
+    private static Identifier ENDER_CRYSTAL_TEXTURES = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/entity/guardian_crystal.png");
     private static RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(ENDER_CRYSTAL_TEXTURES);
     private static final float SIN_45 = (float) Math.sin((Math.PI / 4D));
     private final ModelPart cube;
@@ -125,7 +125,7 @@ public class GuardianCrystalRenderer extends EntityRenderer<GuardianCrystalEntit
     }
 
     @Override
-    public ResourceLocation getTextureLocation(GuardianCrystalEntity entity) {
+    public Identifier getTextureLocation(GuardianCrystalEntity entity) {
         return ENDER_CRYSTAL_TEXTURES;
     }
 

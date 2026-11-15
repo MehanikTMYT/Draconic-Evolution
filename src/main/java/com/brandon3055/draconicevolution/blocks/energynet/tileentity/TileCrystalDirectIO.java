@@ -1,36 +1,67 @@
 package com.brandon3055.draconicevolution.blocks.energynet.tileentity;
 
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedBool;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedEnum;
+
 import com.brandon3055.brandonscore.utils.EnergyUtils;
+
 import com.brandon3055.draconicevolution.blocks.energynet.EnergyCrystal;
+
 import com.brandon3055.draconicevolution.client.render.effect.CrystalFXBase;
+
 import com.brandon3055.draconicevolution.client.render.effect.CrystalFXIO;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 import java.util.List;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.context.BlockPlaceContext;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+
+
 
 /**
  * Created by brandon3055 on 19/11/2016.
@@ -59,7 +90,7 @@ public class TileCrystalDirectIO extends TileCrystalBase   {
     public void tick() {
         super.tick();
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
 

@@ -9,7 +9,7 @@
 //import net.minecraft.data.worldgen.features.NetherFeatures;
 //import net.minecraft.data.worldgen.placement.VegetationPlacements;
 //import net.minecraft.resources.ResourceKey;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.tags.BiomeTags;
 //import net.minecraft.tags.EntityTypeTags;
 //import net.minecraft.world.entity.EntityType;
@@ -37,8 +37,8 @@
 // */
 //public class BiomeGenerator extends DatapackBuiltinEntriesProvider {
 //
-//    private static final ResourceKey<ConfiguredFeature<?, ?>> DRACONIUM_ORE_FEATURE = ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(DraconicEvolution.MODID, "draconium_ore"));
-//    private static final ResourceKey<PlacedFeature> DRACONIUM_ORE = ResourceKey.create(Registries.PLACED_FEATURE, new ResourceLocation(DraconicEvolution.MODID, "draconium_ore"));
+//    private static final ResourceKey<ConfiguredFeature<?, ?>> DRACONIUM_ORE_FEATURE = ResourceKey.create(Registries.CONFIGURED_FEATURE, new Identifier(DraconicEvolution.MODID, "draconium_ore"));
+//    private static final ResourceKey<PlacedFeature> DRACONIUM_ORE = ResourceKey.create(Registries.PLACED_FEATURE, new Identifier(DraconicEvolution.MODID, "draconium_ore"));
 //
 //    private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
 //            .add(Registries.CONFIGURED_FEATURE, context -> context.register(DRACONIUM_ORE_FEATURE,

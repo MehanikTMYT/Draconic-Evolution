@@ -1,22 +1,40 @@
 package com.brandon3055.draconicevolution.blocks.reactor.tileentity;
 
 import codechicken.lib.data.MCDataInput;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.lib.Vec3I;
+
 import com.brandon3055.brandonscore.lib.datamanager.*;
+
 import com.brandon3055.brandonscore.utils.MathUtils;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.utils.LogHelper;
+
 import net.minecraft.core.BlockPos;
+
 import net.minecraft.core.Direction;
+
 import net.minecraft.core.particles.ParticleTypes;
+
 import net.minecraft.server.level.ChunkHolder;
+
 import net.minecraft.server.level.ServerPlayer;
+
 import net.minecraft.world.entity.player.Player;
+
 import net.minecraft.world.level.block.entity.BlockEntity;
+
 import net.minecraft.world.level.block.entity.BlockEntityType;
+
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.minecraft.world.level.chunk.LevelChunk;
+
+
 
 /**
  * Created by brandon3055 on 20/01/2017.
@@ -50,7 +68,7 @@ public abstract class TileReactorComponent extends TileBCore {
         super.tick();
         moveCheckComplete = false;
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             TileReactorCore core = tryGetCore();
             if (core != null) {
                 animRotationSpeed = core.shieldAnimationState * 15F;
@@ -62,13 +80,13 @@ public abstract class TileReactorComponent extends TileBCore {
             }
 
             animRotation += animRotationSpeed;
-            if (coreFalureIminent && level.random.nextInt(10) == 0) {
-                animRotation += (level.random.nextDouble() - 0.5) * 360;
-                if (level.random.nextBoolean()) {
-                    level.addParticle(ParticleTypes.LARGE_SMOKE, worldPosition.getX() + level.random.nextDouble(), worldPosition.getY() + level.random.nextDouble(), worldPosition.getZ() + level.random.nextDouble(), 0, 0, 0);
+            if (coreFalureIminent && level.getRandom().nextInt(10) == 0) {
+                animRotation += (level.getRandom().nextDouble() - 0.5) * 360;
+                if (level.getRandom().nextBoolean()) {
+                    level.addParticle(ParticleTypes.LARGE_SMOKE, worldPosition.getX() + level.getRandom().nextDouble(), worldPosition.getY() + level.getRandom().nextDouble(), worldPosition.getZ() + level.getRandom().nextDouble(), 0, 0, 0);
                 }
                 else {
-                    level.addParticle(ParticleTypes.CLOUD, worldPosition.getX() + level.random.nextDouble(), worldPosition.getY() + level.random.nextDouble(), worldPosition.getZ() + level.random.nextDouble(), 0, 0, 0);
+                    level.addParticle(ParticleTypes.CLOUD, worldPosition.getX() + level.getRandom().nextDouble(), worldPosition.getY() + level.getRandom().nextDouble(), worldPosition.getZ() + level.getRandom().nextDouble(), 0, 0, 0);
                 }
             }
         }
@@ -139,14 +157,14 @@ public abstract class TileReactorComponent extends TileBCore {
     //region Player Interaction
 
     public void onPlaced() {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         pokeCore();
     }
 
     public void onBroken() {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
 
@@ -157,7 +175,7 @@ public abstract class TileReactorComponent extends TileBCore {
     }
 
     public void onActivated(Player player) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
 
@@ -169,7 +187,7 @@ public abstract class TileReactorComponent extends TileBCore {
     }
 
     public void setRSMode(Player player, RSMode rsMode) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             TileReactorCore core = tryGetCore();
             if (core != null) {
                 core.sendPacketToServer(output -> output.writeString(rsMode.name()).writePos(getBlockPos()), 99);

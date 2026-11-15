@@ -1,35 +1,64 @@
 package com.brandon3055.draconicevolution.api.modules.items;
 
 import com.brandon3055.brandonscore.api.TimeKeeper;
+
 import com.brandon3055.draconicevolution.api.modules.Module;
+
 import com.brandon3055.draconicevolution.api.modules.data.EnergyLinkData;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyCore;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyCoreStabilizer;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyPylon;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileStructureBlock;
+
 import com.brandon3055.draconicevolution.init.ItemData;
-import net.minecraft.Util;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.UUID;
+
 import java.util.function.Supplier;
 
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.GlobalPos;
+
+import net.minecraft.core.Registry;
+
+import net.minecraft.core.registries.Registries;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.resources.Identifier;
+
+import net.minecraft.resources.ResourceKey;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.util.Util;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.context.UseOnContext;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
 import static com.brandon3055.draconicevolution.DraconicEvolution.MODID;
+
+
+
+
 
 public class EnergyLinkModuleItem extends ModuleItem<EnergyLinkData> {
 
@@ -78,7 +107,7 @@ public class EnergyLinkModuleItem extends ModuleItem<EnergyLinkData> {
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         Player player = context.getPlayer();
-        if (level.isClientSide || player == null || !player.isShiftKeyDown()) return InteractionResult.SUCCESS;
+        if (level.isClientSide() || player == null || !player.isShiftKeyDown()) return InteractionResult.SUCCESS;
 
         BlockEntity blockEntity = level.getBlockEntity(context.getClickedPos());
         if (blockEntity instanceof TileStructureBlock structureBlock) blockEntity = (BlockEntity) structureBlock.getController();

@@ -1,13 +1,13 @@
 //package com.brandon3055.draconicevolution.items;
 //
 //import com.brandon3055.brandonscore.utils.ItemNBTHelper;
-//import net.minecraft.Util;
+//import net.minecraft.util.Util;
 //import net.minecraft.core.BlockPos;
 //import net.minecraft.core.Direction;
 //import net.minecraft.network.chat.Component;
 //import net.minecraft.world.InteractionHand;
 //import net.minecraft.world.InteractionResult;
-//import net.minecraft.world.InteractionResultHolder;
+//import net.minecraft.world.InteractionResult;
 //import net.minecraft.world.entity.Entity;
 //import net.minecraft.world.entity.player.Player;
 //import net.minecraft.world.item.Item;
@@ -129,7 +129,7 @@
 ////    private
 //
 //    @Override
-//    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+//    public InteractionResult use(Level world, Player player, InteractionHand hand) { // port-26.1.2: InteractionResultHolder удалён
 //        ItemStack itemStack = player.getItemInHand(hand);
 //        //if (!world.isRemote) {
 //        double posX = player.getX() - (player.getX() % 16) + 8;
@@ -420,7 +420,7 @@
 ////        FusionRecipes.registerRecipes();
 ////
 ////        if (world.isRemote && BCEffectHandler.effectRenderer != null) {
-////            BCEffectHandler.effectRenderer.addEffect(new ResourceLocation("textures/particle/particles2.png"), new ParticleFusionCrafting(world, new Vec3D(player.getPosX(), player.getPosY(), player.getPosZ() + 3), new Vec3D(), new TileFusionCraftingCore()));
+////            BCEffectHandler.effectRenderer.addEffect(new Identifier("textures/particle/particles2.png"), new ParticleFusionCrafting(world, new Vec3D(player.getPosX(), player.getPosY(), player.getPosZ() + 3), new Vec3D(), new TileFusionCraftingCore()));
 ////
 ////            return super.onItemRightClick(itemStack, world, player, hand);
 ////        }
@@ -513,7 +513,7 @@
 //
 //        //BCEffectHandler.testRenderer.spawnEffectParticle(EnumParticleTypes.BARRIER.getParticleID(), player.getPosX(), player.getPosY(), player.getPosZ(), 0, 0, 0);
 //        //world.spawnParticle(EnumParticleTypes.BARRIER, player.getPosX(), player.getPosY(), player.getPosZ() + 1, 0, 0, 0);
-//        // for (int i = 0; i < 20000; i++) BCEffectHandler.s(new ResourceLocation("textures/particle/particles.png"), new EntitySpellParticleFX.AmbientMobFactory().getEntityFX(EnumParticleTypes.SPELL_MOB.getParticleID(), world, player.getPosX() + itemRand.nextDouble(), player.getPosY()+itemRand.nextDouble(), player.getPosZ() + itemRand.nextDouble(), 0, 0, 0));
+//        // for (int i = 0; i < 20000; i++) BCEffectHandler.s(new Identifier("textures/particle/particles.png"), new EntitySpellParticleFX.AmbientMobFactory().getEntityFX(EnumParticleTypes.SPELL_MOB.getParticleID(), world, player.getPosX() + itemRand.nextDouble(), player.getPosY()+itemRand.nextDouble(), player.getPosZ() + itemRand.nextDouble(), 0, 0, 0));
 //
 ////        for (int i = 0; i < 200; i++) BCEffectHandler.spawnFX(DEParticles.ENERGY_PARTICLE, world, player.getPosX()+ itemRand.nextFloat(), player.getPosY()+ itemRand.nextFloat(), player.getPosZ()+ itemRand.nextFloat(), player.getPosX(), player.getPosY(), player.getPosZ() + 10);
 //
@@ -766,19 +766,19 @@
 //            if (mode == MODES.size()) {
 //                mode = 0;
 //            }
-//            if (!world.isClientSide) {
+//            if (!world.isClientSide()) {
 //                player.sendSystemMessage(Component.literal(MODES.get(mode)));
 //            }
 //            ItemNBTHelper.setInteger(stack, "mode", mode);
-//            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+//            return InteractionResult.SUCCESS;
 //        }
 //
 //        switch (mode) {
 //            case 0:
 //                break;
 //            case 3:
-//                if (world.isClientSide) {
-////                    Map<ResourceLocation, ArrayDeque<Particle>[][]> texturedRenderQueue = ReflectionHelper.getPrivateValue(BCEffectRenderer.class, BCEffectHandler.effectRenderer, "texturedRenderQueue");
+//                if (world.isClientSide()) {
+////                    Map<Identifier, ArrayDeque<Particle>[][]> texturedRenderQueue = ReflectionHelper.getPrivateValue(BCEffectRenderer.class, BCEffectHandler.effectRenderer, "texturedRenderQueue");
 ////
 ////                    for (ArrayDeque<Particle>[][] array : texturedRenderQueue.values()) {
 ////                        for (ArrayDeque<Particle>[] array2 : array) {
@@ -791,23 +791,23 @@
 //                }
 //                break;
 //            case 4:
-//                if (!world.isClientSide) {
+//                if (!world.isClientSide()) {
 ////                    player.openGui(DraconicEvolution.instance, 2016, world, 0, 0, 0);
 //                }
 //                break;
 //
 //            case 6:
-//                if (world.isClientSide) {
+//                if (world.isClientSide()) {
 //                    openWiki();
 //                }
 //                break;
 //            case 7:
-//                if (!world.isClientSide) {
+//                if (!world.isClientSide()) {
 //                    destroyUniverse(player);
 //                }
 //                break;
 //            case 8:
-//                if (!world.isClientSide) {
+//                if (!world.isClientSide()) {
 ////                    lightingTest(world, new BlockPos(player));
 //                }
 //                break;

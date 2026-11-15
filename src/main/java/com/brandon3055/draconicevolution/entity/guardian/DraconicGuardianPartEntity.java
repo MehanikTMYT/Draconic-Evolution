@@ -1,15 +1,28 @@
 package com.brandon3055.draconicevolution.entity.guardian;
 
 import net.minecraft.nbt.CompoundTag;
+
 import net.minecraft.network.protocol.Packet;
+
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+
 import net.minecraft.network.syncher.SynchedEntityData;
+
 import net.minecraft.server.level.ServerEntity;
+
+import net.minecraft.server.level.ServerLevel;
+
 import net.minecraft.world.damagesource.DamageSource;
+
 import net.minecraft.world.entity.Entity;
+
 import net.minecraft.world.entity.EntityDimensions;
+
 import net.minecraft.world.entity.Pose;
+
 import net.neoforged.neoforge.entity.PartEntity;
+
+
 
 public class DraconicGuardianPartEntity extends PartEntity<DraconicGuardianEntity> {
    public final DraconicGuardianEntity dragon;
@@ -45,7 +58,7 @@ public class DraconicGuardianPartEntity extends PartEntity<DraconicGuardianEntit
    }
 
    @Override
-   public boolean hurt(DamageSource source, float amount) {
+   public boolean hurtServer(ServerLevel level, DamageSource source, float amount) { // port-26.1.2: Entity.hurt -> hurtServer
       return !this.isInvulnerableTo(source) && this.dragon.attackEntityPartFrom(this, source, amount);
    }
 

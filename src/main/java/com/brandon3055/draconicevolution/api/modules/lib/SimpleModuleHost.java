@@ -1,31 +1,84 @@
 package com.brandon3055.draconicevolution.api.modules.lib;
 
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.draconicevolution.api.DataComponentAccessor;
+
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleCategory;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleRegistry;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleType;
+
 import com.brandon3055.draconicevolution.api.modules.data.ModuleData;
+
 import com.brandon3055.draconicevolution.init.DEModules;
+
 import com.brandon3055.draconicevolution.init.ItemData;
-import net.covers1624.quack.collection.FastStream;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jetbrains.annotations.Nullable;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
 
 import java.util.*;
+
 import java.util.function.BiFunction;
+
 import java.util.stream.Stream;
+
+import net.covers1624.quack.collection.FastStream;
+
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.ListTag;
+
+import net.minecraft.nbt.NbtOps;
+
+import net.minecraft.nbt.Tag;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.resources.Identifier;
+
+import org.apache.logging.log4j.LogManager;
+
+import org.apache.logging.log4j.Logger;
+
+import org.jetbrains.annotations.Nullable;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import com.brandon3055.draconicevolution.lib.INBTSerializable; // port-26.1.2: neoforge INBTSerializable удалён
+
 
 /**
  * Created by brandon3055 on 16/11/2022
@@ -200,8 +253,8 @@ public class SimpleModuleHost implements ModuleHost, INBTSerializable<CompoundTa
             ModuleEntity.CODEC.listOf().parse(ops, modules).ifSuccess(moduleEntities::addAll);
 
         }
-        if (nbt.hasUUID("identity")) {
-            identity = nbt.getUUID("identity");
+        if (TagUtils26.hasUUID(TagUtils26, nbt, "identity")) {
+            identity = TagUtils26.getUUID(TagUtils26, nbt, "identity");
         }
     }
 

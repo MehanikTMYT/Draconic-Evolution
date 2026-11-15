@@ -1,28 +1,52 @@
 package com.brandon3055.draconicevolution.client.render.effect;
 
 import codechicken.lib.math.MathHelper;
+
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.utils.BCProfiler;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.api.energy.ICrystalLink;
+
 import com.brandon3055.draconicevolution.api.energy.IENetEffectTile;
+
 import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
-import com.mojang.blaze3d.platform.GlStateManager;
+
+import com.mojang.blaze3d.opengl.GlStateManager;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import com.mojang.blaze3d.vertex.*;
+
 import net.minecraft.client.Camera;
+
 import net.minecraft.client.multiplayer.ClientLevel;
+
 import net.minecraft.client.particle.ParticleRenderType;
+
 import net.minecraft.client.renderer.GameRenderer;
+
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
+
+import net.minecraft.resources.Identifier;
+
 import net.minecraft.world.level.Level;
+
 import net.minecraft.world.level.block.entity.BlockEntity;
+
 import net.minecraft.world.phys.AABB;
+
 import net.minecraft.world.phys.Vec3;
+
 import org.joml.Vector3f;
+
+
 
 /**
  * Created by brandon3055 on 29/11/2016.
@@ -38,7 +62,7 @@ public class CrystalFXBeam<T extends BlockEntity & IENetEffectTile> extends Crys
 
     public CrystalFXBeam(Level worldIn, T tile, ICrystalLink linkTarget) {
         super((ClientLevel)worldIn, tile);
-        this.age = worldIn.random.nextInt(1024);
+        this.age = worldIn.getRandom().nextInt(1024);
         this.setPosition(tile.getBeamLinkPos(((BlockEntity) linkTarget).getBlockPos()));
         this.terminateSource = tile.renderBeamTermination();
         this.linkTarget = linkTarget.getBeamLinkPos(tile.getBlockPos());
@@ -79,7 +103,7 @@ public class CrystalFXBeam<T extends BlockEntity & IENetEffectTile> extends Crys
             scale = 0.1F;
         }
 
-        Vec3 viewVec = renderInfo.getPosition();
+        Vec3 viewVec = renderInfo.position();
         Vector3 source = new Vector3(x - viewVec.x, y - viewVec.y, z - viewVec.z);
         Vector3 target = linkTarget.toVector3().subtract(viewVec.x, viewVec.y, viewVec.z);
         Vector3 dirVec = source.copy().subtract(target).normalize();
@@ -169,16 +193,16 @@ public class CrystalFXBeam<T extends BlockEntity & IENetEffectTile> extends Crys
         return tile.getTier() == 0 ? BASIC_HANDLER : tile.getTier() == 1 ? WYVERN_HANDLER : DRACONIC_HANDLER;
     }
 
-    private static final ParticleRenderType BASIC_HANDLER = new FXHandler(ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_basic.png"));
-    private static final ParticleRenderType WYVERN_HANDLER = new FXHandler(ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_wyvern.png"));
-    private static final ParticleRenderType DRACONIC_HANDLER = new FXHandler(ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_draconic.png"));
+    private static final ParticleRenderType BASIC_HANDLER = new FXHandler(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_basic.png"));
+    private static final ParticleRenderType WYVERN_HANDLER = new FXHandler(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_wyvern.png"));
+    private static final ParticleRenderType DRACONIC_HANDLER = new FXHandler(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_draconic.png"));
 
     public static class FXHandler implements ParticleRenderType {
-        private static final ResourceLocation highlightTexture = ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_highlight.png");
-        private ResourceLocation texture;
+        private static final Identifier highlightTexture = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_highlight.png");
+        private Identifier texture;
         private float green;
 
-        public FXHandler(ResourceLocation texture) {
+        public FXHandler(Identifier texture) {
             this.texture = texture;
             this.green = texture.getPath().contains("energy_beam_wyvern") ? 0.3F : 1F;
         }

@@ -1,45 +1,84 @@
 package com.brandon3055.draconicevolution.client.render.effect;
 
 import codechicken.lib.math.MathHelper;
+
 import codechicken.lib.render.CCModel;
+
 import codechicken.lib.render.CCRenderState;
+
 import codechicken.lib.render.RenderUtils;
+
 import codechicken.lib.render.model.OBJParser;
+
 import codechicken.lib.render.shader.ShaderObject;
+
 import codechicken.lib.render.shader.ShaderProgram;
+
 import codechicken.lib.render.shader.ShaderProgramBuilder;
+
 import codechicken.lib.render.shader.UniformType;
+
 import codechicken.lib.vec.Matrix4;
+
 import codechicken.lib.vec.Rotation;
+
 import codechicken.lib.vec.Scale;
+
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.client.DEShaders;
+
 import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.Iterator;
+
 import java.util.LinkedList;
+
 import java.util.Map;
+
 import java.util.Random;
 
+import net.minecraft.client.Camera;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+
+import net.minecraft.client.particle.Particle;
+
+import net.minecraft.client.particle.ParticleRenderType;
+
+import net.minecraft.client.renderer.GameRenderer;
+
+import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+
+import net.minecraft.client.renderer.RenderStateShard;
+
+import net.minecraft.client.renderer.rendertype.RenderType;
+
+import net.minecraft.client.renderer.texture.TextureManager;
+
+import net.minecraft.resources.Identifier;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.phys.Vec3;
+
 import static com.brandon3055.draconicevolution.DraconicEvolution.MODID;
+
 import static net.minecraft.client.renderer.RenderStateShard.COLOR_WRITE;
+
+
+
+
 
 /**
  * Created by brandon3055 on 12/02/2017.
@@ -78,7 +117,7 @@ public class ExplosionFX extends Particle {
     );
 
     static {
-        Map<String, CCModel> map = new OBJParser(ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "models/block/reactor/reactor_core.obj")).quads().ignoreMtl().parse();
+        Map<String, CCModel> map = new OBJParser(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "models/block/reactor/reactor_core.obj")).quads().ignoreMtl().parse();
         model = CCModel.combine(map.values());
         model_inv = model.backfacedCopy();
     }
@@ -137,7 +176,7 @@ public class ExplosionFX extends Particle {
 
     @Override
     public void render(VertexConsumer b, Camera renderInfo, float partialTicks) {
-        Vec3 viewVec = renderInfo.getPosition();
+        Vec3 viewVec = renderInfo.position();
         Vector3 pos = new Vector3(x - viewVec.x, y - viewVec.y, z - viewVec.z);
 
         CCRenderState ccrs = CCRenderState.instance();

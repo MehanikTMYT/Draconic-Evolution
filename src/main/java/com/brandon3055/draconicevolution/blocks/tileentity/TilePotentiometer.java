@@ -1,26 +1,47 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.lib.ChatHelper;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.IRedstoneEmitter;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedByte;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedEnum;
+
 import com.brandon3055.draconicevolution.blocks.Potentiometer;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.UUID;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+
+
 
 /**
  * Created by brandon3055 on 28/09/2016.
@@ -69,7 +90,7 @@ public class TilePotentiometer extends TileBCore implements IRedstoneEmitter, II
             }
         }
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             ChatHelper.sendIndexed(player, Component.literal(String.valueOf(power.get())), MSG_ID);
         }
         else {

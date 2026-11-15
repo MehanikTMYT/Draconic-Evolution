@@ -1,10 +1,10 @@
 package com.brandon3055.draconicevolution.client.gui;
 
-import codechicken.lib.gui.modular.elements.GuiElement;
-import codechicken.lib.gui.modular.lib.BackgroundRender;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import codechicken.lib.gui.modular.lib.geometry.Constraint;
-import codechicken.lib.gui.modular.lib.geometry.GuiParent;
+import com.brandon3055.brandonscore.client.gui.modular.elements.GuiElement;
+import com.brandon3055.brandonscore.client.gui.modular.lib.BackgroundRender;
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GuiParent;
 import com.brandon3055.brandonscore.BCConfig;
 import com.brandon3055.brandonscore.client.gui.GuiToolkit.Palette;
 import com.brandon3055.brandonscore.client.render.RenderUtils;
@@ -16,19 +16,19 @@ import com.brandon3055.draconicevolution.api.modules.lib.ModuleEntity;
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleGrid;
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.HEIGHT;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.WIDTH;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.HEIGHT;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.WIDTH;
 
 /**
  * Created by brandon3055 on 26/4/20.
@@ -174,12 +174,12 @@ public class ModuleGridRenderer extends GuiElement<ModuleGridRenderer> implement
 
                     if (player.player.containerMenu.getCarried().isEmpty()) {
                         if (pickBlock) {
-                            handleGridClick(host, cell, mouseX, mouseY, button, ClickType.CLONE); //Creative Clone
+                            handleGridClick(host, cell, mouseX, mouseY, button, ContainerInput.CLONE); //Creative Clone
                         } else {
                             boolean shiftClick = (InputConstants.isKeyDown(mc().getWindow().getWindow(), 340) || InputConstants.isKeyDown(mc().getWindow().getWindow(), 344));
-                            ClickType clicktype = ClickType.PICKUP;
+                            ContainerInput clicktype = ContainerInput.PICKUP;
                             if (shiftClick) {
-                                clicktype = ClickType.QUICK_MOVE;
+                                clicktype = ContainerInput.QUICK_MOVE;
                             }
                             handleGridClick(host, cell, mouseX, mouseY, button, clicktype);
                         }
@@ -202,18 +202,18 @@ public class ModuleGridRenderer extends GuiElement<ModuleGridRenderer> implement
         try (ModuleHost host = grid.container.getModuleHost()){
             ModuleGrid.GridPos cell = getCellAtPos(host, mouseX, mouseY, true);
             if (this.doubleClick && button == 0) {
-                this.handleGridClick(host, cell, mouseX, mouseY, button, ClickType.PICKUP_ALL);
+                this.handleGridClick(host, cell, mouseX, mouseY, button, ContainerInput.PICKUP_ALL);
                 this.doubleClick = false;
                 this.lastClickTime = 0L;
             } else if (canDrop) {
-                handleGridClick(host, cell, mouseX, mouseY, button, ClickType.PICKUP);
+                handleGridClick(host, cell, mouseX, mouseY, button, ContainerInput.PICKUP);
             }
         }
 
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
-    protected void handleGridClick(ModuleHost host, ModuleGrid.GridPos cell, double mouseX, double mouseY, int mouseButton, ClickType type) {
+    protected void handleGridClick(ModuleHost host, ModuleGrid.GridPos cell, double mouseX, double mouseY, int mouseButton, ContainerInput type) {
         float x = 0.5F;
         float y = 0.5F;
         ModuleEntity<?> entity = cell.getEntity();

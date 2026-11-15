@@ -19,7 +19,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -27,7 +27,8 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.enchantment.ItemEnchantments; // port-26.1.2: EnchantedBookItem удалён
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -104,7 +105,11 @@ public class TileDisenchanter extends TileBCore implements MenuProvider, IIntera
                 input.set(DataComponents.REPAIR_COST, Math.max(repairCost, 0));
             }
 
-            ItemStack book = EnchantedBookItem.createForEnchantment(new EnchantmentInstance(enchantHolder, lvl));
+            // port-26.1.2: EnchantedBookItem.createForEnchantment удалён -> DataComponents.STORED_ENCHANTMENTS (эталон Items26 ENCHANTED_BOOK)
+            ItemEnchantments.Mutable mut = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+            mut.set(enchantHolder, lvl);
+            ItemStack book = new ItemStack(Items.ENCHANTED_BOOK);
+            book.set(DataComponents.STORED_ENCHANTMENTS, mut.toImmutable());
             itemHandler.setStackInSlot(2, book);
 
             EnchantmentHelper.updateEnchantments(input, mutable -> mutable.removeIf(e -> e == enchantHolder));

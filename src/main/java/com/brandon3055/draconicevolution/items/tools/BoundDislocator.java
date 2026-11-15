@@ -1,37 +1,133 @@
 package com.brandon3055.draconicevolution.items.tools;
 
 import com.brandon3055.brandonscore.api.TimeKeeper;
+
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.brandonscore.utils.InventoryUtils;
+
 import com.brandon3055.brandonscore.utils.TargetPos;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.brandon3055.draconicevolution.handlers.dislocator.DislocatorSaveData;
+
 import com.brandon3055.draconicevolution.handlers.dislocator.DislocatorTarget;
+
 import com.brandon3055.draconicevolution.handlers.dislocator.GroundTarget;
+
 import com.brandon3055.draconicevolution.handlers.dislocator.PlayerTarget;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.init.ItemData;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.Nullable;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
 
 import java.util.List;
+
 import java.util.UUID;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.server.MinecraftServer;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.TooltipFlag;
+
+import net.minecraft.world.level.Level;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import org.jetbrains.annotations.Nullable;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 16/07/2016.
@@ -66,7 +162,7 @@ public class BoundDislocator extends Dislocator {
 
     @Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-        if (player.level().isClientSide) {
+        if (player.level().isClientSide()) {
             return true;
         }
         TargetPos location = getTargetPos(stack, player.level());
@@ -83,22 +179,22 @@ public class BoundDislocator extends Dislocator {
         if (server == null || !(server.getLevel(location.getDimension()) instanceof Level targetLevel)) {
             return true;
         }
-        if (!entity.canChangeDimensions(entity.level(), targetLevel) || !(entity instanceof LivingEntity)) {
+        if (!entity.canTeleport(entity.level(), targetLevel) || !(entity instanceof LivingEntity)) {
             return true;
         }
 
-        BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().random.nextFloat() * 0.1F + 0.9F, false);
+        BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().getRandom().nextFloat() * 0.1F + 0.9F, false);
         notifyArriving(stack, player.level(), entity);
         location.teleport(entity);
-        BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().random.nextFloat() * 0.1F + 0.9F, false);
+        BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().getRandom().nextFloat() * 0.1F + 0.9F, false);
         return true;
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) { // port-26.1.2: InteractionResultHolder удалён
         ItemStack stack = player.getItemInHand(hand);
-        if (player.level().isClientSide) {
-            return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+        if (player.level().isClientSide()) {
+            return InteractionResult.PASS;
         }
 
         if (stack.getItem() == DEContent.DISLOCATOR_P2P_UNBOUND.get()) {
@@ -108,7 +204,7 @@ public class BoundDislocator extends Dislocator {
             player.setItemInHand(hand, ItemStack.EMPTY);
             InventoryUtils.givePlayerStack(player, boundA);
             InventoryUtils.givePlayerStack(player, boundB);
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+            return InteractionResult.SUCCESS;
         } else if (stack.getItem() == DEContent.DISLOCATOR_PLAYER_UNBOUND.get()) {
             ItemStack bound = new ItemStack(DEContent.DISLOCATOR_PLAYER.get());
             setPlayerID(bound, player.getUUID());
@@ -116,7 +212,7 @@ public class BoundDislocator extends Dislocator {
             bound.set(ItemData.DISLOCATOR_PLAYER_NAME, player.getName().getString());
             player.setItemInHand(hand, ItemStack.EMPTY);
             InventoryUtils.givePlayerStack(player, bound);
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+            return InteractionResult.SUCCESS;
         } else {
             TargetPos location = getTargetPos(stack, level);
             if (location == null) {
@@ -125,15 +221,15 @@ public class BoundDislocator extends Dislocator {
                 } else {
                     player.sendSystemMessage(Component.translatable("dislocate.draconicevolution.bound.cant_find_target").withStyle(ChatFormatting.RED));
                 }
-                return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+                return InteractionResult.PASS;
             }
 
-            BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().random.nextFloat() * 0.1F + 0.9F, false);
+            BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().getRandom().nextFloat() * 0.1F + 0.9F, false);
             notifyArriving(stack, player.level(), player);
             location.teleport(player);
-            BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().random.nextFloat() * 0.1F + 0.9F, false);
+            BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().getRandom().nextFloat() * 0.1F + 0.9F, false);
 
-            return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
+            return InteractionResult.SUCCESS;
         }
     }
 
@@ -199,7 +295,7 @@ public class BoundDislocator extends Dislocator {
                 if (playerID != null) {
                     Player player = server.getPlayerList().getPlayer(playerID);
                     if (player != null) {
-                        return TargetPos.of(player);
+                        return new TargetPos(player);
                     }
                 }
             } else {

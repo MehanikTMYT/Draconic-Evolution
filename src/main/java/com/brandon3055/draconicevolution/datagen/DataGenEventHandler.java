@@ -131,7 +131,7 @@ public class DataGenEventHandler {
 //        private void aggAdvancements(Consumer<Advancement> consumer) {
 //
 ////            Advancement advancement = Advancement.Builder.builder()
-////                    .withDisplay(Blocks.END_STONE, new TranslationTextComponent("advancements.end.root.title"), new TranslationTextComponent("advancements.end.root.description"), new ResourceLocation("textures/gui/advancements/backgrounds/end.png"), FrameType.TASK, false, false, false)
+////                    .withDisplay(Blocks.END_STONE, new TranslationTextComponent("advancements.end.root.title"), new TranslationTextComponent("advancements.end.root.description"), new Identifier("textures/gui/advancements/backgrounds/end.png"), FrameType.TASK, false, false, false)
 ////                    .withCriterion("entered_end", ChangeDimensionTrigger.Instance.toWorld(World.THE_END))
 ////                    .register(consumer, "end/root");
 //        }
@@ -139,7 +139,7 @@ public class DataGenEventHandler {
 //        @Override
 //        public void run(HashCache cache) {
 //            Path path = this.generator.getOutputFolder();
-//            Set<ResourceLocation> set = Sets.newHashSet();
+//            Set<Identifier> set = Sets.newHashSet();
 //            Consumer<Advancement> consumer = (advancement) -> {
 //                if (!set.add(advancement.getId())) {
 //                    throw new IllegalStateException("Duplicate advancement " + advancement.getId());
@@ -165,7 +165,7 @@ public class DataGenEventHandler {
 ////            return pathIn.resolve("data/" + advancementIn.getId().getNamespace() + "/advancements/" + advancementIn.getId().getPath() + ".json");
 ////        }
 //
-//        protected Path makePath(ResourceLocation id) {
+//        protected Path makePath(Identifier id) {
 //            return this.generator.getOutputFolder().resolve("data/" + id.getNamespace() + "/advancements/" + id.getPath() + ".json");
 //        }
 //    }

@@ -1,6 +1,6 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
-import com.brandon3055.brandonscore.api.BCStreamCodec;
+import com.brandon3055.draconicevolution.lib.DEStreamCodecs; // port-26.1.2: BCStreamCodec удалён из BC-26
 import com.brandon3055.draconicevolution.api.config.BooleanProperty;
 import com.brandon3055.draconicevolution.api.config.ConfigProperty;
 import com.brandon3055.draconicevolution.api.modules.Module;
@@ -29,7 +29,7 @@ public class AutoFireEntity extends ModuleEntity<NoData> {
             BooleanProperty.CODEC.fieldOf("auto_fire_enabled").forGetter(e -> e.autoFireEnabled)
     ).apply(builder, AutoFireEntity::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, AutoFireEntity> STREAM_CODEC = BCStreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, AutoFireEntity> STREAM_CODEC = DEStreamCodecs.composite(
             DEModules.streamCodec(), ModuleEntity::getModule,
             ByteBufCodecs.INT, ModuleEntity::getGridX,
             ByteBufCodecs.INT, ModuleEntity::getGridY,

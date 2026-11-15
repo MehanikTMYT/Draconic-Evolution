@@ -1,25 +1,45 @@
 package com.brandon3055.draconicevolution.api.modules;
 
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.inventory.InventoryDynamic;
+
 import com.brandon3055.draconicevolution.api.capability.DECapabilities;
+
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
+
 import com.brandon3055.draconicevolution.api.modules.data.ModuleData;
+
 import com.brandon3055.draconicevolution.api.modules.entities.EnderCollectionEntity;
+
 import com.brandon3055.draconicevolution.api.modules.entities.JunkFilterEntity;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleEntity;
+
 import com.brandon3055.draconicevolution.integration.equipment.EquipmentManager;
+
 import com.brandon3055.draconicevolution.items.equipment.IModularItem;
+
 import com.brandon3055.draconicevolution.lib.WTFException;
-import net.covers1624.quack.collection.FastStream;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
+
 import java.util.function.Predicate;
+
+import net.covers1624.quack.collection.FastStream;
+
+import net.minecraft.world.entity.EquipmentSlot;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+
+
 
 /**
  * Created by brandon3055 on 31/01/2023
@@ -30,7 +50,7 @@ public class ModuleHelper {
      * Handles the process of giving the supplied item stacks to the player accounting for junk filters and ender collection.
      */
     public static void handleItemCollection(Player player, ModuleHost host, IOPStorage storage, InventoryDynamic inventory) {
-        if (player.level().isClientSide) return;
+        if (player.level().isClientSide()) return;
 
         Predicate<ItemStack> junkTest = null;
         for (ModuleEntity<?> entity : host.getEntitiesByType(ModuleTypes.JUNK_FILTER).toList()) {

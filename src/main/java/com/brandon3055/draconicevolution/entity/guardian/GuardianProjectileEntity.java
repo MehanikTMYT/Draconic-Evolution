@@ -1,23 +1,43 @@
 package com.brandon3055.draconicevolution.entity.guardian;
 
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.init.DEDamage;
+
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+
+import net.minecraft.core.particles.ParticleOptions;
+
+import net.minecraft.core.particles.ParticleTypes;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.EntitySelector;
+
+import net.minecraft.world.entity.EntityType;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
+
+import net.minecraft.world.level.Explosion;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.phys.EntityHitResult;
+
+import net.minecraft.world.phys.HitResult;
+
+import net.minecraft.world.phys.Vec3;
+
+
+
 
 public class GuardianProjectileEntity extends AbstractHurtingProjectile {
     private Vec3 target;
@@ -51,7 +71,7 @@ public class GuardianProjectileEntity extends AbstractHurtingProjectile {
         super.onHit(result);
         Entity shooter = this.getOwner();
         if (result.getType() != HitResult.Type.ENTITY || !((EntityHitResult) result).getEntity().is(shooter)) {
-            if (!this.level().isClientSide) {
+            if (!this.level().isClientSide()) {
                 detonate();
             }
         }
@@ -106,7 +126,7 @@ public class GuardianProjectileEntity extends AbstractHurtingProjectile {
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) { // port-26.1.2: Entity.hurt -> hurtServer
         return false;
     }
 

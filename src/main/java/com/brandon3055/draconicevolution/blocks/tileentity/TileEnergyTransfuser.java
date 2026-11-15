@@ -1,40 +1,74 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import codechicken.lib.raytracer.RayTracer;
+
 import codechicken.lib.raytracer.SubHitBlockHitResult;
+
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.brandonscore.inventory.TileItemStackHandler;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.IRSSwitchable;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedBool;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedEnum;
+
 import com.brandon3055.brandonscore.utils.EnergyUtils;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.inventory.TransfuserMenu;
+
 import com.brandon3055.draconicevolution.utils.ItemCapMerger;
+
 import net.minecraft.core.BlockPos;
+
 import net.minecraft.core.Direction;
+
 import net.minecraft.server.level.ServerPlayer;
+
 import net.minecraft.world.InteractionHand;
+
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
+
 import net.minecraft.world.MenuProvider;
+
 import net.minecraft.world.entity.player.Inventory;
+
 import net.minecraft.world.entity.player.Player;
+
 import net.minecraft.world.inventory.AbstractContainerMenu;
+
 import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.minecraft.world.phys.BlockHitResult;
+
 import net.minecraft.world.phys.HitResult;
+
 import net.neoforged.neoforge.capabilities.Capabilities;
+
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
 import net.neoforged.neoforge.items.IItemHandler;
+
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
+
 import org.jetbrains.annotations.NotNull;
+
 import org.jetbrains.annotations.Nullable;
+
+
 
 /**
  * Created by brandon3055 on 12/12/2020.
@@ -79,7 +113,7 @@ public class TileEnergyTransfuser extends TileBCore implements IInteractTile, Me
     @Override
     public void tick() {
         super.tick();
-        if (level.isClientSide || !isTileEnabled()) {
+        if (level.isClientSide() || !isTileEnabled()) {
             return;
         }
 
@@ -134,9 +168,9 @@ public class TileEnergyTransfuser extends TileBCore implements IInteractTile, Me
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack heldStack, BlockState state, Player player, InteractionHand hand, BlockHitResult hitIn) {
-        if (level.isClientSide) {
-            return ItemInteractionResult.SUCCESS;
+    public InteractionResult useItemOn(ItemStack heldStack, BlockState state, Player player, InteractionHand hand, BlockHitResult hitIn) {
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
         }
 
         HitResult hit = RayTracer.retrace(player);
@@ -146,7 +180,7 @@ public class TileEnergyTransfuser extends TileBCore implements IInteractTile, Me
             if (!stack.isEmpty() && heldStack.isEmpty()) {
                 player.setItemInHand(hand, stack);
                 itemsCombined.setStackInSlot(slot, ItemStack.EMPTY);
-                return ItemInteractionResult.SUCCESS;
+                return InteractionResult.SUCCESS;
             } else if (stack.isEmpty() && !heldStack.isEmpty()) {
                 if (itemsCombined.isItemValid(slot, heldStack)) {
                     if (heldStack.getCount() > 1) {
@@ -158,7 +192,7 @@ public class TileEnergyTransfuser extends TileBCore implements IInteractTile, Me
                         itemsCombined.setStackInSlot(slot, heldStack);
                         player.setItemInHand(hand, ItemStack.EMPTY);
                     }
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
             }
         }
@@ -166,7 +200,7 @@ public class TileEnergyTransfuser extends TileBCore implements IInteractTile, Me
         if (player instanceof ServerPlayer) {
             player.openMenu(this, worldPosition);
         }
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Nullable

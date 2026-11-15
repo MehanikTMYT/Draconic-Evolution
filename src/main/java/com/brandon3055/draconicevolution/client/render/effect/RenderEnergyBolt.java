@@ -2,11 +2,11 @@
 //
 //import com.brandon3055.brandonscore.lib.Vec3D;
 //import com.brandon3055.brandonscore.utils.Utils;
-//import com.mojang.blaze3d.platform.GlStateManager;
+//import com.mojang.blaze3d.opengl.GlStateManager;
 //import com.mojang.blaze3d.systems.RenderSystem;
 //import com.mojang.blaze3d.vertex.*;
 //import net.minecraft.client.renderer.MultiBufferSource;
-//import net.minecraft.client.renderer.RenderType;
+//import net.minecraft.client.renderer.rendertype.RenderType;
 //import org.joml.Matrix4f;
 //
 //import java.util.Random;

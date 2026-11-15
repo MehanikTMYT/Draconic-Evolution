@@ -1,6 +1,6 @@
 package com.brandon3055.draconicevolution.client.render.particle;
 
-import com.brandon3055.brandonscore.client.particle.IntParticleData;
+import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.util.Mth;
@@ -18,9 +18,9 @@ public class CustomFlameParticle extends TextureSheetParticle {
         this.xd = this.xd * (double)0.01F + xSpeedIn;
         this.yd = this.yd * (double)0.01F + ySpeedIn;
         this.zd = this.zd * (double)0.01F + zSpeedIn;
-        this.x += (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
-        this.y += (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
-        this.z += (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
+        this.x += (double)((this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.05F);
+        this.y += (double)((this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.05F);
+        this.z += (double)((this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.05F);
         this.lifetime = (int)(8.0D / (Math.random() * 0.8D + 0.2D)) + 4;
     }
 

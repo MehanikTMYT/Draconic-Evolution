@@ -1,16 +1,27 @@
 package com.brandon3055.draconicevolution.entity;
 
 import com.brandon3055.brandonscore.handlers.IProcess;
+
 import com.brandon3055.brandonscore.handlers.ProcessHandler;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.init.DEDamage;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 
 import java.util.List;
+
 import java.util.Random;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.phys.AABB;
+
+
+
 
 /**
  * Created by brandon3055 on 12/8/2015.
@@ -32,7 +43,7 @@ public class ProcessChaosImplosion implements IProcess {
         this.yCoord = y;
         this.zCoord = z;
         this.power = 30F;
-        isDead = world.isClientSide;
+        isDead = world.isClientSide();
     }
 
     @Override
@@ -78,7 +89,7 @@ public class ProcessChaosImplosion implements IProcess {
             this.yCoord = y;
             this.zCoord = z;
             this.power = power;
-            this.random = random;
+            this.getRandom() = random;
         }
 
         @Override

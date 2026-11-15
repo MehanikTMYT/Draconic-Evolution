@@ -1,54 +1,91 @@
 package com.brandon3055.draconicevolution.client.gui;
 
-import codechicken.lib.gui.modular.ModularGui;
-import codechicken.lib.gui.modular.ModularGuiContainer;
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.BackgroundRender;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import codechicken.lib.gui.modular.lib.container.ContainerGuiProvider;
-import codechicken.lib.gui.modular.lib.container.ContainerScreenAccess;
-import codechicken.lib.gui.modular.lib.geometry.Direction;
-import codechicken.lib.gui.modular.lib.geometry.GuiParent;
 import codechicken.lib.math.MathHelper;
+
 import codechicken.lib.render.CCModel;
+
 import codechicken.lib.render.CCRenderState;
+
 import codechicken.lib.render.model.OBJParser;
+
 import codechicken.lib.vec.Matrix4;
+
 import codechicken.lib.vec.Rotation;
+
 import com.brandon3055.brandonscore.client.BCGuiTextures;
+
 import com.brandon3055.brandonscore.client.gui.GuiToolkit;
+
 import com.brandon3055.brandonscore.client.gui.InfoPanel;
+
+import com.brandon3055.brandonscore.client.gui.modular.ModularGui;
+
+import com.brandon3055.brandonscore.client.gui.modular.ModularGuiContainer;
+
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.BackgroundRender;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerGuiProvider;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerScreenAccess;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Direction;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GuiParent;
+
 import com.brandon3055.brandonscore.client.gui.modulargui.templates.ButtonRow;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileGenerator;
+
 import com.brandon3055.draconicevolution.client.DEGuiTextures;
+
 import com.brandon3055.draconicevolution.inventory.GeneratorMenu;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Inventory;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.renderer.rendertype.RenderType;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.resources.Identifier;
+
+import net.minecraft.world.entity.player.Inventory;
+
+import org.jetbrains.annotations.NotNull;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
+
 import static net.minecraft.ChatFormatting.GOLD;
+
 import static net.minecraft.ChatFormatting.GRAY;
+
+
+
+
 
 public class GeneratorGui extends ContainerGuiProvider<GeneratorMenu> {
     private static final GuiToolkit TOOLKIT = new GuiToolkit("gui.draconicevolution.generator");
     public static final int GUI_WIDTH = 176;
     public static final int GUI_HEIGHT = 166;
 
-    private static final RenderType modelType = RenderType.entitySolid(ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/generator/generator_2.png"));
+    private static final RenderType modelType = RenderType.entitySolid(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/generator/generator_2.png"));
     private static final CCModel storageModel;
 
 //    private ModuleGridPanel gridPanel;
 
     static {
-        Map<String, CCModel> map = new OBJParser(ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "models/block/generator/generator_storage.obj")).quads().ignoreMtl().parse();
+        Map<String, CCModel> map = new OBJParser(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "models/block/generator/generator_storage.obj")).quads().ignoreMtl().parse();
         storageModel = CCModel.combine(map.values());
         storageModel.computeNormals();
     }
@@ -112,7 +149,7 @@ public class GeneratorGui extends ContainerGuiProvider<GeneratorMenu> {
 
         //Mode Button
         GuiButton modButton = TOOLKIT.createFlat3DButton(root, () -> Component.translatable(tile.mode.get().unlocalizedName()));
-        modButton.onPress(() -> tile.mode.set(tile.mode.get().next(Screen.hasShiftDown())), GuiButton.LEFT_CLICK);
+        modButton.onPress(() -> tile.mode.set(tile.mode.get().next(Minecraft.getInstance().hasShiftDown())), GuiButton.LEFT_CLICK);
         modButton.onPress(() -> tile.mode.set(tile.mode.get().next(true)), GuiButton.RIGHT_CLICK);
         Constraints.size(modButton, 100, 14);
         Constraints.placeInside(modButton, playInv.container(), Constraints.LayoutPos.TOP_RIGHT, 0, -16);

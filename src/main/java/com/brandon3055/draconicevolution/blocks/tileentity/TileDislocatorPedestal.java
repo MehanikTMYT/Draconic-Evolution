@@ -1,47 +1,81 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.inventory.TileItemStackHandler;
+
 import com.brandon3055.brandonscore.lib.DelayedTask;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedInt;
+
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.brandonscore.utils.InventoryUtils;
+
 import com.brandon3055.brandonscore.utils.TargetPos;
+
 import com.brandon3055.draconicevolution.api.DislocatorEndPoint;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.brandon3055.draconicevolution.handlers.dislocator.DislocatorSaveData;
+
 import com.brandon3055.draconicevolution.handlers.dislocator.PlayerTarget;
+
 import com.brandon3055.draconicevolution.handlers.dislocator.TileTarget;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.items.tools.BoundDislocator;
+
 import com.brandon3055.draconicevolution.items.tools.Dislocator;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+import java.util.UUID;
 
 import javax.annotation.Nullable;
-import java.util.UUID;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.tags.BlockTags;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.Vec3;
+
+import net.neoforged.neoforge.capabilities.Capabilities;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+
+
 
 /**
  * Created by brandon3055 on 27/09/2016.
  */
 public class TileDislocatorPedestal extends TileBCore implements DislocatorEndPoint, IInteractTile {
-//    private static final ResourceLocation WOOL_TAG = new ResourceLocation("forge:wool");
+//    private static final Identifier WOOL_TAG = new Identifier("forge:wool");
 
     public final ManagedInt rotation = register(new ManagedInt("rotation", 0, DataFlags.SAVE_NBT_SYNC_TILE, DataFlags.TRIGGER_UPDATE));
     public TileItemStackHandler itemHandler = new TileItemStackHandler(this, 1);
@@ -58,7 +92,7 @@ public class TileDislocatorPedestal extends TileBCore implements DislocatorEndPo
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
         ItemStack stack = itemHandler.getStackInSlot(0);
@@ -80,14 +114,14 @@ public class TileDislocatorPedestal extends TileBCore implements DislocatorEndPo
                 boolean silenced = level.getBlockState(worldPosition.below()).is(BlockTags.WOOL);
 
                 if (!silenced) {
-                    BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().random.nextFloat() * 0.1F + 0.9F, false);
+                    BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().getRandom().nextFloat() * 0.1F + 0.9F, false);
                 }
 
                 BoundDislocator.notifyArriving(stack, player.level(), player);
                 location.teleport(player);
 
                 if (!silenced) {
-                    DelayedTask.run(1, () -> BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().random.nextFloat() * 0.1F + 0.9F, false));
+                    DelayedTask.run(1, () -> BCoreNetwork.sendSound(player.level(), player.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, player.level().getRandom().nextFloat() * 0.1F + 0.9F, false));
                 }
             }
 

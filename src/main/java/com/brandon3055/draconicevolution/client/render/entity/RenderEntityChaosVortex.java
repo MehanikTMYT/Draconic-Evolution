@@ -4,7 +4,7 @@
 //import com.brandon3055.draconicevolution.entity.EntityChaosImplosion;
 //import net.minecraft.client.renderer.entity.EntityRenderer;
 //import net.minecraft.client.renderer.entity.EntityRendererProvider;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //
 ///**
 // * Created by brandon3055 on 3/10/2015.
@@ -42,7 +42,7 @@
 //
 //
 //    @Override
-//    public ResourceLocation getTextureLocation(EntityChaosImplosion entity) {
+//    public Identifier getTextureLocation(EntityChaosImplosion entity) {
 //        return null;
 //    }
 //

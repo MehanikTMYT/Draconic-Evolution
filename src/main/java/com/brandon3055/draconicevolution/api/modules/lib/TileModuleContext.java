@@ -19,7 +19,7 @@ public class TileModuleContext extends ModuleContext {
     @Override
     @Nullable
     public IOPStorage getOpStorage() {
-        return CapabilityOP.fromBlockEntity(tile);
+        return tile.getLevel().getCapability(CapabilityOP.OP, tile.getBlockPos(), null);
     }
 
     @Override

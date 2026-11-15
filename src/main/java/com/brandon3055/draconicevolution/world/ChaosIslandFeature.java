@@ -60,7 +60,7 @@ public class ChaosIslandFeature extends Feature<NoneFeatureConfiguration> {
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
         BlockPos origin = context.origin();
-        ChunkPos chunkPos = new ChunkPos(origin);
+        ChunkPos chunkPos = new ChunkPos(origin.getX() >> 4, origin.getZ() >> 4);
         ChunkPos closestSpawn = getClosestSpawn(chunkPos);
 
         if (!DEConfig.chaosIslandEnabled) {
@@ -263,7 +263,7 @@ public class ChaosIslandFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     public static ChunkPos getClosestSpawn(ChunkPos pos) {
-        return new ChunkPos(MathUtils.getNearestMultiple(pos.x * 16, DEConfig.chaosIslandSeparation) / 16, MathUtils.getNearestMultiple(pos.z * 16, DEConfig.chaosIslandSeparation) / 16);
+        return new ChunkPos(MathUtils.getNearestMultiple(pos.x() * 16, DEConfig.chaosIslandSeparation) / 16, MathUtils.getNearestMultiple(pos.z() * 16, DEConfig.chaosIslandSeparation) / 16);
     }
 
     private static boolean inChunk(BlockPos ref, BlockPos test) {

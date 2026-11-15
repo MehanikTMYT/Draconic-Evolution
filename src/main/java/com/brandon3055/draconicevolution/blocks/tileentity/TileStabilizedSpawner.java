@@ -1,31 +1,57 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.lib.IChangeListener;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.datamanager.*;
+
 import com.brandon3055.brandonscore.utils.InventoryUtils;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.items.ItemCore;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SpawnEggItem;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.Random;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.EntityType;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.SpawnEggItem;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+
+
 
 /**
  * Created by brandon3055 on 28/09/2016.
@@ -72,15 +98,15 @@ public class TileStabilizedSpawner extends TileBCore implements IInteractTile, I
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult useItemOn(ItemStack stack, BlockState state, Player player, InteractionHand hand, BlockHitResult hit) {
         if (stack.is(DEContent.MOB_SOUL.get())) {
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 (mobSoul.set(stack.copy())).setCount(1);
                 if (!player.isCreative()) {
                     InventoryUtils.consumeHeldItem(player, stack, hand);
                 }
             }
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         } else if (stack.getItem() instanceof SpawnEggItem) {
             EntityType<?> type = ((SpawnEggItem) stack.getItem()).getType(stack);
             ItemStack soul = new ItemStack(DEContent.MOB_SOUL.get());
@@ -89,23 +115,23 @@ public class TileStabilizedSpawner extends TileBCore implements IInteractTile, I
             if (!player.getAbilities().instabuild) {
                 stack.shrink(1);
             }
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         } else if (!stack.isEmpty()) {
             SpawnerTier prevTier = spawnerTier.get();
             if (stack.is(DEContent.CORE_DRACONIUM.get())) {
-                if (spawnerTier.get() == SpawnerTier.BASIC) return ItemInteractionResult.FAIL;
+                if (spawnerTier.get() == SpawnerTier.BASIC) return InteractionResult.FAIL;
                 spawnerTier.set(SpawnerTier.BASIC);
             } else if (stack.is(DEContent.CORE_WYVERN.get())) {
-                if (spawnerTier.get() == SpawnerTier.WYVERN) return ItemInteractionResult.FAIL;
+                if (spawnerTier.get() == SpawnerTier.WYVERN) return InteractionResult.FAIL;
                 spawnerTier.set(SpawnerTier.WYVERN);
             } else if (stack.is(DEContent.CORE_AWAKENED.get())) {
-                if (spawnerTier.get() == SpawnerTier.DRACONIC) return ItemInteractionResult.FAIL;
+                if (spawnerTier.get() == SpawnerTier.DRACONIC) return InteractionResult.FAIL;
                 spawnerTier.set(SpawnerTier.DRACONIC);
             } else if (stack.is(DEContent.CORE_CHAOTIC.get())) {
-                if (spawnerTier.get() == SpawnerTier.CHAOTIC) return ItemInteractionResult.FAIL;
+                if (spawnerTier.get() == SpawnerTier.CHAOTIC) return InteractionResult.FAIL;
                 spawnerTier.set(SpawnerTier.CHAOTIC);
             } else {
-                return ItemInteractionResult.FAIL;
+                return InteractionResult.FAIL;
             }
 
             ItemStack dropStack = switch (prevTier) {
@@ -114,7 +140,7 @@ public class TileStabilizedSpawner extends TileBCore implements IInteractTile, I
                 case DRACONIC -> new ItemStack(DEContent.CORE_AWAKENED.get());
                 case CHAOTIC -> new ItemStack(DEContent.CORE_CHAOTIC.get());
             };
-            if (!level.isClientSide && !player.getAbilities().instabuild) {
+            if (!level.isClientSide() && !player.getAbilities().instabuild) {
                 ItemEntity entityItem = new ItemEntity(level, worldPosition.getX() + 0.5, worldPosition.getY() + 1, worldPosition.getZ() + 0.5, dropStack);
                 entityItem.setDeltaMovement(entityItem.getDeltaMovement().x, 0.2, entityItem.getDeltaMovement().z);
                 level.addFreshEntity(entityItem);
@@ -122,7 +148,7 @@ public class TileStabilizedSpawner extends TileBCore implements IInteractTile, I
             }
         }
 
-        return ItemInteractionResult.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @Override

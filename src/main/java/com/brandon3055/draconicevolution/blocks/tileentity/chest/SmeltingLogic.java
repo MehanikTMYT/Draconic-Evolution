@@ -1,31 +1,51 @@
 package com.brandon3055.draconicevolution.blocks.tileentity.chest;
 
 import codechicken.lib.inventory.InventorySimple;
+
 import codechicken.lib.inventory.InventoryUtils;
+
 import codechicken.lib.math.MathHelper;
+
 import com.brandon3055.brandonscore.api.power.OPStorage;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedEnum;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedFloat;
+
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
-import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import java.util.Locale;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.resources.Identifier;
+
+import net.minecraft.world.Container;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.crafting.*;
+
+import net.minecraft.world.level.Level;
+
+import net.neoforged.neoforge.items.IItemHandler;
+
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+
+
+
 
 /**
  * Created by brandon3055 on 19/04/2022
  */
 public class SmeltingLogic {
-    private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
+    private final Object2IntOpenHashMap<Identifier> recipesUsed = new Object2IntOpenHashMap<>();
     public final ManagedEnum<FeedMode> feedMode;
     public final ManagedFloat smeltProgress;
     /**
@@ -116,7 +136,7 @@ public class SmeltingLogic {
             }
             SingleRecipeInput input = new SingleRecipeInput(stack);
 
-            RecipeHolder<SmeltingRecipe> holder = world.getRecipeManager().getRecipeFor(RecipeType.SMELTING, input, world).orElse(null);
+            RecipeHolder<SmeltingRecipe> holder = world.recipeAccess().getRecipeFor(RecipeType.SMELTING, input, world).orElse(null);
             if (holder == null) {
                 continue;
             }
@@ -248,12 +268,12 @@ public class SmeltingLogic {
     public void loadAdditionalNBT(CompoundTag nbt) {
         CompoundTag compound = nbt.getCompound("recipes_used");
         for (String s : compound.getAllKeys()) {
-            this.recipesUsed.put(ResourceLocation.parse(s), compound.getInt(s));
+            this.recipesUsed.put(Identifier.parse(s), compound.getInt(s));
         }
     }
 
     public boolean isSmeltable(ItemStack stack) {
-        return tile.getLevel().getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), tile.getLevel()).isPresent();
+        return tile.getLevel().recipeAccess().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), tile.getLevel()).isPresent();
     }
 
     public enum FeedMode {

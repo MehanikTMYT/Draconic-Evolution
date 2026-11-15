@@ -1,9 +1,14 @@
 package com.brandon3055.draconicevolution.entity.guardian.control;
 
 import com.brandon3055.draconicevolution.entity.guardian.DraconicGuardianEntity;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianFightManager;
+
 import org.apache.logging.log4j.LogManager;
+
 import org.apache.logging.log4j.Logger;
+
+
 
 /**
  * Reminder. There are a fixed number of {@link PhaseType}'s but those types will create a new instance of their associated phase for each guardian entity.
@@ -27,7 +32,7 @@ public class PhaseManager {
             }
 
             phase = getPhase(phaseIn);
-            if (!dragon.level().isClientSide) {
+            if (!dragon.level().isClientSide()) {
                 dragon.getEntityData().set(DraconicGuardianEntity.PHASE, phaseIn.getId());
                 GuardianFightManager manager = dragon.getFightManager();
                 if (manager != null) {
@@ -36,7 +41,7 @@ public class PhaseManager {
 //            dragon.level.getServer().getPlayerList().broadcastMessage(new StringTextComponent("Start Phase: " + phaseIn), ChatType.CHAT, Util.NIL_UUID);
             }
 
-//         LOGGER.info("Dragon is now in phase {} on the {}", phaseIn, dragon.level.isClientSide ? "client" : "server");
+//         LOGGER.info("Dragon is now in phase {} on the {}", phaseIn, dragon.level.isClientSide() ? "client" : "server");
             phase.initPhase();
             return (T) phase;
         }

@@ -1,31 +1,83 @@
 package com.brandon3055.draconicevolution.handlers;
 
 import codechicken.lib.raytracer.RayTracer;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.api.energy.ICrystalBinder;
+
 import com.brandon3055.draconicevolution.entity.GuardianCrystalEntity;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.network.CrystalUpdateBatcher;
-import net.covers1624.quack.util.CrashLock;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.AnvilUpdateEvent;
-import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.ArrayList;
+
 import java.util.List;
+
 import java.util.Random;
+
 import java.util.WeakHashMap;
+
+import net.covers1624.quack.util.CrashLock;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.Mob;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.HitResult;
+
+import net.neoforged.bus.api.IEventBus;
+
+import net.neoforged.neoforge.common.NeoForge;
+
+import net.neoforged.neoforge.event.AnvilUpdateEvent;
+
+import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
+
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @SuppressWarnings ("unused")
 public class DEEventHandler {
@@ -126,7 +178,7 @@ public class DEEventHandler {
     }
 
     public static void rightClickItem(PlayerInteractEvent.RightClickItem event) {
-        if (event.getLevel().isClientSide || event.isCanceled() || !event.getEntity().isShiftKeyDown() || !(event.getItemStack().getItem() instanceof ICrystalBinder)) {
+        if (event.getLevel().isClientSide() || event.isCanceled() || !event.getEntity().isShiftKeyDown() || !(event.getItemStack().getItem() instanceof ICrystalBinder)) {
             return;
         }
 
@@ -151,7 +203,7 @@ public class DEEventHandler {
         if (event.getLeft().getItem() == DEContent.DISLOCATOR.get() && event.getRight().getItem() == DEContent.INGOT_DRACONIUM.get() && event.getLeft().getDamageValue() > 0) {
             event.setOutput(event.getLeft().copy());
             event.getOutput().setDamageValue(0);
-            event.setCost(1);
+            event.setXpCost(1);
             event.setMaterialCost(1);
         }
     }

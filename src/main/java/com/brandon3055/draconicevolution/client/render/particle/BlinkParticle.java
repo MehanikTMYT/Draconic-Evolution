@@ -16,8 +16,8 @@ public class BlinkParticle extends TextureSheetParticle {
       this.x = x;
       this.y = y;
       this.z = z;
-      this.quadSize = 0.1F * (this.random.nextFloat() * 0.2F + 0.5F) * 1.5F;
-      float f = this.random.nextFloat() * 0.6F + 0.4F;
+      this.quadSize = 0.1F * (this.getRandom().nextFloat() * 0.2F + 0.5F) * 1.5F;
+      float f = this.getRandom().nextFloat() * 0.6F + 0.4F;
       this.rCol = f * 0.9F;
       this.gCol = f * 0.3F;
       this.bCol = f;

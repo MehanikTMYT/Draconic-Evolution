@@ -26,7 +26,7 @@
 //import net.minecraft.world.entity.Entity;
 //import net.minecraft.world.entity.EntityType;
 //import net.minecraft.world.entity.LivingEntity;
-//import net.minecraft.world.entity.projectile.AbstractArrow;
+//import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 //import net.minecraft.world.item.ItemStack;
 //import net.minecraft.world.item.Items;
 //import net.minecraft.world.item.alchemy.Potion;
@@ -198,7 +198,7 @@
 //     * @return true prevents normal arrow damage processing.
 //     * */
 //    protected boolean activateDamageEffect(@Nullable HitResult traceResult) {
-//        if (level().isClientSide) return true;
+//        if (level().isClientSide()) return true;
 //        Entity owner = getOwner();
 //        Module<DamageModData> damageMod = getDamageModifier();
 //        Vec3 pos = position();
@@ -327,7 +327,7 @@
 //            super.tick();
 //        }
 //
-//        if (this.level().isClientSide) {
+//        if (this.level().isClientSide()) {
 //            if (this.inGround) {
 //                if (this.inGroundTime % 5 == 0) {
 //                    this.spawnPotionParticles(1);

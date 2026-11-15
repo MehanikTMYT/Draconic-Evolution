@@ -1,6 +1,6 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
-import com.brandon3055.brandonscore.api.BCStreamCodec;
+import com.brandon3055.draconicevolution.lib.DEStreamCodecs; // port-26.1.2: BCStreamCodec удалён из BC-26
 import com.brandon3055.brandonscore.api.power.IOPStorage;
 import com.brandon3055.draconicevolution.api.config.BooleanProperty;
 import com.brandon3055.draconicevolution.api.config.ConfigProperty;
@@ -44,7 +44,7 @@ public class NightVisionEntity extends ModuleEntity<AutoFeedData> {
             IntegerProperty.CODEC.fieldOf("enable_in_light").forGetter(e -> e.enableInLight)
     ).apply(builder, NightVisionEntity::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, NightVisionEntity> STREAM_CODEC = BCStreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, NightVisionEntity> STREAM_CODEC = DEStreamCodecs.composite(
             DEModules.streamCodec(), NightVisionEntity::getModule,
             ByteBufCodecs.INT, ModuleEntity::getGridX,
             ByteBufCodecs.INT, ModuleEntity::getGridY,

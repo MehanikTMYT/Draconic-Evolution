@@ -1,21 +1,37 @@
 package com.brandon3055.draconicevolution.entity.guardian.control;
 
 import codechicken.lib.data.MCDataInput;
+
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.draconicevolution.entity.guardian.DraconicGuardianEntity;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianFightManager;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianProjectileEntity;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+
 import java.util.stream.Collectors;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.util.Mth;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.level.ClipContext;
+
+import net.minecraft.world.phys.HitResult;
+
+import net.minecraft.world.phys.Vec3;
+
+
+
 
 public class ArialBombardPhase extends ChargeUpPhase {
     private int volleys = 0;
@@ -86,7 +102,7 @@ public class ArialBombardPhase extends ChargeUpPhase {
         double randMult = 0.1;
         Vector3 randVec = targetVec.copy().add((random.nextDouble() - 0.5) * randMult, (random.nextDouble() - 0.5) * randMult, (random.nextDouble() - 0.5) * randMult);
         GuardianProjectileEntity projectile = new GuardianProjectileEntity(this.guardian.level(), this.guardian, randVec.x, randVec.y, randVec.z, null, 25, GuardianFightManager.PROJECTILE_POWER);
-        projectile.moveTo(headPos.x, headPos.y, headPos.z, 0.0F, 0.0F);
+        projectile.snapTo(headPos.x, headPos.y, headPos.z, 0.0F, 0.0F);
         guardian.level().addFreshEntity(projectile);
         BCoreNetwork.sendSound(guardian.level(), guardian, SoundEvents.ENDER_DRAGON_SHOOT, SoundSource.HOSTILE, 32.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
 

@@ -1,14 +1,24 @@
 package com.brandon3055.draconicevolution.client.sound;
 
 import codechicken.lib.math.MathHelper;
+
 import com.brandon3055.draconicevolution.blocks.reactor.tileentity.TileReactorCore;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import net.minecraft.client.Minecraft;
+
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+
 import net.minecraft.client.resources.sounds.TickableSoundInstance;
+
 import net.minecraft.sounds.SoundSource;
+
 import net.minecraft.world.entity.player.Player;
+
 import net.minecraft.world.phys.Vec3;
+
+
 
 /**
  * Created by brandon3055 on 4/10/2015.
@@ -21,7 +31,7 @@ public class ReactorSound extends SimpleSoundInstance implements TickableSoundIn
     private int stopTimer = 0;
 
     public ReactorSound(TileReactorCore tile) {
-        super(DESounds.CORE_SOUND.get(), SoundSource.BLOCKS, tile.reactorState.get() == TileReactorCore.ReactorState.BEYOND_HOPE ? 10F : 1.5F, 1, tile.getLevel().random, tile.getBlockPos());
+        super(DESounds.CORE_SOUND.get(), SoundSource.BLOCKS, tile.reactorState.get() == TileReactorCore.ReactorState.BEYOND_HOPE ? 10F : 1.5F, 1, tile.getLevel().getRandom(), tile.getBlockPos());
         this.tile = tile;
         this.looping = true;
         this.targetPitch = 1F;
@@ -57,8 +67,8 @@ public class ReactorSound extends SimpleSoundInstance implements TickableSoundIn
             if (volume == 1.5F) {
                 donePlaying = true;
             }
-            if (tile.getLevel().random.nextInt(10) == 0) {
-                targetPitch = 1F + (tile.getLevel().random.nextFloat() / 2F);
+            if (tile.getLevel().getRandom().nextInt(10) == 0) {
+                targetPitch = 1F + (tile.getLevel().getRandom().nextFloat() / 2F);
             }
         }
 

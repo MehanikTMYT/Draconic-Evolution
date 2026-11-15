@@ -1,19 +1,33 @@
 package com.brandon3055.draconicevolution.init;
 
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SingleRecipeInput;
-import net.minecraft.world.item.crafting.SmeltingRecipe;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import java.util.HashMap;
+
+import java.util.Map;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.Items;
+
+import net.minecraft.world.item.crafting.RecipeHolder;
+
+import net.minecraft.world.item.crafting.RecipeType;
+
+import net.minecraft.world.item.crafting.SingleRecipeInput;
+
+import net.minecraft.world.item.crafting.SmeltingRecipe;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.Blocks;
+
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
+
+import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+
+
+
 
 /**
  * Created by brandon3055 on 9/06/2017.
@@ -55,7 +69,7 @@ public class OreDoublingRegistry {
 //                    continue;
 //                }
 //                stack = candidate;
-//                ResourceLocation registryName = candidate.getItem().getRegistryName();
+//                Identifier registryName = candidate.getItem().getRegistryName();
 //                if (registryName != null && registryName.getResourceDomain().equals(DEConfig.oreDoublingOutputPriority)) {
 //                    break;
 //                }
@@ -96,7 +110,7 @@ public class OreDoublingRegistry {
     }
 
     public static ItemStack getSmeltingResult(ItemStack stack, Level world) {
-        RecipeHolder<SmeltingRecipe> recipe = world.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), world).orElse(null);
+        RecipeHolder<SmeltingRecipe> recipe = world.recipeAccess().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), world).orElse(null);
         return recipe == null ? ItemStack.EMPTY : recipe.value().assemble(new SingleRecipeInput(stack), world.registryAccess());
     }
 

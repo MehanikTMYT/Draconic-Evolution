@@ -1,54 +1,103 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import codechicken.lib.data.MCDataInput;
+
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.api.power.OPStorage;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
-import com.brandon3055.brandonscore.client.particle.IntParticleData;
+
+import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
+
 import com.brandon3055.brandonscore.lib.IChangeListener;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedBool;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedByte;
+
 import com.brandon3055.draconicevolution.DEOldConfig;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModularOPStorage;
+
 import com.brandon3055.draconicevolution.client.DEParticles;
+
 import com.brandon3055.draconicevolution.client.render.effect.EffectTrackerCelestialManipulator;
+
 import com.brandon3055.draconicevolution.client.sound.CelestialModifierSound;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.inventory.CelestialManipulatorMenu;
+
 import com.brandon3055.draconicevolution.utils.LogHelper;
+
 import com.mojang.blaze3d.vertex.Tesselator;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ServerLevelData;
-import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+import java.util.LinkedList;
+
+import java.util.List;
 
 import javax.annotation.Nullable;
-import java.util.LinkedList;
-import java.util.List;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.MenuProvider;
+
+import net.minecraft.world.entity.player.Inventory;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.inventory.AbstractContainerMenu;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.level.storage.ServerLevelData;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.capabilities.Capabilities;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+
+
 
 /**
  * Created by brandon3055 on 28/09/2016.
@@ -85,7 +134,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
 
         if (weatherToggleRunning.get()) {
             timer++;
-            if (level.isClientSide) {
+            if (level.isClientSide()) {
                 updateWeatherEffects();
             } else {
                 if (timer >= 230) {
@@ -93,21 +142,21 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                     weatherToggleRunning.set(false);
                     level.getLevelData().setRaining(rain);
                     ((ServerLevelData) level.getLevelData()).setThundering(storm);
-                    int time = (10 * 60 * 20) + level.random.nextInt(20 * 60 * 20);
+                    int time = (10 * 60 * 20) + level.getRandom().nextInt(20 * 60 * 20);
                     ((ServerLevelData) level.getLevelData()).setRainTime(rain ? time : 0);
                     ((ServerLevelData) level.getLevelData()).setClearWeatherTime(rain ? 0 : time);
                 }
             }
         } else if (timeWarpRunning.get()) {
             timer++;
-            if (level.isClientSide) {
+            if (level.isClientSide()) {
                 updateSunEffect();
             }
             if (timer > 100) {
                 if (opStorage.getEnergyStored() > 320) {
                     int extracted = opStorage.extractEnergy(16000, true);
                     int ticks = extracted / 320;
-                    if (level.isClientSide) {
+                    if (level.isClientSide()) {
                         ClientLevel cLevel = (ClientLevel) level;
                         cLevel.setDayTime(cLevel.getDayTime() + ticks);
                     } else {
@@ -118,7 +167,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 } else {
                     stopTimeWarp();
                 }
-                if (!level.isClientSide && level.getDayTime() >= targetTime) {
+                if (!level.isClientSide() && level.getDayTime() >= targetTime) {
                     stopTimeWarp();
                 }
             }
@@ -128,13 +177,13 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
             }
 
             timer--;
-            if (timer <= 0 && !level.isClientSide) {
+            if (timer <= 0 && !level.isClientSide()) {
                 timeWarpStopping.set(false);
             }
 
-            if (level.isClientSide && timer >= 0) {
+            if (level.isClientSide() && timer >= 0) {
                 updateSunEffect();
-            } else if (level.isClientSide) {
+            } else if (level.isClientSide()) {
                 if (effects != null) {
                     effects.clear();
                 }
@@ -145,13 +194,13 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
             }
         } else if (active.get()) {
             active.set(false);
-        } else if (level.isClientSide) {
+        } else if (level.isClientSide()) {
             standbyParticleEffect();
         }
     }
 
     public void toggleWeather(boolean rain, boolean storm) {
-        if (level.isClientSide || active.get()) {
+        if (level.isClientSide() || active.get()) {
             return;
         }
 
@@ -305,7 +354,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
         }
 
         Vec3D vec = Vec3D.getCenter(worldPosition.offset(0, 1, 0));
-        sound = new CelestialModifierSound(DESounds.ELECTRIC_BUZZ.get(), worldPosition, level.random);
+        sound = new CelestialModifierSound(DESounds.ELECTRIC_BUZZ.get(), worldPosition, level.getRandom());
         sound.updateSound(vec, 0.01F, 0.5F);
         Minecraft.getInstance().getSoundManager().play(sound);
         level.playLocalSound(vec.x, vec.y, vec.z, DESounds.FUSION_COMPLETE.get(), SoundSource.BLOCKS, getSoundVolume(), 0.5F, false);
@@ -346,12 +395,12 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
         double scaleTime = (timer - expandStart) / (ascendStart - expandStart);
         if (timer > expandStart && timer < ascendStart) {
             for (int i = 0; i < 10; i++) {
-                Direction dir = Direction.values()[2 + level.random.nextInt(4)];
+                Direction dir = Direction.values()[2 + level.getRandom().nextInt(4)];
                 IntParticleData data = new IntParticleData(DEParticles.SPARK.get(),
                         0, //R
                         127,  //G
                         255,  //B
-                        (int) (1F * (level.random.nextFloat() + 0.1) * 100), //Scale
+                        (int) (1F * (level.getRandom().nextFloat() + 0.1) * 100), //Scale
                         (int) (5D * scaleTime * 100), //Spark scale
                         10, 0, //Max Age, Additional random age
                         (int) (0), //Gravity
@@ -370,7 +419,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                         0, //R
                         127,  //G
                         255,  //B
-                        (int) (5F * (level.random.nextFloat() + 0.1) * 100), //Scale
+                        (int) (5F * (level.getRandom().nextFloat() + 0.1) * 100), //Scale
                         (int) (100 * 100), //Spark scale
                         80, 0, //Max Age, Additional random age
                         (int) (-0.5 * 1000), //Gravity
@@ -378,7 +427,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                         //Set velocity direct
                 );
                 Vector3 pos = Vector3.fromTileCenter(this);
-                level.addParticle(data, pos.x, pos.y, pos.z, 0.5 * level.random.nextGaussian(), 0, 0.5 * level.random.nextGaussian());
+                level.addParticle(data, pos.x, pos.y, pos.z, 0.5 * level.getRandom().nextGaussian(), 0, 0.5 * level.getRandom().nextGaussian());
             }
         }
 
@@ -459,7 +508,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
         effects.get(1).blue = 1F;
         effects.get(1).renderBolts = false;
 
-        sound = new CelestialModifierSound(DESounds.SUN_DIAL_EFFECT.get(), worldPosition, level.random);
+        sound = new CelestialModifierSound(DESounds.SUN_DIAL_EFFECT.get(), worldPosition, level.getRandom());
         sound.updateSound(Vec3D.getCenter(worldPosition), getSoundVolume(), 0.5F);
         Minecraft.getInstance().getSoundManager().play(sound);
     }
@@ -496,7 +545,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 255, //R
                 127,  //G
                 0,  //B
-                (int) (1.2F * (level.random.nextFloat() + 0.1) * 100), //Scale
+                (int) (1.2F * (level.getRandom().nextFloat() + 0.1) * 100), //Scale
                 (int) (0.5F * 100), //Spark scale
                 30, 10, //Max Age, Additional random age
                 (int) (0) //Gravity
@@ -504,12 +553,12 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
         Vector3 pos = Vector3.fromTileCenter(this);
         level.addParticle(data, pos.x, pos.y, pos.z, 0.002D, 0.04, 0.002D);
 
-        Direction dir = Direction.values()[2 + level.random.nextInt(4)];
+        Direction dir = Direction.values()[2 + level.getRandom().nextInt(4)];
         data = new IntParticleData(DEParticles.SPARK.get(),
                 255, //R
                 127,  //G
                 255,  //B
-                (int) (1F * (level.random.nextFloat() + 0.1) * 100), //Scale
+                (int) (1F * (level.getRandom().nextFloat() + 0.1) * 100), //Scale
                 (int) (0.5F * 100), //Spark scale
                 10, 0, //Max Age, Additional random age
                 (int) (0), //Gravity
@@ -576,7 +625,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 76, //R
                 0,  //G
                 255,  //B
-                (int) (0.4F * (level.random.nextFloat() + 0.1) * 100), //Scale
+                (int) (0.4F * (level.getRandom().nextFloat() + 0.1) * 100), //Scale
                 (int) (0.15F * 100), //Spark scale
                 30, 10, //Max Age, Additional random age
                 (int) (0) //Gravity

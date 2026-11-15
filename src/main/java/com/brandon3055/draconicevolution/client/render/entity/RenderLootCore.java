@@ -10,7 +10,7 @@
 //import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
 //import com.brandon3055.draconicevolution.entity.EntityLootCore;
 //import com.brandon3055.draconicevolution.utils.ResourceHelperDE;
-//import com.mojang.blaze3d.platform.GlStateManager;
+//import com.mojang.blaze3d.opengl.GlStateManager;
 //import com.mojang.blaze3d.systems.RenderSystem;
 //import com.mojang.blaze3d.vertex.BufferBuilder;
 //import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -22,7 +22,7 @@
 //import net.minecraft.client.renderer.entity.EntityRenderer;
 //import net.minecraft.client.renderer.entity.EntityRendererProvider;
 //import net.minecraft.client.resources.language.I18n;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.util.Mth;
 //import net.minecraft.world.item.ItemStack;
 //
@@ -139,7 +139,7 @@
 //    }
 //
 //    @Override
-//    public ResourceLocation getTextureLocation(EntityLootCore entity) {
+//    public Identifier getTextureLocation(EntityLootCore entity) {
 //        return ResourceHelperDE.getResource("textures/items/loot_core.png");
 //    }
 //

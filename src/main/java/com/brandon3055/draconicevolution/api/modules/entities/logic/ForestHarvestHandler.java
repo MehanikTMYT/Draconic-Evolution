@@ -1,22 +1,56 @@
 package com.brandon3055.draconicevolution.api.modules.entities.logic;
 
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.inventory.InventoryDynamic;
+
 import com.brandon3055.brandonscore.utils.Utils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.particles.ParticleTypes;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.tags.BlockTags;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import org.jetbrains.annotations.NotNull;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 31/01/2023
@@ -53,7 +87,7 @@ public class ForestHarvestHandler implements IHarvestHandler {
         do {
             if (i++ > 80) return false;
             origin = origin.below();
-            if (origin.getY() < level.getMinBuildHeight()) return false;
+            if (origin.getY() < level.getMinY()) return false;
             state = level.getBlockState(origin);
             if (!canSearchThrough(state) || isHarvestable(state)) continue;
             if (!canSearchUnder(level.getBlockState(origin.above()))) {
@@ -70,7 +104,7 @@ public class ForestHarvestHandler implements IHarvestHandler {
 
     @Override
     public void tick(Level level, ServerPlayer player, ItemStack stack, IOPStorage storage, InventoryDynamic stackCollector) {
-        if (origin == null || complete || level.isClientSide) return;
+        if (origin == null || complete || level.isClientSide()) return;
 
         if (!sortedHarvestQue.isEmpty()) {
             for (int i = 0; i < speed && !sortedHarvestQue.isEmpty(); i++) {
@@ -89,7 +123,7 @@ public class ForestHarvestHandler implements IHarvestHandler {
 
         complete = true;//temp
 //        harvestComplete();
-        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.1F, 0.5F * ((player.level().random.nextFloat() - player.level().random.nextFloat()) * 0.7F + 1.8F));
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.1F, 0.5F * ((player.level().getRandom().nextFloat() - player.level().getRandom().nextFloat()) * 0.7F + 1.8F));
     }
 
     private void updateSearch(Level level, Player player) {
@@ -97,7 +131,7 @@ public class ForestHarvestHandler implements IHarvestHandler {
 
 
 
-        if (level instanceof ServerLevel serverLevel && level.random.nextFloat() < 0.1) {
+        if (level instanceof ServerLevel serverLevel && level.getRandom().nextFloat() < 0.1) {
             serverLevel.sendParticles((ServerPlayer) player, ParticleTypes.CLOUD, true, mPos.getX() + 0.5, mPos.getY() + 1.5, mPos.getZ() + 0.5, 1, 0, 0, 0, 0.1);
         }
 
@@ -142,7 +176,7 @@ public class ForestHarvestHandler implements IHarvestHandler {
         //Harvest
         doHarvest(stack, player, level, mPos.immutable(), storage, stackCollector);
 
-        if (level instanceof ServerLevel serverLevel && level.random.nextFloat() < 0.10) {
+        if (level instanceof ServerLevel serverLevel && level.getRandom().nextFloat() < 0.10) {
             serverLevel.sendParticles((ServerPlayer) player, ParticleTypes.FLAME, true, mPos.getX() + 0.5, mPos.getY() + 0.5, mPos.getZ() + 0.5, 1, 0, 0, 0, 0.1);
         }
 
@@ -165,7 +199,7 @@ public class ForestHarvestHandler implements IHarvestHandler {
     }
 
     private void queHarvest(Level level, BlockPos pos) {
-        sortedHarvestQue.add(new Pos(pos.asLong(), (int) Utils.getDistanceSq(pos.getX(), pos.getZ(), origin.getX(), origin.getZ()) + level.random.nextInt(16)));
+        sortedHarvestQue.add(new Pos(pos.asLong(), (int) Utils.getDistanceSq(pos.getX(), pos.getZ(), origin.getX(), origin.getZ()) + level.getRandom().nextInt(16)));
     }
 
 

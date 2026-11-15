@@ -1,24 +1,44 @@
 package com.brandon3055.draconicevolution.blocks;
 
 import com.brandon3055.brandonscore.blocks.EntityBlockBCore;
+
 import com.brandon3055.brandonscore.lib.CustomTabHandling;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileChaosCrystal;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.init.DEDamage;
+
 import net.minecraft.core.BlockPos;
+
 import net.minecraft.world.entity.Entity;
+
 import net.minecraft.world.entity.LivingEntity;
+
 import net.minecraft.world.entity.player.Player;
+
 import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.world.level.BlockGetter;
+
 import net.minecraft.world.level.Explosion;
+
 import net.minecraft.world.level.Level;
+
 import net.minecraft.world.level.block.entity.BlockEntity;
+
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.minecraft.world.level.material.FluidState;
+
 import net.minecraft.world.phys.shapes.CollisionContext;
+
 import net.minecraft.world.phys.shapes.Shapes;
+
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+
 
 /**
  * Created by brandon3055 on 24/9/2015.
@@ -61,7 +81,7 @@ public class ChaosCrystal extends EntityBlockBCore implements CustomTabHandling 
     @Override
     public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
         BlockEntity tile = world.getBlockEntity(pos);
-        if (!world.isClientSide && tile instanceof TileChaosCrystal) {
+        if (!world.isClientSide() && tile instanceof TileChaosCrystal) {
             ((TileChaosCrystal) tile).detonate(null);
         }
         super.onRemove(state, world, pos, newState, isMoving);
@@ -71,7 +91,7 @@ public class ChaosCrystal extends EntityBlockBCore implements CustomTabHandling 
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
         if (placer instanceof Player && ((Player) placer).getAbilities().instabuild) {
             BlockEntity tile = level.getBlockEntity(pos);
-            if (!level.isClientSide && tile instanceof TileChaosCrystal) {
+            if (!level.isClientSide() && tile instanceof TileChaosCrystal) {
                 ((TileChaosCrystal) tile).onValidPlacement();
                 ((TileChaosCrystal) tile).guardianDefeated.set(true);
             }

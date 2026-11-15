@@ -1,24 +1,44 @@
 package com.brandon3055.draconicevolution.items;
 
 import com.brandon3055.brandonscore.blocks.BlockBCore;
+
 import com.brandon3055.brandonscore.utils.InventoryUtils;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileStabilizedSpawner.SpawnerTier;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import net.minecraft.core.BlockPos;
+
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+
+import net.minecraft.resources.Identifier;
+
 import net.minecraft.world.InteractionHand;
+
 import net.minecraft.world.InteractionResult;
+
 import net.minecraft.world.entity.item.ItemEntity;
+
 import net.minecraft.world.item.Item;
+
 import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.world.item.component.CustomData;
+
 import net.minecraft.world.item.context.UseOnContext;
+
 import net.minecraft.world.level.BaseSpawner;
+
 import net.minecraft.world.level.Level;
+
 import net.minecraft.world.level.SpawnData;
+
 import net.minecraft.world.level.block.entity.BlockEntity;
+
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+
+
 
 /**
  * Created by brandon3055 on 2/06/2017.
@@ -38,7 +58,7 @@ public class ItemCore extends Item {
         BlockEntity tile = world.getBlockEntity(pos);
 
         if (tile instanceof SpawnerBlockEntity) {
-            if (!world.isClientSide) {
+            if (!world.isClientSide()) {
                 SpawnData data = ((SpawnerBlockEntity) tile).getSpawner().nextSpawnData;
                 if (data == null) {
                     return InteractionResult.FAIL;
@@ -47,7 +67,7 @@ public class ItemCore extends Item {
                 if (id.isEmpty()) {
                     return InteractionResult.FAIL;
                 }
-                ResourceLocation name = ResourceLocation.parse(id);
+                Identifier name = Identifier.parse(id);
                 ItemStack soul = new ItemStack(DEContent.MOB_SOUL.get());
                 DEContent.MOB_SOUL.get().setEntity(name, soul);
                 SpawnerTier tier = SpawnerTier.getTierFromCore(this);

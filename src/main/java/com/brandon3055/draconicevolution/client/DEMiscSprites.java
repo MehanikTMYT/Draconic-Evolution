@@ -4,7 +4,7 @@
 //import com.brandon3055.brandonscore.client.render.CustomSpriteUploader;
 //import com.brandon3055.draconicevolution.integration.ModHelper;
 //import com.google.common.collect.Streams;
-//import com.mojang.blaze3d.platform.GlStateManager;
+//import com.mojang.blaze3d.opengl.GlStateManager;
 //import com.mojang.blaze3d.systems.RenderSystem;
 //import com.mojang.blaze3d.vertex.BufferBuilder;
 //import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -13,11 +13,11 @@
 //import net.minecraft.client.particle.ParticleRenderType;
 //import net.minecraft.client.renderer.GameRenderer;
 //import net.minecraft.client.renderer.RenderStateShard;
-//import net.minecraft.client.renderer.RenderType;
+//import net.minecraft.client.renderer.rendertype.RenderType;
 //import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 //import net.minecraft.client.renderer.texture.TextureManager;
 //import net.minecraft.client.resources.model.Material;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraftforge.client.event.ColorHandlerEvent;
 //
 //import java.lang.reflect.Array;
@@ -36,10 +36,10 @@
 // * Created by brandon3055 on 22/05/2022
 // */
 //public class DEMiscSprites {
-//    public static final ResourceLocation ATLAS_LOCATION = new ResourceLocation(MODID, "textures/atlas/misc_sprites.png");
+//    public static final Identifier ATLAS_LOCATION = new Identifier(MODID, "textures/atlas/misc_sprites.png");
 //
 //    private static CustomSpriteUploader customSpriteUploader;
-//    private static final Map<ResourceLocation, Consumer<TextureAtlasSprite>> registeredSprites = new HashMap<>();
+//    private static final Map<Identifier, Consumer<TextureAtlasSprite>> registeredSprites = new HashMap<>();
 //    private static final Map<String, Material> matCache = new HashMap<>();
 //
 //    public static final RenderType GUI_TYPE = RenderType.create("gui_tex", DefaultVertexFormat.POSITION_COLOR_TEX, VertexFormat.Mode.QUADS, 256, RenderType.CompositeState.builder()
@@ -65,7 +65,7 @@
 //
 //        //Ender storage buttons
 //        if (ModHelper.ENDERSTORAGE.isPresent()) {
-//            register(new ResourceLocation("enderstorage:buttons"));
+//            register(new Identifier("enderstorage:buttons"));
 //        }
 //    }
 //
@@ -101,20 +101,20 @@
 //
 //    //region Register / Get
 //
-//    private static void register(ResourceLocation location) {
+//    private static void register(Identifier location) {
 //        register(location, null);
 //    }
 //
 //    private static void register(String location) {
-//        register(new ResourceLocation(MODID, location));
+//        register(new Identifier(MODID, location));
 //    }
 //
-//    private static void register(ResourceLocation location, Consumer<TextureAtlasSprite> onLoad) {
+//    private static void register(Identifier location, Consumer<TextureAtlasSprite> onLoad) {
 //        registeredSprites.put(location, onLoad);
 //    }
 //
 //    private static void register(String location, Consumer<TextureAtlasSprite> onLoad) {
-//        register(new ResourceLocation(MODID, location), onLoad);
+//        register(new Identifier(MODID, location), onLoad);
 //    }
 //
 //    private static void registerToArray(Function<Integer, String> nameFunction, Supplier<TextureAtlasSprite[]> arraySupplier) {
@@ -127,11 +127,11 @@
 //    }
 //
 //    public static Material getMat(String modid, String location) {
-//        return matCache.computeIfAbsent(modid + ":" + location, s -> new CustomMat(ATLAS_LOCATION, new ResourceLocation(modid, location)));
+//        return matCache.computeIfAbsent(modid + ":" + location, s -> new CustomMat(ATLAS_LOCATION, new Identifier(modid, location)));
 //    }
 //
 //    public static Material getMat(String location) {
-//        return matCache.computeIfAbsent(MODID + ":" + location, s -> new CustomMat(ATLAS_LOCATION, new ResourceLocation(MODID, location)));
+//        return matCache.computeIfAbsent(MODID + ":" + location, s -> new CustomMat(ATLAS_LOCATION, new Identifier(MODID, location)));
 //    }
 //
 //    public static TextureAtlasSprite getSprite(String location) {
@@ -139,12 +139,12 @@
 //    }
 //
 //    public static Supplier<Material> matGetter(String location) {
-//        return () -> matCache.computeIfAbsent(MODID + ":" + location, s -> new CustomMat(ATLAS_LOCATION, new ResourceLocation(MODID, location)));
+//        return () -> matCache.computeIfAbsent(MODID + ":" + location, s -> new CustomMat(ATLAS_LOCATION, new Identifier(MODID, location)));
 //    }
 //
 //    private static class CustomMat extends Material {
 //
-//        public CustomMat(ResourceLocation atlasLocationIn, ResourceLocation textureLocationIn) {
+//        public CustomMat(Identifier atlasLocationIn, Identifier textureLocationIn) {
 //            super(atlasLocationIn, textureLocationIn);
 //        }
 //

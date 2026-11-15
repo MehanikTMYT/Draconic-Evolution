@@ -9,7 +9,7 @@
 //import com.brandon3055.brandonscore.lib.datamanager.ManagedVec3I;
 //import com.brandon3055.draconicevolution.init.DEContent;
 //import net.minecraft.core.BlockPos;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.world.InteractionHand;
 //import net.minecraft.world.entity.player.Player;
 //import net.minecraft.world.level.block.Block;
@@ -44,7 +44,7 @@
 //        if (tile instanceof IMultiBlockPart) {
 //            return (IMultiBlockPart) tile;
 //        }
-//        else if (!level.isClientSide) {
+//        else if (!level.isClientSide()) {
 //            revert();
 //        }
 //
@@ -82,8 +82,8 @@
 //    }
 //
 //    public void revert() {
-//        if (level.isClientSide) return;
-//        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(blockName.get()));
+//        if (level.isClientSide()) return;
+//        Block block = ForgeRegistries.BLOCKS.getValue(new Identifier(blockName.get()));
 //        if (block != Blocks.AIR) {
 //            level.setBlockAndUpdate(worldPosition, block.defaultBlockState());
 //        }

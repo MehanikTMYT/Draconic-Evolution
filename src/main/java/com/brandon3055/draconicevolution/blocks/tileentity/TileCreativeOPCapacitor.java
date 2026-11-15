@@ -1,26 +1,47 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import com.brandon3055.brandonscore.BrandonsCore;
+
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedLong;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 import java.util.UUID;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.neoforged.neoforge.capabilities.Capabilities;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+
+
 
 /**
  * Created by brandon3055 on 19/07/2016.
@@ -99,7 +120,7 @@ public class TileCreativeOPCapacitor extends TileBCore implements IInteractTile 
     @Override
     public void tick() {
         super.tick();
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             for (Direction direction : Direction.values()) {
                 sendEnergyTo(level, worldPosition, powerRate.get(), direction);
             }
@@ -108,7 +129,7 @@ public class TileCreativeOPCapacitor extends TileBCore implements IInteractTile 
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             if (player.isShiftKeyDown()) {
                 powerRate.divide(10);
             } else {

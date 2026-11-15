@@ -1,10 +1,15 @@
 package com.brandon3055.draconicevolution.client.render.particle;
 
-import com.brandon3055.brandonscore.client.particle.IntParticleData;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
 
 import java.util.List;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+
+import net.minecraft.client.particle.*;
+
+
+
 
 public class ParticleEnergyBasic extends TextureSheetParticle {
 
@@ -13,7 +18,7 @@ public class ParticleEnergyBasic extends TextureSheetParticle {
     public ParticleEnergyBasic(ClientLevel world, double xPos, double yPos, double zPos, SpriteSet spriteSet) {
         super(world, xPos, yPos, zPos);
         this.spriteSet = spriteSet;
-        setSprite(spriteSet.get(world.random));
+        setSprite(spriteSet.get(world.getRandom()));
         hasPhysics = false;
     }
 

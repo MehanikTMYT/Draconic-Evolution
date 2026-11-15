@@ -1,7 +1,7 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
-import codechicken.lib.gui.modular.sprite.Material;
-import com.brandon3055.brandonscore.api.BCStreamCodec;
+import com.brandon3055.brandonscore.client.gui.modular.sprite.Material;
+import com.brandon3055.draconicevolution.lib.DEStreamCodecs; // port-26.1.2: BCStreamCodec удалён из BC-26
 import com.brandon3055.brandonscore.client.BCGuiTextures;
 import com.brandon3055.draconicevolution.api.config.BooleanProperty;
 import com.brandon3055.draconicevolution.api.config.ConfigProperty;
@@ -38,7 +38,7 @@ public class JunkFilterEntity extends FilteredModuleEntity<NoData> {
             BooleanProperty.CODEC.fieldOf("enabled").forGetter(e -> e.filterEnabled)
     ).apply(builder, JunkFilterEntity::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, JunkFilterEntity> STREAM_CODEC = BCStreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, JunkFilterEntity> STREAM_CODEC = DEStreamCodecs.composite(
             DEModules.streamCodec(), ModuleEntity::getModule,
             ByteBufCodecs.INT, ModuleEntity::getGridX,
             ByteBufCodecs.INT, ModuleEntity::getGridY,

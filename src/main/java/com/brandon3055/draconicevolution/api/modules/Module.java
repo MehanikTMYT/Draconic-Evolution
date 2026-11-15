@@ -1,6 +1,6 @@
 package com.brandon3055.draconicevolution.api.modules;
 
-import codechicken.lib.gui.modular.sprite.Material;
+import com.brandon3055.brandonscore.client.gui.modular.sprite.Material;
 import com.brandon3055.brandonscore.api.TechLevel;
 import com.brandon3055.draconicevolution.api.modules.data.ModuleData;
 import com.brandon3055.draconicevolution.api.modules.data.ModuleProperties;
@@ -23,7 +23,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.animal.FrogVariant;
+import net.minecraft.world.entity.animal.frog.FrogVariant;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.PotDecorations;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;

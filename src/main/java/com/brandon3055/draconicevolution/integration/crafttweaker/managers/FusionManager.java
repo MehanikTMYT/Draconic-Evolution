@@ -10,7 +10,7 @@
 //import com.brandon3055.draconicevolution.api.DraconicAPI;
 //import com.brandon3055.draconicevolution.api.crafting.FusionRecipe;
 //import com.brandon3055.draconicevolution.api.crafting.IFusionRecipe;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.world.item.crafting.RecipeType;
 //import org.openzen.zencode.java.ZenCodeType;
 //
@@ -23,7 +23,7 @@
 //    @ZenCodeType.Method
 //    public void addRecipe(String name, IItemStack result, IIngredient catalyst, long totalEnergy, TechLevel techLevel, FusionRecipe.FusionIngredient[] ingredients) {
 //        name = fixRecipeName(name);
-//        FusionRecipe fusionRecipe = new FusionRecipe(new ResourceLocation(name), result.getInternal(), catalyst.asVanillaIngredient(), totalEnergy, techLevel, Arrays.asList(ingredients));
+//        FusionRecipe fusionRecipe = new FusionRecipe(new Identifier(name), result.getInternal(), catalyst.asVanillaIngredient(), totalEnergy, techLevel, Arrays.asList(ingredients));
 //        CraftTweakerAPI.apply(new ActionAddRecipe<>(this, fusionRecipe));
 //    }
 //

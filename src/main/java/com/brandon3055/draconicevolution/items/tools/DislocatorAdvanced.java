@@ -1,63 +1,176 @@
 package com.brandon3055.draconicevolution.items.tools;
 
 import codechicken.lib.data.MCDataInput;
+
 import codechicken.lib.data.MCDataOutput;
+
 import com.brandon3055.brandonscore.handlers.HandHelper;
+
 import com.brandon3055.brandonscore.lib.ChatHelper;
+
 import com.brandon3055.brandonscore.lib.TeleportUtils;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.utils.DataUtils;
+
 import com.brandon3055.brandonscore.utils.TargetPos;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.client.gui.DislocatorGui;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.init.ItemData;
+
 import com.brandon3055.draconicevolution.integration.equipment.EquipmentManager;
+
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
+
 import com.google.common.collect.Sets;
+
 import com.mojang.serialization.Codec;
+
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import io.netty.buffer.ByteBuf;
-import net.covers1624.quack.collection.FastStream;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.RelativeMovement;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.pathfinder.PathComputationType;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.Tags;
-import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.ArrayList;
+
+import java.util.LinkedList;
+
+import java.util.List;
+
+import java.util.UUID;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+
+import net.covers1624.quack.collection.FastStream;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.network.codec.ByteBufCodecs;
+
+import net.minecraft.network.codec.StreamCodec;
+
+import net.minecraft.resources.ResourceKey;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.RelativeMovement;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.TooltipFlag;
+
+import net.minecraft.world.level.ClipContext;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.pathfinder.PathComputationType;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.HitResult;
+
+import net.minecraft.world.phys.Vec2;
+
+import net.minecraft.world.phys.Vec3;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.common.Tags;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 16/07/2016.
@@ -104,7 +217,7 @@ public class DislocatorAdvanced extends Dislocator {
         }
 
         ServerLevel targetLevel = serverLevel.getServer().getLevel(location.getDimension());
-        if ((serverLevel != targetLevel && !entity.canChangeDimensions(serverLevel, targetLevel)) || !(entity instanceof LivingEntity)) {
+        if ((serverLevel != targetLevel && !entity.canTeleport(serverLevel, targetLevel)) || !(entity instanceof LivingEntity)) {
             return true;
         }
 
@@ -117,23 +230,23 @@ public class DislocatorAdvanced extends Dislocator {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) { // port-26.1.2: InteractionResultHolder удалён
         ItemStack stack = player.getItemInHand(hand);
         TargetPos location = getTargetPos(stack, player.level());
 
         boolean blink = getBlinkMode(stack);
         if (player.isShiftKeyDown() || (location == null && !blink)) {
-            if (level.isClientSide) {
+            if (level.isClientSide()) {
                 openGui(stack, player);
             }
-        } else if (!level.isClientSide) {
+        } else if (!level.isClientSide()) {
             if (blink) {
                 handleBlink((ServerPlayer) player, stack, false);
             } else {
                 handleTeleport(player, stack, location, false);
             }
         }
-        return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+        return InteractionResult.PASS;
     }
 
     @OnlyIn (Dist.CLIENT)
@@ -148,7 +261,7 @@ public class DislocatorAdvanced extends Dislocator {
         } else if (useFuel(stack, player)) {
             dislocateEntity(stack, player, player, targetPos);
             if (showFuel) {
-                player.displayClientMessage(Component.translatable("dislocate.draconicevolution.teleport_fuel").append(" " + getFuel(stack)).withStyle(ChatFormatting.WHITE), true);
+                player.sendOverlayMessage(Component.translatable("dislocate.draconicevolution.teleport_fuel").append(" " + getFuel(stack)).withStyle(ChatFormatting.WHITE));
             }
         }
     }
@@ -171,7 +284,7 @@ public class DislocatorAdvanced extends Dislocator {
             blinkFuel--;
             setFuel(stack, blinkFuel);
             if (showFuel) {
-                player.displayClientMessage(Component.translatable("dislocate.draconicevolution.teleport_fuel").append(" " + getFuel(stack)).withStyle(ChatFormatting.WHITE), true);
+                player.sendOverlayMessage(Component.translatable("dislocate.draconicevolution.teleport_fuel").append(" " + getFuel(stack)).withStyle(ChatFormatting.WHITE));
             }
             player.getCooldowns().addCooldown(stack.getItem(), 5);
         }
@@ -464,7 +577,7 @@ public class DislocatorAdvanced extends Dislocator {
         }
 
         public DislocatorTarget(Entity entity) {
-            pos = TargetPos.of(entity);
+            pos = new TargetPos(entity);
         }
 
         public DislocatorTarget(CompoundTag nbt) {
@@ -476,7 +589,7 @@ public class DislocatorAdvanced extends Dislocator {
         }
 
         public DislocatorTarget(double x, double y, double z, ResourceKey<Level> dimension, float xRot, float yRot) {
-            pos = TargetPos.of(x, y, z, dimension, new Vec2(xRot, yRot));
+            pos = new TargetPos(x, y, z, dimension, xRot, yRot);
         }
 
         public DislocatorTarget(TargetPos pos, String name, boolean locked) {
@@ -499,7 +612,7 @@ public class DislocatorAdvanced extends Dislocator {
         }
 
         public void update(Entity player) {
-            pos = TargetPos.of(player);
+            pos = new TargetPos(player);
         }
 
         public String getName() {
@@ -524,7 +637,7 @@ public class DislocatorAdvanced extends Dislocator {
         }
 
         public void readFromNBT(CompoundTag nbt) {
-            pos = TargetPos.readFromNBT(nbt);
+            pos = new TargetPos(nbt);
             name = nbt.getString("name");
             locked = nbt.getBoolean("lock");
         }
@@ -536,7 +649,8 @@ public class DislocatorAdvanced extends Dislocator {
         }
 
         public void read(MCDataInput input) {
-            pos = TargetPos.read(input);
+            pos = new TargetPos();
+            pos.read(input); // port-26.1.2: TargetPos.read теперь instance-метод
             name = input.readString();
             locked = input.readBoolean();
         }

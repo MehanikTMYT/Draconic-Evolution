@@ -1,20 +1,53 @@
 package com.brandon3055.draconicevolution.handlers.dislocator;
 
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.utils.TargetPos;
+
 import com.brandon3055.draconicevolution.items.tools.BoundDislocator;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
 
 import java.util.List;
+
 import java.util.UUID;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.resources.ResourceKey;
+
+import net.minecraft.server.MinecraftServer;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.phys.AABB;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 15/10/2021
@@ -46,14 +79,14 @@ public class GroundTarget extends DislocatorTarget {
                 ItemStack stack = item.getItem();
                 UUID id = BoundDislocator.getLinkId(stack);
                 if (id != null && id.equals(linkID)) {
-                    return TargetPos.of(item);
+                    return new TargetPos(item);
                 }
             }
         } else {
             ItemStack stack = ((ItemEntity) entity).getItem();
             UUID id = BoundDislocator.getLinkId(stack);
             if (id != null && id.equals(linkID)) {
-                return TargetPos.of(entity);
+                return new TargetPos(entity);
             }
         }
         return null;
@@ -63,13 +96,13 @@ public class GroundTarget extends DislocatorTarget {
     protected void loadInternal(CompoundTag nbt) {
         super.loadInternal(nbt);
         entityPos = Vector3.fromNBT(nbt);
-        entityUUID = nbt.getUUID("entity_uuid");
+        entityUUID = TagUtils26.getUUID(TagUtils26, nbt, "entity_uuid");
     }
 
     @Override
     public CompoundTag save(CompoundTag nbt) {
         entityPos.writeToNBT(nbt);
-        nbt.putUUID("entity_uuid", entityUUID);
+        TagUtils26.putUUID(TagUtils26, nbt, "entity_uuid", entityUUID);
         return super.save(nbt);
     }
 

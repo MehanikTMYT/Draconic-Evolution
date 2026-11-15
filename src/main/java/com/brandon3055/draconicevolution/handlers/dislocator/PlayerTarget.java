@@ -1,17 +1,44 @@
 package com.brandon3055.draconicevolution.handlers.dislocator;
 
 import com.brandon3055.brandonscore.utils.TargetPos;
+
 import com.brandon3055.draconicevolution.items.tools.BoundDislocator;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
 
 import java.util.UUID;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.resources.ResourceKey;
+
+import net.minecraft.server.MinecraftServer;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.Level;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 15/10/2021
@@ -35,7 +62,7 @@ public class PlayerTarget extends DislocatorTarget {
         if (player != null) {
             for (ItemStack stack : player.getInventory().items) {
                 if (BoundDislocator.isValid(stack) && !sourceDislocatorID.equals(BoundDislocator.getDislocatorId(stack))) {
-                    return TargetPos.of(player);
+                    return new TargetPos(player);
                 }
             }
         }
@@ -53,14 +80,14 @@ public class PlayerTarget extends DislocatorTarget {
 
     @Override
     public CompoundTag save(CompoundTag nbt) {
-        nbt.putUUID("player_id", playerID);
+        TagUtils26.putUUID(TagUtils26, nbt, "player_id", playerID);
         return super.save(nbt);
     }
 
     @Override
     protected void loadInternal(CompoundTag nbt) {
         super.loadInternal(nbt);
-        playerID = nbt.getUUID("player_id");
+        playerID = TagUtils26.getUUID(TagUtils26, nbt, "player_id");
     }
 
     @Override

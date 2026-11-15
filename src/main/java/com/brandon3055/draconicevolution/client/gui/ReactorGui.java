@@ -1,16 +1,16 @@
 package com.brandon3055.draconicevolution.client.gui;
 
-import codechicken.lib.gui.modular.ModularGui;
-import codechicken.lib.gui.modular.ModularGuiContainer;
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import codechicken.lib.gui.modular.lib.SliderState;
-import codechicken.lib.gui.modular.lib.container.ContainerGuiProvider;
-import codechicken.lib.gui.modular.lib.container.ContainerScreenAccess;
-import codechicken.lib.gui.modular.lib.geometry.Align;
-import codechicken.lib.gui.modular.lib.geometry.Axis;
-import codechicken.lib.gui.modular.lib.geometry.Direction;
+import com.brandon3055.brandonscore.client.gui.modular.ModularGui;
+import com.brandon3055.brandonscore.client.gui.modular.ModularGuiContainer;
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+import com.brandon3055.brandonscore.client.gui.modular.lib.SliderState;
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerGuiProvider;
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerScreenAccess;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Align;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Axis;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Direction;
 import codechicken.lib.math.MathHelper;
 import com.brandon3055.brandonscore.api.TimeKeeper;
 import com.brandon3055.brandonscore.client.BCGuiTextures;
@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
 
 /**
  * Created by brandon3055 on 10/02/2017.

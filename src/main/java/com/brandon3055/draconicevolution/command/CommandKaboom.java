@@ -1,26 +1,48 @@
 package com.brandon3055.draconicevolution.command;
 
 import com.brandon3055.brandonscore.api.TimeKeeper;
+
 import com.brandon3055.brandonscore.handlers.ProcessHandler;
+
 import com.brandon3055.brandonscore.worldentity.WorldEntity;
+
 import com.brandon3055.brandonscore.worldentity.WorldEntityHandler;
+
 import com.brandon3055.draconicevolution.blocks.reactor.ProcessExplosion;
+
 import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
+
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
+
 import com.brandon3055.draconicevolution.utils.LogHelper;
+
 import com.mojang.brigadier.CommandDispatcher;
+
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+
 import com.mojang.brigadier.context.CommandContext;
+
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+
 import net.minecraft.commands.CommandSourceStack;
+
 import net.minecraft.commands.Commands;
+
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+
 import net.minecraft.core.BlockPos;
+
 import net.minecraft.core.Vec3i;
+
 import net.minecraft.network.chat.Component;
+
 import net.minecraft.server.level.ServerLevel;
+
 import net.minecraft.server.level.ServerPlayer;
+
 import net.minecraft.world.level.chunk.LevelChunk;
+
+
 
 /**
  * Created by brandon3055 on 23/06/2017.
@@ -113,14 +135,14 @@ public class CommandKaboom {
 ////            guardian.getPhaseManager().setPhase(PhaseType.HOLDING_PATTERN);
 ////            guardian.setPosition(0, 128, 0);
 ////            player.world.addEntity(guardian);
-//            ChaosWorldGenHandler.generateObelisk((ServerWorld)player.world, player.getPosition().add(0, 0, 40), player.world.rand);
+//            ChaosWorldGenHandler.generateObelisk((ServerWorld)player.world, player.position().add(0, 0, 40), player.world.rand);
 //        } catch (Throwable e) {
 //            e.printStackTrace();
 //        }
 
 
-//        ShortPos shortPos = new ShortPos(player.getPosition());
-//        ExplosionHelper helper = new ExplosionHelper((ServerWorld) player.world, player.getPosition(), shortPos);
+//        ShortPos shortPos = new ShortPos(player.position());
+//        ExplosionHelper helper = new ExplosionHelper((ServerWorld) player.world, player.position(), shortPos);
 //        LinkedList<HashSet<Integer>> list = new LinkedList<>();
 //        HashSet<Integer> set= new HashSet<>();
 //
@@ -155,7 +177,7 @@ public class CommandKaboom {
     }
 
     private static int relight(CommandSourceStack source) {
-        BlockPos pos = BlockPos.containing(source.getPosition());
+        BlockPos pos = BlockPos.containing(source.position());
         ServerLevel world = source.getLevel();
         while (world.isEmptyBlock(pos)) pos = pos.below();
 

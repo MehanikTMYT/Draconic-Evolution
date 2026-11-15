@@ -1,13 +1,22 @@
 package com.brandon3055.draconicevolution.blocks.reactor.tileentity;
 
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.brandonscore.utils.EnergyUtils;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import net.minecraft.core.BlockPos;
+
 import net.minecraft.world.level.block.entity.BlockEntity;
+
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+
 
 /**
  * Created by brandon3055 on 18/01/2017.
@@ -29,7 +38,7 @@ public class TileReactorStabilizer extends TileReactorComponent {
     public void tick() {
         super.tick();
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
 

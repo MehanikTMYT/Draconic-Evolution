@@ -1,28 +1,53 @@
 package com.brandon3055.draconicevolution.client.gui;
 
-import codechicken.lib.gui.modular.ModularGui;
-import codechicken.lib.gui.modular.ModularGuiContainer;
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.container.ContainerGuiProvider;
-import codechicken.lib.gui.modular.lib.container.ContainerScreenAccess;
-import codechicken.lib.gui.modular.lib.geometry.Direction;
 import com.brandon3055.brandonscore.client.BCGuiTextures;
-import com.brandon3055.brandonscore.client.gui.GuiToolkit;
+
 import com.brandon3055.brandonscore.client.gui.GuiToolkit.Palette;
+
+import com.brandon3055.brandonscore.client.gui.GuiToolkit;
+
 import com.brandon3055.brandonscore.client.gui.InfoPanel;
+
+import com.brandon3055.brandonscore.client.gui.modular.ModularGui;
+
+import com.brandon3055.brandonscore.client.gui.modular.ModularGuiContainer;
+
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerGuiProvider;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerScreenAccess;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Direction;
+
 import com.brandon3055.brandonscore.client.gui.modulargui.GuiEntityFilter;
+
 import com.brandon3055.brandonscore.client.gui.modulargui.templates.ButtonRow;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileGrinder;
+
 import com.brandon3055.draconicevolution.client.DEGuiTextures;
+
 import com.brandon3055.draconicevolution.inventory.GrinderMenu;
+
+import net.minecraft.client.Minecraft;
+
 import net.minecraft.network.chat.Component;
+
 import net.minecraft.world.entity.player.Inventory;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
+
 import static net.minecraft.ChatFormatting.GOLD;
+
 import static net.minecraft.ChatFormatting.GRAY;
+
+
+
 
 /**
  * Created by brandon3055 on 30/3/2016.
@@ -97,7 +122,7 @@ public class GrinderGui extends ContainerGuiProvider<GrinderMenu> {
 
         GuiButton aoeSize = TOOLKIT.createFlat3DButton(root, () -> TOOLKIT.translate("aoe").append(" " + getAOEString()))
                 .setTooltipSingle(TOOLKIT.translate("aoe.info"))
-                .onPress(() -> modifyAOE(Screen.hasShiftDown()), GuiButton.LEFT_CLICK)
+                .onPress(() -> modifyAOE(Minecraft.getInstance().hasShiftDown()), GuiButton.LEFT_CLICK)
                 .onPress(() -> modifyAOE(true), GuiButton.RIGHT_CLICK)
                 .constrain(HEIGHT, literal(14))
                 .constrain(TOP, match(invBG.get(TOP)))

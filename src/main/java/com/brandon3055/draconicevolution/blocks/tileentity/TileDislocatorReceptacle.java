@@ -1,67 +1,127 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.api.hud.IHudBlock;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.brandonscore.inventory.TileItemStackHandler;
+
 import com.brandon3055.brandonscore.lib.DelayedTask;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.IRSSwitchable;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedByte;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedEnum;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedPos;
+
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.brandonscore.utils.*;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.api.DislocatorEndPoint;
+
 import com.brandon3055.draconicevolution.api.energy.ICrystalLink;
+
 import com.brandon3055.draconicevolution.api.energy.IENetEffectTile;
+
 import com.brandon3055.draconicevolution.blocks.DislocatorReceptacle;
+
 import com.brandon3055.draconicevolution.blocks.energynet.rendering.ENetFXHandler;
+
 import com.brandon3055.draconicevolution.blocks.energynet.rendering.ENetFXHandlerClient;
+
 import com.brandon3055.draconicevolution.blocks.energynet.rendering.ENetFXHandlerServer;
+
 import com.brandon3055.draconicevolution.client.render.effect.CrystalFXBase;
+
 import com.brandon3055.draconicevolution.handlers.DEEventHandler;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.brandon3055.draconicevolution.handlers.dislocator.DislocatorSaveData;
+
 import com.brandon3055.draconicevolution.handlers.dislocator.DislocatorTarget;
+
 import com.brandon3055.draconicevolution.handlers.dislocator.PlayerTarget;
+
 import com.brandon3055.draconicevolution.handlers.dislocator.TileTarget;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.items.tools.BoundDislocator;
+
 import com.brandon3055.draconicevolution.items.tools.Dislocator;
+
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Axis;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+import java.util.*;
 
 import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
-import java.util.*;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction.Axis;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.resources.ResourceKey;
+
+import net.minecraft.server.MinecraftServer;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.Vec3;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.capabilities.Capabilities;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+
+
 
 /**
  * Created by brandon3055 on 16/07/2016.
@@ -105,17 +165,17 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult useItemOn(ItemStack stack, BlockState state, Player player, InteractionHand hand, BlockHitResult hit) {
         if (hasRSSignal()) {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
 
         if (stack.getItem() == DEContent.INFUSED_OBSIDIAN.get().asItem()) {
             level.setBlockAndUpdate(worldPosition, state.setValue(DislocatorReceptacle.CAMO, !state.getValue(DislocatorReceptacle.CAMO)));
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             ItemStack previousInstalled = itemHandler.getStackInSlot(0);
             InventoryUtils.handleHeldStackTransfer(0, itemHandler, player);
             //Transfer the dislocator that was in the pedestal to the players inventory
@@ -126,11 +186,11 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
             checkIn();
         }
 
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     private void onInventoryChange() {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         if (portalHelper.isRunning()) {
             portalHelper.abort();
@@ -145,7 +205,7 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
     }
 
     public void attemptActivation() {
-        if (level.isClientSide || isActive() || portalHelper.isRunning()) return;
+        if (level.isClientSide() || isActive() || portalHelper.isRunning()) return;
         TargetPos target = getTargetPos();
         if (target != null) {
             portalHelper.startScan();
@@ -164,7 +224,7 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
     }
 
     public void handleEntityTeleport(Entity entity) {
-        if (level.isClientSide || teleportQ.contains(entity)) {
+        if (level.isClientSide() || teleportQ.contains(entity)) {
             return;
         }
 
@@ -180,7 +240,7 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
     public void tick() {
         updateCrystalLogic();
         super.tick();
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         if (portalHelper.isRunning()) {
             int maxSpeed = portalHelper.isBuilding() ? 125 : 384; //ignitionStage.get() == 1 ? 128 : 256;
@@ -381,11 +441,11 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
         fxHandler.update();
 
         boolean boundCrystals = isActive() && isBound() && linkedCrystal.get() != null;
-        if (level.isClientSide && boundCrystals && remoteCrystalTier.isDirty(false)) {
+        if (level.isClientSide() && boundCrystals && remoteCrystalTier.isDirty(false)) {
             fxHandler.reloadConnections();
         }
 
-        if (!level.isClientSide && boundCrystals) {
+        if (!level.isClientSide() && boundCrystals) {
             if (DEEventHandler.serverTicks % 10 == 0) {
                 BlockEntity remoteTile = getRemoteReceptacle();
                 ICrystalLink remote = getRemoteCrystal();
@@ -404,7 +464,7 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
             if (linkedFlowRate.get() != 0 && DEEventHandler.serverTicks % 100 == 0) {
                 dataManager.forceSync(linkedFlowRate);
             }
-        } else if (!level.isClientSide) {
+        } else if (!level.isClientSide()) {
             linkedFlowRate.set(0);
         }
     }

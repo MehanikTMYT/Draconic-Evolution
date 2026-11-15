@@ -1,38 +1,69 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import codechicken.lib.raytracer.RayTracer;
+
 import codechicken.lib.raytracer.SubHitBlockHitResult;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.inventory.TileItemStackHandler;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedBool;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedByte;
+
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.brandonscore.utils.InventoryUtils;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+
 import java.util.List;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.BlockItem;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.TieredItem;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.level.gamerules.GameRules;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.HitResult;
+
+import net.neoforged.neoforge.capabilities.Capabilities;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+import org.jetbrains.annotations.Nullable;
+
+
+
 
 /**
  * Created by brandon3055 on 25/07/2016.
@@ -128,35 +159,35 @@ public class TilePlacedItem extends TileBCore implements IInteractTile {
     }
 
     @Override
-    public ItemInteractionResult useItemOn(ItemStack heldStack, BlockState state, Player player, InteractionHand hand, BlockHitResult traceIn) {
-        if (player.level().isClientSide()) return ItemInteractionResult.SUCCESS;
+    public InteractionResult useItemOn(ItemStack heldStack, BlockState state, Player player, InteractionHand hand, BlockHitResult traceIn) {
+        if (player.level().isClientSide()) return InteractionResult.SUCCESS;
         List<ItemStack> stacks = getStacksInOrder();
 
         HitResult hit = RayTracer.retrace(player);
         if (!(hit instanceof SubHitBlockHitResult)){
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
 
         int index = ((SubHitBlockHitResult) hit).subHit - 1;
         if (!heldStack.isEmpty() && heldStack.getItem() == DEContent.CRYSTAL_BINDER.get() && getStacksInOrder().size() == 1) {
             toolMode.invert();
             tick();
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (player.isShiftKeyDown()) {
             if (index >= 0 && index < rotation.length) {
                 rotation[index].inc();
-                BCoreNetwork.sendSound(level, worldPosition, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.PLAYERS, 1.0F, 0.9F + level.random.nextFloat() * 0.2F, false);
+                BCoreNetwork.sendSound(level, worldPosition, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.PLAYERS, 1.0F, 0.9F + level.getRandom().nextFloat() * 0.2F, false);
                 tick();
             }
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (index == -1) {
             onBroken(player, player.getOnPos().above(), true);
             level.removeBlock(getBlockPos(), false);
-            return ItemInteractionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (index < stacks.size()) {
@@ -167,7 +198,7 @@ public class TilePlacedItem extends TileBCore implements IInteractTile {
             }
         }
 
-        return ItemInteractionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -176,13 +207,13 @@ public class TilePlacedItem extends TileBCore implements IInteractTile {
         List<ItemStack> stacks = getStacksInOrder();
         if (stacks.size() == 1 && !(stacks.get(0).getItem() instanceof BlockItem)) {
             toolMode.invert();
-            BCoreNetwork.sendSound(level, worldPosition, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.PLAYERS, 1.0F, 0.9F + level.random.nextFloat() * 0.2F, false);
+            BCoreNetwork.sendSound(level, worldPosition, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.PLAYERS, 1.0F, 0.9F + level.getRandom().nextFloat() * 0.2F, false);
             tick();
         } else {
             HitResult hit = player.pick(4, 0, false);
             if (hit instanceof SubHitBlockHitResult && hit.getType() == HitResult.Type.BLOCK && ((SubHitBlockHitResult) hit).subHit > 0 && ((SubHitBlockHitResult) hit).subHit - 1 < rotation.length) {
                 rotation[((SubHitBlockHitResult) hit).subHit - 1].dec();
-                BCoreNetwork.sendSound(level, worldPosition, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.PLAYERS, 1.0F, 0.9F + level.random.nextFloat() * 0.2F, false);
+                BCoreNetwork.sendSound(level, worldPosition, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.PLAYERS, 1.0F, 0.9F + level.getRandom().nextFloat() * 0.2F, false);
                 tick();
             }
         }
@@ -198,10 +229,10 @@ public class TilePlacedItem extends TileBCore implements IInteractTile {
     }
 
     public static void popResource(Level world, BlockPos pos, ItemStack stack, boolean noPickupDelay) {
-        if (!world.isClientSide && !stack.isEmpty() && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !world.restoringBlockSnapshots) {
-            double d0 = (double) (world.random.nextFloat() * 0.5F) + 0.25D;
-            double d1 = (double) (world.random.nextFloat() * 0.5F) + 0.25D;
-            double d2 = (double) (world.random.nextFloat() * 0.5F) + 0.25D;
+        if (!world.isClientSide() && !stack.isEmpty() && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !world.restoringBlockSnapshots) {
+            double d0 = (double) (world.getRandom().nextFloat() * 0.5F) + 0.25D;
+            double d1 = (double) (world.getRandom().nextFloat() * 0.5F) + 0.25D;
+            double d2 = (double) (world.getRandom().nextFloat() * 0.5F) + 0.25D;
             ItemEntity itementity = new ItemEntity(world, pos.getX() + d0, pos.getY() + d1, pos.getZ() + d2, stack);
             if (noPickupDelay) {
                 itementity.setNoPickUpDelay();

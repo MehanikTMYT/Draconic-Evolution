@@ -1,43 +1,81 @@
 package com.brandon3055.draconicevolution.network;
 
 import codechicken.lib.data.MCDataInput;
+
 import codechicken.lib.inventory.InventoryUtils;
+
 import codechicken.lib.packet.ICustomPacketHandler;
+
 import codechicken.lib.packet.PacketCustom;
+
 import com.brandon3055.brandonscore.handlers.HandHelper;
+
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
+
 import com.brandon3055.draconicevolution.api.crafting.IFusionRecipe;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleGrid;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleHostContainer;
+
 import com.brandon3055.draconicevolution.blocks.PlacedItem;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TilePlacedItem;
+
 import com.brandon3055.draconicevolution.client.gui.modular.itemconfig.PropertyData;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.integration.equipment.EquipmentManager;
-import com.brandon3055.draconicevolution.integration.jei.FusionRecipeTransferHelper;
+
 import com.brandon3055.draconicevolution.inventory.ConfigurableItemMenu;
+
 import com.brandon3055.draconicevolution.inventory.FusionCraftingCoreMenu;
+
 import com.brandon3055.draconicevolution.inventory.ModularItemMenu;
+
 import com.brandon3055.draconicevolution.items.tools.DislocatorAdvanced;
+
 import com.brandon3055.draconicevolution.items.tools.Magnet;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.event.EventHooks;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
 
 import java.util.ArrayList;
+
 import java.util.List;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.resources.Identifier;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.inventory.ContainerInput;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.crafting.RecipeHolder;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.HitResult;
+
+import net.neoforged.neoforge.common.util.BlockSnapshot;
+
+import net.neoforged.neoforge.event.EventHooks;
+
+
+
 
 public class ServerPacketHandler implements ICustomPacketHandler.IServerPacketHandler {
 
@@ -80,8 +118,7 @@ public class ServerPacketHandler implements ICustomPacketHandler.IServerPacketHa
             case DraconicNetwork.S_DISLOCATOR_SCROLL:
                 dislocatorScroll(sender, packet);
                 break;
-            case DraconicNetwork.S_JEI_FUSION_TRANSFER:
-                jeiFusionTransfer(sender, packet);
+            // port-26.1.2: S_JEI_FUSION_TRANSFER removed (EMI-only policy)
                 break;
             case DraconicNetwork.S_PLACE_ITEM:
                 placeItem(sender, packet);
@@ -112,7 +149,7 @@ public class ServerPacketHandler implements ICustomPacketHandler.IServerPacketHa
             Magnet.toggleEnabled(stack, player);
             boolean enabled = Magnet.isEnabled(stack);
 //            ChatHelper.sendIndexed(player, new TranslationTextComponent("item_dislocate.draconicevolution." + (enabled ? "activate" : "deactivate")), 567);
-            player.displayClientMessage(Component.translatable("item_dislocate.draconicevolution." + (enabled ? "activate" : "deactivate")).withStyle(enabled ? ChatFormatting.GREEN : ChatFormatting.RED), true);
+            player.sendOverlayMessage(Component.translatable("item_dislocate.draconicevolution." + (enabled ? "activate" : "deactivate")).withStyle(enabled ? ChatFormatting.GREEN : ChatFormatting.RED));
         }
     }
 
@@ -190,7 +227,7 @@ public class ServerPacketHandler implements ICustomPacketHandler.IServerPacketHa
             if (grid != null) {
                 try (ModuleHost host = container.getModuleHost()) {
                     ModuleGrid.GridPos pos = grid.getCell(host, input.readByte(), input.readByte());
-                    grid.cellClicked(host, pos, input.readFloat(), input.readFloat(), input.readByte(), input.readEnum(ClickType.class));
+                    grid.cellClicked(host, pos, input.readFloat(), input.readFloat(), input.readByte(), input.readEnum(ContainerInput.class));
                 }
             }
         }
@@ -229,14 +266,7 @@ public class ServerPacketHandler implements ICustomPacketHandler.IServerPacketHa
         }
     }
 
-    private void jeiFusionTransfer(ServerPlayer sender, PacketCustom packet) {
-        ResourceLocation id = packet.readResourceLocation();
-        boolean maxTransfer = packet.readBoolean();
-        RecipeHolder<?> recipe = sender.level().getRecipeManager().byKey(id).orElse(null);
-        if (recipe != null && recipe.value() instanceof IFusionRecipe fusionRecipe && sender.containerMenu instanceof FusionCraftingCoreMenu) {
-            FusionRecipeTransferHelper.doServerSideTransfer(sender, (FusionCraftingCoreMenu) sender.containerMenu, fusionRecipe, maxTransfer);
-        }
-    }
+    // port-26.1.2: jeiFusionTransfer removed (EMI-only policy)
 
     private void placeItem(ServerPlayer player, PacketCustom packet) {
         ItemStack stack = HandHelper.getMainFirst(player);

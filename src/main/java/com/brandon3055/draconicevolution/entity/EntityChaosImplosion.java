@@ -54,18 +54,18 @@
 //
 //    @Override
 //    public void tick() {
-//        if (!level.isClientSide) {
+//        if (!level.isClientSide()) {
 //            entityData.set(TICKS, tickCount);
 //        }
 //
 ////        Vec3D pos = new Vec3D(getPosX(), getPosY(), getPosZ());
 //
-//        if (tickCount < 30 && tickCount % 5 == 0 && level.isClientSide) {
+//        if (tickCount < 30 && tickCount % 5 == 0 && level.isClientSide()) {
 //            //TODO Particles
 ////            BCEffectHandler.spawnFX(DEParticles.CHAOS_IMPLOSION, world, pos, pos, 1024D, 1);
 ////            DraconicEvolution.proxy.spawnParticle(new Particles.ChaosExpansionParticle(world, posX, posY, posZ, false), 512);
 //        }
-//        if (tickCount >= 100 && tickCount < 130 && tickCount % 5 == 0 && level.isClientSide) {
+//        if (tickCount >= 100 && tickCount < 130 && tickCount % 5 == 0 && level.isClientSide()) {
 ////            BCEffectHandler.spawnFX(DEParticles.CHAOS_IMPLOSION, world, pos, pos, 1024D, 2);
 ////            DraconicEvolution.proxy.spawnParticle(new Particles.ChaosExpansionParticle(world, posX, posY, posZ, true), 512);
 //        }
@@ -78,17 +78,17 @@
 ////                double x = posX - 18 + rand.nextDouble() * 36;
 ////                double y = posY - 8 + rand.nextDouble() * 16;
 ////                double z = posZ - 18 + rand.nextDouble() * 36;
-//                if (level.isClientSide) {
+//                if (level.isClientSide()) {
 ////                    BCEffectHandler.spawnFX(DEParticles.CHAOS_IMPLOSION, world, new Vec3D(x, y, z), pos, 512D, 0);
 //                }
 //            }
 //
-//            if (tickCount > 130 && level.isClientSide && tickCount % 2 == 0) {
+//            if (tickCount > 130 && level.isClientSide() && tickCount % 2 == 0) {
 //                shakeScreen();
 //            }
 //        }
 //
-//        if (tickCount == 700 && !level.isClientSide) {
+//        if (tickCount == 700 && !level.isClientSide()) {
 ////            BCEffectHandler.spawnFX(DEParticles.CHAOS_IMPLOSION, world, pos, pos, 1024D, 5);
 //            ProcessHandler.addProcess(new ProcessChaosImplosion(level, (int) getX(), (int) getY(), (int) getZ()));
 //        }

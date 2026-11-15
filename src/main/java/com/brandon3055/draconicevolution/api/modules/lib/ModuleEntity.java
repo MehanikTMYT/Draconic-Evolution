@@ -2,9 +2,9 @@ package com.brandon3055.draconicevolution.api.modules.lib;
 
 import codechicken.lib.data.MCDataInput;
 import codechicken.lib.data.MCDataOutput;
-import codechicken.lib.gui.modular.elements.GuiElement;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import codechicken.lib.gui.modular.sprite.Material;
+import com.brandon3055.brandonscore.client.gui.modular.elements.GuiElement;
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+import com.brandon3055.brandonscore.client.gui.modular.sprite.Material;
 import codechicken.lib.render.buffer.TransformingVertexConsumer;
 import com.brandon3055.brandonscore.api.TechLevel;
 import com.brandon3055.brandonscore.client.render.RenderUtils;
@@ -19,7 +19,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -29,7 +29,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -438,7 +438,7 @@ public abstract class ModuleEntity<T extends ModuleData<T>> {
      * @param clickType The click type.
      * @return true to prevent module pickup from slot. (Returning different values for client and server may result in desync)
      */
-    public boolean moduleClicked(Player player, double x, double y, int button, ClickType clickType) {
+    public boolean moduleClicked(Player player, double x, double y, int button, ContainerInput clickType) {
         return false;
     }
 

@@ -67,8 +67,8 @@
 //
 //    @Override
 //    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-//        if (nbt.hasUUID("identity")){
-//            identity = nbt.getUUID("identity");
+//        if (TagUtils26.hasUUID(nbt, "identity")){
+//            identity = TagUtils26.getUUID(nbt, "identity");
 //        }
 //        CompoundTag properties = nbt.getCompound("properties");
 //        propertyMap.forEach((name, property) -> property.deserializeNBT(provider, properties.getCompound(name)));

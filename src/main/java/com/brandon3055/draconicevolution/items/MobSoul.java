@@ -1,45 +1,77 @@
 package com.brandon3055.draconicevolution.items;
 
 import com.brandon3055.brandonscore.api.TimeKeeper;
+
 import com.brandon3055.brandonscore.utils.InventoryUtils;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.init.ItemData;
+
 import com.brandon3055.draconicevolution.utils.LogHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SpawnEggItem;
-import net.minecraft.world.item.component.CustomData;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.event.EventHooks;
+
+import java.util.*;
 
 import javax.annotation.Nullable;
-import java.util.*;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.resources.Identifier;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.EntitySpawnReason;
+
+import net.minecraft.world.entity.EntityType;
+
+import net.minecraft.world.entity.Mob;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.Item;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.SpawnEggItem;
+
+import net.minecraft.world.item.component.CustomData;
+
+import net.minecraft.world.item.context.UseOnContext;
+
+import net.minecraft.world.level.Level;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.event.EventHooks;
+
+
+
 
 /**
  * Created by brandon3055 on 25/09/2016.
  */
 public class MobSoul extends Item {
 
-    private static final Map<ResourceLocation, Entity> renderEntityMap = new HashMap<>();
-    public static List<ResourceLocation> randomDisplayList = null;
+    private static final Map<Identifier, Entity> renderEntityMap = new HashMap<>();
+    public static List<Identifier> randomDisplayList = null;
 
     public MobSoul(Properties properties) {
         super(properties);
@@ -65,9 +97,9 @@ public class MobSoul extends Item {
             }
             entity.moveTo(sX, sY, sZ, player.getYRot(), 0F);
 
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 if (!stack.has(ItemData.SOUL_DATA) && entity instanceof Mob mob && level instanceof ServerLevel serverLevel) {
-                    EventHooks.finalizeMobSpawn(mob, serverLevel, serverLevel.getCurrentDifficultyAt(new BlockPos(0, 0, 0)), MobSpawnType.SPAWN_EGG, null);
+                    EventHooks.finalizeMobSpawn(mob, serverLevel, serverLevel.getCurrentDifficultyAt(new BlockPos(0, 0, 0)), EntitySpawnReason.SPAWN_EGG, null);
                 }
                 level.addFreshEntity(entity);
                 if (!player.getAbilities().instabuild) {
@@ -84,11 +116,11 @@ public class MobSoul extends Item {
         return Component.translatable(type.getDescriptionId()).append(" ").append(super.getName(stack));
     }
 
-    public ResourceLocation getEntity(ItemStack stack) {
-        return stack.getOrDefault(ItemData.SOUL_ID, ResourceLocation.withDefaultNamespace("pig"));
+    public Identifier getEntity(ItemStack stack) {
+        return stack.getOrDefault(ItemData.SOUL_ID, Identifier.withDefaultNamespace("pig"));
     }
 
-    public void setEntity(ResourceLocation entityName, ItemStack stack) {
+    public void setEntity(Identifier entityName, ItemStack stack) {
         stack.set(ItemData.SOUL_ID, entityName);
     }
 
@@ -121,7 +153,7 @@ public class MobSoul extends Item {
                 entity.load(entityData);
             } else {
                 if (entity instanceof Mob mob && level instanceof ServerLevel serverLevel) {
-                    EventHooks.finalizeMobSpawn(mob, serverLevel, serverLevel.getCurrentDifficultyAt(new BlockPos(0, 0, 0)), MobSpawnType.SPAWN_EGG, null);
+                    EventHooks.finalizeMobSpawn(mob, serverLevel, serverLevel.getCurrentDifficultyAt(new BlockPos(0, 0, 0)), EntitySpawnReason.SPAWN_EGG, null);
                 }
             }
             return entity;
@@ -149,8 +181,8 @@ public class MobSoul extends Item {
     }
 
     @OnlyIn (Dist.CLIENT)
-    public Entity getRenderEntity(ResourceLocation name) {
-        if (name == null || name.equals(ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "random_display_entity"))) {
+    public Entity getRenderEntity(Identifier name) {
+        if (name == null || name.equals(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "random_display_entity"))) {
             if (randomDisplayList == null) {
                 randomDisplayList = new ArrayList<>();
                 SpawnEggItem.BY_ID.keySet().forEach(type -> randomDisplayList.add(BuiltInRegistries.ENTITY_TYPE.getKey(type)));

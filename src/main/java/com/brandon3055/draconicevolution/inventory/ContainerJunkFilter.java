@@ -1,18 +1,31 @@
 package com.brandon3055.draconicevolution.inventory;
 
 import com.brandon3055.brandonscore.inventory.PlayerSlot;
+
 import com.brandon3055.brandonscore.inventory.SlotCheckValid;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
+
+import java.util.List;
 
 import javax.annotation.Nullable;
-import java.util.List;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.inventory.AbstractContainerMenu;
+
+import net.minecraft.world.inventory.ContainerInput;
+
+import net.minecraft.world.inventory.MenuType;
+
+import net.minecraft.world.inventory.Slot;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.neoforged.neoforge.items.IItemHandler;
+
+import net.neoforged.neoforge.items.SlotItemHandler;
+
+
+
 
 /**
  * Created by brandon3055 on 21/12/2017.
@@ -49,14 +62,14 @@ public class ContainerJunkFilter extends AbstractContainerMenu {
 
     @Override
     public void broadcastChanges() {
-        if (stack != slot.getStackInSlot(player) && !player.level().isClientSide) {
+        if (stack != slot.getStackInSlot(player) && !player.level().isClientSide()) {
             player.closeContainer();
         }
         super.broadcastChanges();
     }
 
     @Override
-    public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
+    public void clicked(int slotId, int dragType, ContainerInput clickTypeIn, Player player) {
         if (slotId >= 0 && slotId < slots.size() && slots.get(slotId).getItem() == stack) {
             return;
         }

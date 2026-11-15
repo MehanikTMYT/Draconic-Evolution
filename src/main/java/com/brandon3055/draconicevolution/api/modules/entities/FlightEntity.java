@@ -1,6 +1,6 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
-import com.brandon3055.brandonscore.api.BCStreamCodec;
+import com.brandon3055.draconicevolution.lib.DEStreamCodecs; // port-26.1.2: BCStreamCodec удалён из BC-26
 import com.brandon3055.draconicevolution.api.config.BooleanProperty;
 import com.brandon3055.draconicevolution.api.config.ConfigProperty;
 import com.brandon3055.draconicevolution.api.config.ConfigProperty.DecimalFormatter;
@@ -36,7 +36,7 @@ public class FlightEntity extends ModuleEntity<FlightData> {
             DecimalProperty.CODEC.optionalFieldOf("elytra_boost").forGetter(e -> e.elytraBoost)
     ).apply(builder, FlightEntity::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, FlightEntity> STREAM_CODEC = BCStreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, FlightEntity> STREAM_CODEC = DEStreamCodecs.composite(
             DEModules.streamCodec(), FlightEntity::getModule,
             ByteBufCodecs.INT, ModuleEntity::getGridX,
             ByteBufCodecs.INT, ModuleEntity::getGridY,

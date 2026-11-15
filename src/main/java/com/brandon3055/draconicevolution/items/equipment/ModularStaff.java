@@ -1,37 +1,69 @@
 package com.brandon3055.draconicevolution.items.equipment;
 
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.draconicevolution.api.IReaperItem;
+
 import com.brandon3055.draconicevolution.api.capability.DECapabilities;
+
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
+
 import com.brandon3055.draconicevolution.api.modules.Module;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleCategory;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleTypes;
+
 import com.brandon3055.draconicevolution.api.modules.data.DamageModData;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModularOPStorage;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleEntity;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleHostImpl;
+
 import com.brandon3055.draconicevolution.init.DETags;
+
 import com.brandon3055.draconicevolution.init.EquipCfg;
+
 import com.brandon3055.draconicevolution.init.ModuleCfg;
+
 import com.brandon3055.draconicevolution.init.TechProperties;
-import net.minecraft.network.chat.Component;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.function.Supplier;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.tags.BlockTags;
+
+import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.damagesource.DamageTypes;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.DiggerItem;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.TooltipFlag;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import org.jetbrains.annotations.NotNull;
+
+
+
 
 /**
  * Created by brandon3055 on 21/5/20.
@@ -208,7 +240,7 @@ public class ModularStaff extends DiggerItem implements IReaperItem, IModularMin
 //
 //        //The staff does not exactly fire an "Arrow" but i am treating the projectile as an arrow in code for better compatibility.
 //        chargeTime = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, world, player, chargeTime, true);
-//        if (chargeTime < 0 || world.isClientSide) {
+//        if (chargeTime < 0 || world.isClientSide()) {
 //            return;
 //        }
 //

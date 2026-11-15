@@ -1,19 +1,33 @@
 package com.brandon3055.draconicevolution.entity.guardian.control;
 
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.entity.guardian.DraconicGuardianEntity;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianFightManager;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianProjectileEntity;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.util.Mth;
+
+import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.phys.Vec3;
+
+import org.apache.logging.log4j.Logger;
+
+
+
 
 public class BombardPlayerPhase extends Phase {
     private static final Logger LOGGER = DraconicEvolution.LOGGER;
@@ -70,7 +84,7 @@ public class BombardPlayerPhase extends Phase {
                     BCoreNetwork.sendSound(guardian.level(), guardian, SoundEvents.ENDER_DRAGON_SHOOT, SoundSource.HOSTILE, 32.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F, false);
                 }
                 GuardianProjectileEntity projectile = new GuardianProjectileEntity(this.guardian.level(), this.guardian, targetRelX, targetRelY, targetRelZ, targetPos, 25, GuardianFightManager.PROJECTILE_POWER);
-                projectile.moveTo(headX, headY, headZ, 0.0F, 0.0F);
+                projectile.snapTo(headX, headY, headZ, 0.0F, 0.0F);
                 guardian.level().addFreshEntity(projectile);
             }
         }

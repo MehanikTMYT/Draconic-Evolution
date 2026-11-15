@@ -1,28 +1,51 @@
 package com.brandon3055.draconicevolution.lib;
 
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.client.BCClientEventHandler;
+
 import com.brandon3055.brandonscore.handlers.IProcess;
+
 import com.brandon3055.brandonscore.handlers.ProcessHandler;
+
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
+
 import com.brandon3055.draconicevolution.utils.LogHelper;
-import net.minecraft.Util;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.SectionPos;
-import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
-import net.minecraft.network.protocol.game.ClientboundLightUpdatePacket;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ThreadedLevelLightEngine;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.FallingBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.LevelChunkSection;
 
 import java.util.*;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.SectionPos;
+
+import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
+
+import net.minecraft.network.protocol.game.ClientboundLightUpdatePacket;
+
+import net.minecraft.server.MinecraftServer;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.server.level.ThreadedLevelLightEngine;
+
+import net.minecraft.util.Util;
+
+import net.minecraft.world.level.ChunkPos;
+
+import net.minecraft.world.level.block.Blocks;
+
+import net.minecraft.world.level.block.EntityBlock;
+
+import net.minecraft.world.level.block.FallingBlock;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.level.chunk.LevelChunk;
+
+import net.minecraft.world.level.chunk.LevelChunkSection;
+
+
+
 
 /**
  * Created by brandon3055 on 16/03/2017.
@@ -92,7 +115,7 @@ public class ExplosionHelper {
     }
 
     private LevelChunk getChunk(BlockPos pos) {
-        ChunkPos cp = new ChunkPos(pos);
+        ChunkPos cp = new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4);
         if (!chunkCache.containsKey(cp)) {
             chunkCache.put(cp, serverWorld.getChunk(pos.getX() >> 4, pos.getZ() >> 4));
         }
@@ -197,7 +220,7 @@ public class ExplosionHelper {
                     BlockState state = helper.serverWorld.getBlockState(mPos.set(pos));
                     if (state.getBlock() instanceof FallingBlock) {
 //                        i++;
-                        state.tick(helper.serverWorld, helper.mPos.set(pos), helper.serverWorld.random);
+                        state.tick(helper.serverWorld, helper.mPos.set(pos), helper.serverWorld.getRandom());
                     }
 //                    list.add(Vector3.fromBlockPos(mPos.set(pos)));
                     state.handleNeighborChanged(helper.serverWorld, mPos.set(pos), Blocks.AIR, mPos.set(pos).above(), false);

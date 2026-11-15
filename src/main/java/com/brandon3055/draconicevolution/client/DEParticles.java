@@ -1,6 +1,6 @@
 package com.brandon3055.draconicevolution.client;
 
-import com.brandon3055.brandonscore.client.particle.IntParticleData;
+import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
 import com.brandon3055.draconicevolution.client.render.particle.*;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Camera;

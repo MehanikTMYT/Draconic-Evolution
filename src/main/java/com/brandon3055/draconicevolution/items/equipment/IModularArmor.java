@@ -1,30 +1,109 @@
 package com.brandon3055.draconicevolution.items.equipment;
 
 import com.brandon3055.brandonscore.api.ElytraEnabledItem;
+
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.api.capability.DECapabilities;
+
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleTypes;
+
 import com.brandon3055.draconicevolution.api.modules.data.SpeedData;
+
 import com.brandon3055.draconicevolution.api.modules.entities.FlightEntity;
+
 import com.brandon3055.draconicevolution.init.EquipCfg;
+
 import com.brandon3055.draconicevolution.integration.equipment.EquipmentManager;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
+
 import com.brandon3055.draconicevolution.network.InputSync;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 import javax.annotation.Nullable;
-import java.util.List;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.world.entity.EquipmentSlot;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.Item;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.TooltipFlag;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.phys.Vec3;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 16/6/20
@@ -90,7 +169,7 @@ public interface IModularArmor extends IModularItem, ElytraEnabledItem {
                     }
                 }
 
-                if (!entity.level().isClientSide && !creative) {
+                if (!entity.level().isClientSide() && !creative) {
                     storage.modifyEnergyStored(-energy);
                 }
             }

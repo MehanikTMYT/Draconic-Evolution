@@ -75,7 +75,7 @@
 //
 //    @Override
 //    public void tick() {
-//        if (level.isClientSide) {
+//        if (level.isClientSide()) {
 //            if (isLooking && lookAnimation < 1F) {
 //                lookAnimation += 0.05F;
 //            }
@@ -118,7 +118,7 @@
 //
 //    @Override
 //    public void playerTouch(Player player) {
-//        if (level.isClientSide) {
+//        if (level.isClientSide()) {
 //            return;
 //        }
 //
@@ -166,7 +166,7 @@
 //        }
 //
 //        if (inserted) {
-//            this.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((this.random.nextFloat() - this.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+//            this.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
 //            updateStored();
 //        }
 //
@@ -178,7 +178,7 @@
 //    }
 //
 //    private void updateStored() {
-//        if (level.isClientSide) {
+//        if (level.isClientSide()) {
 //            return;
 //        }
 //

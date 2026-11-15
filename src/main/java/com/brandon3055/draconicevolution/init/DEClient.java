@@ -1,6 +1,6 @@
 package com.brandon3055.draconicevolution.init;
 
-import codechicken.lib.gui.modular.sprite.GuiTextures;
+import com.brandon3055.brandonscore.client.gui.modular.sprite.GuiTextures;
 import com.brandon3055.brandonscore.BrandonsCore;
 import com.brandon3055.brandonscore.api.hud.AbstractHudElement;
 import com.brandon3055.brandonscore.client.hud.HudManager;
@@ -26,10 +26,10 @@ import com.brandon3055.draconicevolution.items.equipment.IModularArmor;
 import net.covers1624.quack.util.CrashLock;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ElytraLayer;
-import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;

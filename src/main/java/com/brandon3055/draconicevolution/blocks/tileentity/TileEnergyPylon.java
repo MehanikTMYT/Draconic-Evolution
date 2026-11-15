@@ -1,42 +1,78 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import codechicken.lib.colour.EnumColour;
+
 import codechicken.lib.data.MCDataInput;
+
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
-import com.brandon3055.brandonscore.client.particle.IntParticleData;
+
+import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.lib.datamanager.*;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.blocks.StructureBlock;
-import com.brandon3055.draconicevolution.blocks.machines.EnergyPylon;
+
 import com.brandon3055.draconicevolution.blocks.machines.EnergyPylon.Mode;
+
+import com.brandon3055.draconicevolution.blocks.machines.EnergyPylon;
+
 import com.brandon3055.draconicevolution.client.DEParticles;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
-import net.neoforged.neoforge.common.Tags;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
+
 import java.util.List;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+
+import net.minecraft.util.RandomSource;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.level.chunk.LevelChunk;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.shapes.CollisionContext;
+
+import net.minecraft.world.phys.shapes.Shapes;
+
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+import net.neoforged.neoforge.common.Tags;
+
+import org.jetbrains.annotations.Nullable;
+
+
+import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent; // port-26.1.2: RenderHighlightEvent удалён
+
 
 /**
  * Created by brandon3055 on 30/3/2016.
@@ -149,18 +185,18 @@ public class TileEnergyPylon extends TileBCore implements MultiBlockController {
             updateComparators();
         }
 
-        if (!level.isClientSide && ioMode.get().canExtract()) {
+        if (!level.isClientSide() && ioMode.get().canExtract()) {
             long extracted = core.energy.extractOP(sendEnergyToAll(core.energy.getUncappedStored(), core.energy.getUncappedStored()), false);
             if (extracted > 0) {
                 particleRate.set((byte) Math.min(20, extracted < 500 ? 1 : extracted / 500));
             }
         }
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             spawnParticles();
         }
 
-        if (!level.isClientSide && (particleRate.get() > 1 || (particleRate.get() > 0 && level.random.nextInt(2) == 0))) {
+        if (!level.isClientSide() && (particleRate.get() > 1 || (particleRate.get() > 0 && level.getRandom().nextInt(2) == 0))) {
             particleRate.subtract((byte) 2);
         }
     }
@@ -179,7 +215,7 @@ public class TileEnergyPylon extends TileBCore implements MultiBlockController {
 
     @Override
     public InteractionResult handleRemoteClick(Player player, BlockHitResult hit) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             ioMode.set(ioMode.get().reverse());
             level.setBlockAndUpdate(worldPosition, level.getBlockState(worldPosition).setValue(EnergyPylon.MODE, ioMode.get()));
         }
@@ -235,7 +271,7 @@ public class TileEnergyPylon extends TileBCore implements MultiBlockController {
     }
 
     public void selectNextCore() {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         List<TileEnergyCore> cores = findActiveCores();
@@ -319,7 +355,7 @@ public class TileEnergyPylon extends TileBCore implements MultiBlockController {
 
 
     public void drawParticleBeam() {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             sendPacketToChunk(mcDataOutput -> {}, 0);
             return;
         }
@@ -336,18 +372,18 @@ public class TileEnergyPylon extends TileBCore implements MultiBlockController {
 
             double speed = 0.02F;
             double offset = 0.2F;
-            double randX = level.random.nextDouble() - 0.5D;
-            double randY = level.random.nextDouble() - 0.5D;
-            double randZ = level.random.nextDouble() - 0.5D;
+            double randX = level.getRandom().nextDouble() - 0.5D;
+            double randY = level.getRandom().nextDouble() - 0.5D;
+            double randZ = level.getRandom().nextDouble() - 0.5D;
             particlePos.add(randX * offset, randY * offset, randZ * offset);
 
-            level.addParticle(new IntParticleData(DEParticles.LINE_INDICATOR.get(), 150, 0, 255, 40 + level.random.nextInt(20)), particlePos.x, particlePos.y, particlePos.z, randX * speed, randY * speed, randZ * speed);
+            level.addParticle(new IntParticleData(DEParticles.LINE_INDICATOR.get(), 150, 0, 255, 40 + level.getRandom().nextInt(20)), particlePos.x, particlePos.y, particlePos.z, randX * speed, randY * speed, randZ * speed);
         }
     }
 
     @OnlyIn (Dist.CLIENT)
     private void spawnParticles() {
-        RandomSource rand = level.random;
+        RandomSource rand = level.getRandom();
         if (getCore() == null || particleRate.get() <= 0) return;
         if (particleRate.get() > 20) particleRate.set((byte) 20);
 
@@ -404,7 +440,7 @@ public class TileEnergyPylon extends TileBCore implements MultiBlockController {
     }
 
     @Override
-    public boolean renderSelectionBox(RenderHighlightEvent.Block event) {
+    public boolean renderSelectionBox(ExtractBlockOutlineRenderStateEvent event) {
         return false;
     }
 

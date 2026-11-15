@@ -15,7 +15,7 @@
 //import net.minecraft.core.BlockPos;
 //import net.minecraft.network.chat.Component;
 //import net.minecraft.network.chat.TextComponent;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.server.level.ServerPlayer;
 //import net.minecraft.tags.ItemTags;
 //import net.minecraft.tags.Tag;
@@ -139,8 +139,8 @@
 //        return recipeCode.toString();
 //    }
 //
-//    public static Map<ResourceLocation, String> getFields() {
-//        Map<ResourceLocation, String> names = new HashMap<>();
+//    public static Map<Identifier, String> getFields() {
+//        Map<Identifier, String> names = new HashMap<>();
 //        try {
 //            for (Field field : DEContent.class.getFields()) {
 //                if (field.get(null) != null && Item.class.isAssignableFrom(field.getType()) && (field.getModifiers() & (Modifier.PUBLIC | Modifier.STATIC)) != 0) {
@@ -168,8 +168,8 @@
 //        return names;
 //    }
 //
-//    public static Map<ResourceLocation, String> getTags() {
-//        Map<ResourceLocation, String> names = new HashMap<>();
+//    public static Map<Identifier, String> getTags() {
+//        Map<Identifier, String> names = new HashMap<>();
 //        try {
 //            for (Field field : Tags.Items.class.getFields()) {
 //                if (TagKey.class.isAssignableFrom(field.getType()) && (field.getModifiers() & (Modifier.PUBLIC | Modifier.STATIC)) != 0) {
@@ -197,7 +197,7 @@
 //        tagPrefixes.add("forge:glass_panes/");
 //        tagPrefixes.add("forge:ores/");
 //
-//        Map<ResourceLocation, String> tagMap = new HashMap<>();
+//        Map<Identifier, String> tagMap = new HashMap<>();
 //        names.forEach((name, field) -> {
 //            for (String prefix : tagPrefixes) {
 //                if (name.toString().startsWith(prefix)) {
@@ -211,8 +211,8 @@
 //    }
 //
 //    public static String getItem(ItemStack stack, boolean ignnoreSize) {
-//        Map<ResourceLocation, String> fields = getFields();
-//        ResourceLocation key = stack.getItem().getRegistryName();
+//        Map<Identifier, String> fields = getFields();
+//        Identifier key = stack.getItem().getRegistryName();
 //        if (fields.containsKey(key)) {
 //            if (stack.getCount() > 1 && !ignnoreSize) {
 //                return "new ItemStack(" + fields.get(key) + ", " + stack.getCount() + ")";
@@ -228,8 +228,8 @@
 //    }
 //
 //    public static String getIngredient(ItemStack stack, boolean ignoreSize) {
-//        Map<ResourceLocation, String> tags = getTags();
-//        for (ResourceLocation tag : stack.getTags().map(TagKey::location).toList()) {
+//        Map<Identifier, String> tags = getTags();
+//        for (Identifier tag : stack.getTags().map(TagKey::location).toList()) {
 //            if (tags.containsKey(tag)) {
 //                if (stack.getCount() > 1 && !ignoreSize) {
 //                    return "IngredientStack.fromTag(" + tags.get(tag) + ", " + stack.getCount() + ")";

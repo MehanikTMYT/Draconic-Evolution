@@ -1,26 +1,71 @@
 package com.brandon3055.draconicevolution.api.config;
 
 import com.brandon3055.draconicevolution.api.capability.PropertyProvider;
+
 import com.brandon3055.draconicevolution.client.gui.modular.itemconfig.PropertyData;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
+
 import com.mojang.datafixers.util.Pair;
+
 import com.mojang.serialization.*;
+
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.ByIdMap;
-import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.Locale;
+
 import java.util.Objects;
+
 import java.util.Optional;
+
 import java.util.UUID;
+
 import java.util.function.Function;
+
 import java.util.function.IntFunction;
+
 import java.util.function.Supplier;
+
 import java.util.stream.Stream;
+
+import net.minecraft.network.RegistryFriendlyByteBuf;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.network.codec.ByteBufCodecs;
+
+import net.minecraft.network.codec.StreamCodec;
+
+import net.minecraft.util.ByIdMap;
+
+import net.minecraft.util.StringRepresentable;
+
+import net.minecraft.world.item.ItemStack;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 2/5/20.
@@ -179,7 +224,7 @@ public abstract class ConfigProperty {
 //        CompoundTag nbt = new CompoundTag();
 //        nbt.putBoolean("hud", showOnHud);
 //        if (uniqueName != null) {
-//            nbt.putUUID("uni_name", uniqueName);
+//            TagUtils26.putUUID(TagUtils26, nbt, "uni_name", uniqueName);
 //        }
 //        return nbt;
 //    }
@@ -187,8 +232,8 @@ public abstract class ConfigProperty {
 //    @Override
 //    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
 //        showOnHud = nbt.getBoolean("hud");
-//        if (nbt.hasUUID("uni_name")) {
-//            uniqueName = nbt.getUUID("uni_name");
+//        if (TagUtils26.hasUUID(TagUtils26, nbt, "uni_name")) {
+//            uniqueName = TagUtils26.getUUID(TagUtils26, nbt, "uni_name");
 //        }
 //    }
 

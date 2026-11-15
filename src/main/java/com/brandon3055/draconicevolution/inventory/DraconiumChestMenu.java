@@ -1,28 +1,74 @@
 package com.brandon3055.draconicevolution.inventory;
 
-import codechicken.lib.gui.modular.lib.container.SlotGroup;
 import codechicken.lib.inventory.container.modular.ModularSlot;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.SlotGroup;
+
 import com.brandon3055.brandonscore.inventory.TileItemStackHandler;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.chest.TileDraconiumChest;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.RecipeCraftingHolder;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.Level;
+
+import java.util.Optional;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
+
+import net.minecraft.network.FriendlyByteBuf;
+
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.world.Container;
+
+import net.minecraft.world.entity.player.Inventory;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.inventory.CraftingContainer;
+
+import net.minecraft.world.inventory.MenuType;
+
+import net.minecraft.world.inventory.RecipeCraftingHolder;
+
+import net.minecraft.world.inventory.Slot;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.crafting.CraftingRecipe;
+
+import net.minecraft.world.item.crafting.RecipeHolder;
+
+import net.minecraft.world.item.crafting.RecipeType;
+
+import net.minecraft.world.level.Level;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 4/06/2017.
@@ -69,10 +115,10 @@ public class DraconiumChestMenu extends DETileMenu<TileDraconiumChest> {
 
 
     protected void slotChangedCraftingGrid(int containerID, Level level, Player player, CraftingContainer craftingInventory, ResultContainerWrapper resultInventory) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             ServerPlayer serverplayerentity = (ServerPlayer) player;
             ItemStack itemstack = ItemStack.EMPTY;
-            Optional<RecipeHolder<CraftingRecipe>> optional = level.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftingInventory.asCraftInput(), level);
+            Optional<RecipeHolder<CraftingRecipe>> optional = level.getServer().recipeAccess().getRecipeFor(RecipeType.CRAFTING, craftingInventory.asCraftInput(), level);
             if (optional.isPresent()) {
                 RecipeHolder<CraftingRecipe> icraftingrecipe = optional.get();
                 if (resultInventory.setRecipeUsed(level, serverplayerentity, icraftingrecipe)) {

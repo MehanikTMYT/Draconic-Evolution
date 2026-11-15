@@ -1,49 +1,91 @@
 package com.brandon3055.draconicevolution.client.handler;
 
-
-import codechicken.lib.gui.modular.lib.GuiRender;
 import codechicken.lib.vec.Matrix4;
+
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.client.ProcessHandlerClient;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+
 import com.brandon3055.brandonscore.client.render.RenderUtils;
+
 import com.brandon3055.brandonscore.lib.DelayedExecutor;
+
 import com.brandon3055.draconicevolution.api.energy.ICrystalBinder;
+
 import com.brandon3055.draconicevolution.client.DEShaders;
-import com.mojang.blaze3d.platform.GlStateManager;
+
+import com.mojang.blaze3d.opengl.GlStateManager;
+
 import com.mojang.blaze3d.platform.Window;
+
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackLocationInfo;
-import net.minecraft.server.packs.PackSelectionConfig;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.PathPackResources;
-import net.minecraft.server.packs.repository.BuiltInPackSource;
-import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.PackSource;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.AddPackFindersEvent;
-import org.joml.Vector4f;
 
 import java.nio.FloatBuffer;
+
 import java.util.Optional;
+
 import java.util.Random;
 
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+
+import net.minecraft.client.renderer.RenderStateShard;
+
+import net.minecraft.client.renderer.rendertype.RenderType;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.resources.Identifier;
+
+import net.minecraft.server.packs.PackLocationInfo;
+
+import net.minecraft.server.packs.PackSelectionConfig;
+
+import net.minecraft.server.packs.PackType;
+
+import net.minecraft.server.packs.PathPackResources;
+
+import net.minecraft.server.packs.repository.BuiltInPackSource;
+
+import net.minecraft.server.packs.repository.Pack;
+
+import net.minecraft.server.packs.repository.PackSource;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.phys.Vec3;
+
+import net.neoforged.bus.api.EventPriority;
+
+import net.neoforged.bus.api.IEventBus;
+
+import net.neoforged.fml.LogicalSide;
+
+import net.neoforged.fml.ModList;
+
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+
+import net.neoforged.neoforge.common.NeoForge;
+
+import net.neoforged.neoforge.event.AddPackFindersEvent;
+
+import org.joml.Vector4f;
+
 import static com.brandon3055.draconicevolution.DraconicEvolution.MODID;
+
+
+
+
+
 
 /**
  * Created by Brandon on 28/10/2014.
@@ -86,7 +128,7 @@ public class ClientEventHandler {
     }
 
     private static void registerOverlays(RegisterGuiLayersEvent event) {
-        event.registerBelowAll(ResourceLocation.fromNamespaceAndPath(MODID, "explosion_overlay"), (graphics, deltaTracker) -> {
+        event.registerBelowAll(Identifier.fromNamespaceAndPath(MODID, "explosion_overlay"), (graphics, deltaTracker) -> {
             if (explosionPos != null) {
                 updateExplosionAnimation(mc, GuiRender.convert(graphics), mc.getWindow(), deltaTracker.getGameTimeDeltaPartialTick(false));
             }
@@ -327,7 +369,7 @@ public class ClientEventHandler {
             RenderUtils.endBatch(render.buffers());
 
         } else {
-            Vec3 camPos = mc.gameRenderer.getMainCamera().getPosition();
+            Vec3 camPos = mc.gameRenderer.getMainCamera().position();
             Vector3 targetPos = Vector3.fromBlockPosCenter(explosionPos);
             targetPos.subtract(camPos.x, camPos.y, camPos.z);
             Vector3 winPos = gluProject(targetPos, MODELVIEW, PROJECTION);

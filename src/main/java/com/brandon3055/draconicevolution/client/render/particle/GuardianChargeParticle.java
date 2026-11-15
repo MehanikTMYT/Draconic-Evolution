@@ -1,23 +1,42 @@
 package com.brandon3055.draconicevolution.client.render.particle;
 
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.utils.MathUtils;
+
 import com.brandon3055.draconicevolution.client.AtlasTextureHelper;
+
 import com.brandon3055.draconicevolution.entity.guardian.control.ChargeUpPhase;
+
 import com.brandon3055.draconicevolution.entity.guardian.control.PhaseManager;
+
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import com.mojang.math.Axis;
+
 import net.minecraft.client.Camera;
+
 import net.minecraft.client.multiplayer.ClientLevel;
+
 import net.minecraft.client.particle.ParticleRenderType;
+
 import net.minecraft.client.particle.SingleQuadParticle;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+
 import net.minecraft.util.Mth;
+
 import net.minecraft.world.phys.Vec3;
+
 import net.neoforged.api.distmarker.Dist;
+
 import net.neoforged.api.distmarker.OnlyIn;
+
 import org.joml.Quaternionf;
+
 import org.joml.Vector3f;
+
+
 
 @OnlyIn(Dist.CLIENT)
 public class GuardianChargeParticle extends SingleQuadParticle {
@@ -60,7 +79,7 @@ public class GuardianChargeParticle extends SingleQuadParticle {
     public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
         if (age + partialTicks > lifetime) return;
         ;
-        Vec3 vector3d = camera.getPosition();
+        Vec3 vector3d = camera.position();
         float anim = (age + partialTicks) / lifetime;
         Vector3 pos = MathUtils.interpolateVec3(startPos, endPos, anim);
         float radius = (anim * 2) + (Mth.sin(anim * (float) Math.PI) * 5);

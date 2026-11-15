@@ -1,58 +1,113 @@
 package com.brandon3055.draconicevolution.items.equipment;
 
 import codechicken.lib.util.ItemUtils;
+
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.brandonscore.inventory.BlockToStackHelper;
+
 import com.brandon3055.draconicevolution.api.IDraconicMelee;
+
 import com.brandon3055.draconicevolution.api.capability.DECapabilities;
+
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
+
 import com.brandon3055.draconicevolution.api.capability.PropertyProvider;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty;
+
 import com.brandon3055.draconicevolution.api.config.IntegerProperty;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleCategory;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleTypes;
+
 import com.brandon3055.draconicevolution.api.modules.data.AOEData;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModularOPStorage;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleHostImpl;
+
 import com.brandon3055.draconicevolution.init.EquipCfg;
+
 import com.brandon3055.draconicevolution.init.ModuleCfg;
+
 import com.brandon3055.draconicevolution.init.TechProperties;
+
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SupportType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.common.ItemAbility;
-import net.neoforged.neoforge.common.util.BlockSnapshot;
-import net.neoforged.neoforge.event.EventHooks;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
 import java.util.Set;
+
 import java.util.function.Consumer;
+
 import java.util.function.Predicate;
+
 import java.util.function.Supplier;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.tags.BlockTags;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.damagesource.DamageTypes;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Inventory;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.*;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.context.UseOnContext;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.Blocks;
+
+import net.minecraft.world.level.block.SupportType;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.Vec3;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.common.ItemAbilities;
+
+import net.neoforged.neoforge.common.ItemAbility;
+
+import net.neoforged.neoforge.common.util.BlockSnapshot;
+
+import net.neoforged.neoforge.event.EventHooks;
+
+import org.jetbrains.annotations.NotNull;
+
+
+
 
 /**
  * Created by brandon3055 on 21/5/20.
@@ -214,7 +269,7 @@ public class ModularHoe extends HoeItem implements IModularTieredItem, IDraconic
             boolean up2OK = level.isEmptyBlock(aoePos.above().above()) || level.getBlockState(aoePos.above().above()).is(BlockTags.REPLACEABLE);
 
             if (!level.isEmptyBlock(aoePos.above()) && canRemoveAbove && up2OK) {
-                if (!level.isClientSide && canDropAbove) {
+                if (!level.isClientSide() && canDropAbove) {
                     level.addFreshEntity(new ItemEntity(level, player.getX(), player.getY(), player.getZ(), new ItemStack(Blocks.DIRT)));
                 }
                 level.removeBlock(aoePos.above(), false);
@@ -223,7 +278,7 @@ public class ModularHoe extends HoeItem implements IModularTieredItem, IDraconic
         }
 
         Set<ItemStack> drops = BlockToStackHelper.collectAndEndCapture();
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             for (ItemStack drop : drops) {
                 ItemUtils.dropItem(drop, level, Vector3.fromEntityCenter(player));
             }
@@ -246,7 +301,7 @@ public class ModularHoe extends HoeItem implements IModularTieredItem, IDraconic
         if (predicate.test(context)) {
             Player player = context.getPlayer();
             level.playSound(player, blockpos, SoundEvents.HOE_TILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 consumer.accept(context);
                 if (player != null) {
                     context.getItemInHand().hurtAndBreak(1, player, LivingEntity.getSlotForHand(context.getHand()));

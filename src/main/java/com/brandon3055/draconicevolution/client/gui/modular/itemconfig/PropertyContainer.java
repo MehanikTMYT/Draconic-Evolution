@@ -1,48 +1,90 @@
 package com.brandon3055.draconicevolution.client.gui.modular.itemconfig;
 
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.ForegroundRender;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import codechicken.lib.gui.modular.lib.TextState;
-import codechicken.lib.gui.modular.lib.geometry.Axis;
-import codechicken.lib.gui.modular.lib.geometry.GeoParam;
-import codechicken.lib.gui.modular.lib.geometry.GuiParent;
-import codechicken.lib.gui.modular.lib.geometry.Rectangle;
 import codechicken.lib.math.MathHelper;
+
 import com.brandon3055.brandonscore.BCConfig;
+
 import com.brandon3055.brandonscore.BrandonsCore;
+
 import com.brandon3055.brandonscore.client.BCGuiTextures;
+
 import com.brandon3055.brandonscore.client.gui.GuiToolkit;
+
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.ForegroundRender;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.TextState;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Axis;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GuiParent;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Rectangle;
+
 import com.brandon3055.brandonscore.lib.Pair;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.client.gui.modular.itemconfig.ConfigurableItemGui.UpdateAnim;
+
 import com.brandon3055.draconicevolution.inventory.ConfigurableItemMenu;
+
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.MessageSignature;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.settings.KeyModifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
 import java.util.stream.Collectors;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.gui.Font;
+
+import net.minecraft.client.gui.screens.Screen;
+
+import net.minecraft.core.HolderLookup;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.ListTag;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.network.chat.HoverEvent;
+
+import net.minecraft.network.chat.MessageSignature;
+
+import net.minecraft.network.chat.MutableComponent;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.neoforged.neoforge.client.settings.KeyModifier;
+
+import org.jetbrains.annotations.NotNull;
+
+import org.jetbrains.annotations.Nullable;
+
 import static com.brandon3055.brandonscore.client.gui.GuiToolkit.Palette.BG;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
+
+
+
+
 
 /**
  * Created by brandon3055 on 15/5/20.
@@ -203,10 +245,10 @@ public class PropertyContainer extends GuiManipulable {
                 .setTooltipSingle(() -> presetMode ? Component.translatable("gui.draconicevolution.item_config.edit_preset.info") : Component.translatable("gui.draconicevolution.item_config." + (collapsed ? "expand_group" : "collapse_group") + ".info"));
         Constraints.placeInside(toggleHidden, root, Constraints.LayoutPos.TOP_LEFT, 2, 2);
 
-        GuiButton dragZone = ConfigurableItemGui.TOOLKIT.createIconButton(root, 8, () -> Screen.hasShiftDown() ? BCGuiTextures.get("dark/copy") : Screen.hasControlDown() ? BCGuiTextures.get("delete") : BCGuiTextures.getThemed("reposition"))
-                .setTooltip(() -> isMoving() ? Collections.emptyList() : Collections.singletonList(Component.translatable(Screen.hasShiftDown() ? "gui.draconicevolution.item_config.copy_group.info" : Screen.hasControlDown() ? "gui.draconicevolution.item_config.delete_group.info" : "gui.draconicevolution.item_config.move_group.info")))
+        GuiButton dragZone = ConfigurableItemGui.TOOLKIT.createIconButton(root, 8, () -> Minecraft.getInstance().hasShiftDown() ? BCGuiTextures.get("dark/copy") : Screen.hasControlDown() ? BCGuiTextures.get("delete") : BCGuiTextures.getThemed("reposition"))
+                .setTooltip(() -> isMoving() ? Collections.emptyList() : Collections.singletonList(Component.translatable(Minecraft.getInstance().hasShiftDown() ? "gui.draconicevolution.item_config.copy_group.info" : Screen.hasControlDown() ? "gui.draconicevolution.item_config.delete_group.info" : "gui.draconicevolution.item_config.move_group.info")))
                 .onClick(() -> {
-                    if (Screen.hasShiftDown()) {
+                    if (Minecraft.getInstance().hasShiftDown()) {
                         duplicateContainer(root.mc().player.registryAccess());
                     } else if (Screen.hasControlDown()) {
                         deleteContainer();
@@ -481,8 +523,8 @@ public class PropertyContainer extends GuiManipulable {
         });
 
         //TODO I think this is redundant?
-        GuiButton dragZone = ConfigurableItemGui.TOOLKIT.createIconButton(element, 8, () -> Screen.hasShiftDown() ? BCGuiTextures.get("dark/copy") : Screen.hasControlDown() ? BCGuiTextures.get("delete") : BCGuiTextures.get("reposition_gray"))
-                .setTooltip(() -> isMoving() ? Collections.emptyList() : Collections.singletonList(Component.translatable(Screen.hasShiftDown() ? "gui.draconicevolution.item_config.copy_group.info" : Screen.hasControlDown() ? "gui.draconicevolution.item_config.delete_group.info" : "gui.draconicevolution.item_config.move_group.info")));
+        GuiButton dragZone = ConfigurableItemGui.TOOLKIT.createIconButton(element, 8, () -> Minecraft.getInstance().hasShiftDown() ? BCGuiTextures.get("dark/copy") : Screen.hasControlDown() ? BCGuiTextures.get("delete") : BCGuiTextures.get("reposition_gray"))
+                .setTooltip(() -> isMoving() ? Collections.emptyList() : Collections.singletonList(Component.translatable(Minecraft.getInstance().hasShiftDown() ? "gui.draconicevolution.item_config.copy_group.info" : Screen.hasControlDown() ? "gui.draconicevolution.item_config.delete_group.info" : "gui.draconicevolution.item_config.move_group.info")));
         Constraints.placeInside(dragZone, element, Constraints.LayoutPos.TOP_RIGHT, -1, 1);
 
         if (!isGroup) {
@@ -496,11 +538,11 @@ public class PropertyContainer extends GuiManipulable {
             element.setEnabled(() -> DEConfig.configUiShowUnavailable || (data.isGlobal || data.isPropertyAvailable()));
             dragZone.onClick(() -> {
 
-                if (!Screen.hasShiftDown()) {
+                if (!Minecraft.getInstance().hasShiftDown()) {
                     dataList.remove(data);
                     reloadPropertyList(false);
                 }
-                if (Screen.hasShiftDown() || !Screen.hasControlDown()) {
+                if (Minecraft.getInstance().hasShiftDown() || !Screen.hasControlDown()) {
                     PropertyContainer copy = new PropertyContainer(gui.root, gui, false);
                     copy.addProperty(data.copy());
                 }
@@ -662,7 +704,7 @@ public class PropertyContainer extends GuiManipulable {
 //    @Override
 //    protected boolean onStartMove(double mouseX, double mouseY) {
 //        if (dragZone.validate(mouseX, mouseY) && !isCopy) {
-//            if (Screen.hasShiftDown()) {
+//            if (Minecraft.getInstance().hasShiftDown()) {
 //                PropertyContainer newGroup = new PropertyContainer(gui, isGroup);
 //                newGroup.isCopy = true;
 //                gui.propertyContainers.add(newGroup);

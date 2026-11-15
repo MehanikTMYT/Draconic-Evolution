@@ -1,10 +1,10 @@
 package com.brandon3055.draconicevolution.client.gui.modular;
 
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.geometry.Align;
-import codechicken.lib.gui.modular.lib.geometry.ConstrainedGeometry;
-import codechicken.lib.gui.modular.lib.geometry.GuiParent;
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Align;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.ConstrainedGeometry;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GuiParent;
 import com.brandon3055.brandonscore.api.TimeKeeper;
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
 import com.brandon3055.draconicevolution.api.modules.Module;
@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
 import static net.minecraft.ChatFormatting.GOLD;
 import static net.minecraft.ChatFormatting.UNDERLINE;
 

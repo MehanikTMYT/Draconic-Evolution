@@ -1,61 +1,117 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
 import codechicken.lib.data.MCDataInput;
+
 import codechicken.lib.inventory.InventoryUtils;
+
 import codechicken.lib.math.MathHelper;
+
 import com.brandon3055.brandonscore.api.power.OPStorage;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.brandonscore.inventory.TileItemStackHandler;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.IRSSwitchable;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedBool;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedByte;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedInt;
+
 import com.brandon3055.brandonscore.lib.entityfilter.EntityFilter;
+
 import com.brandon3055.brandonscore.lib.entityfilter.FilterType;
+
 import com.brandon3055.brandonscore.utils.EnergyUtils;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModularOPStorage;
+
 import com.brandon3055.draconicevolution.blocks.machines.Grinder;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.inventory.GrinderMenu;
+
 import com.mojang.authlib.GameProfile;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.common.util.FakePlayer;
-import net.neoforged.neoforge.common.util.FakePlayerFactory;
-import net.neoforged.neoforge.items.IItemHandler;
+
+import java.util.Iterator;
+
+import java.util.List;
+
+import java.util.UUID;
 
 import javax.annotation.Nullable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+
+import net.minecraft.resources.Identifier;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.MenuProvider;
+
+import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.ExperienceOrb;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Inventory;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.inventory.AbstractContainerMenu;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.AABB;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.neoforged.neoforge.capabilities.Capabilities;
+
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+
+import net.neoforged.neoforge.common.util.FakePlayer;
+
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
+
+import net.neoforged.neoforge.items.IItemHandler;
+
+
+
 
 public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvider, IInteractTile {
 
@@ -134,7 +190,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
     public void tick() {
         super.tick();
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             if (animA < 1) animA += getAnimSpeed();
             else targetA = null;
             if (animB < 1) animB += getAnimSpeed();
@@ -260,7 +316,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
         boolean foundInvulnerable = false;
 
         while (!entitiesInRange.isEmpty()) {
-            LivingEntity randEntity = entitiesInRange.remove(level.random.nextInt(entitiesInRange.size()));
+            LivingEntity randEntity = entitiesInRange.remove(level.getRandom().nextInt(entitiesInRange.size()));
             debug("Checking Target: " + randEntity);
             if (isValidEntity(randEntity)) {
                 debug("Found valid target: " + randEntity);
@@ -271,7 +327,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
                     nextTarget = randEntity;
                     //Throw the sword!
                     sendPacketToChunk(output -> output.writeInt(nextTarget.getId()), 1);
-                    level.playSound(null, worldPosition, SoundEvents.TRIDENT_THROW.value(), SoundSource.BLOCKS, 1, 0.55F + (level.random.nextFloat() * 0.1F));
+                    level.playSound(null, worldPosition, SoundEvents.TRIDENT_THROW.value(), SoundSource.BLOCKS, 1, 0.55F + (level.getRandom().nextFloat() * 0.1F));
                     coolDown = killRate;
                     return;
                 }
@@ -293,7 +349,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
             return false;
         }
         if (DEConfig.grinderBlackList.isEmpty()) return true;
-        ResourceLocation reg = BuiltInRegistries.ENTITY_TYPE.getKey(livingBase.getType());
+        Identifier reg = BuiltInRegistries.ENTITY_TYPE.getKey(livingBase.getType());
         return !(reg != null && DEConfig.grinderBlackList.contains(reg.toString()));
     }
 

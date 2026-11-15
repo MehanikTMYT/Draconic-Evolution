@@ -1,5 +1,7 @@
 package com.brandon3055.draconicevolution;
 
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLEnvironment;
 import com.brandon3055.brandonscore.utils.Utils;
 import com.brandon3055.draconicevolution.api.DraconicAPI;
 import com.brandon3055.draconicevolution.client.ClientProxy;
@@ -26,7 +28,8 @@ public class DraconicEvolution {
     public static CommonProxy proxy;
 
     public DraconicEvolution(IEventBus modBus) {
-        proxy = Utils.unsafeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+        // port-26.1.2: BC Utils.unsafeRunForDist удалён -> FMLEnvironment.getDist()
+        proxy = FMLEnvironment.getDist() == Dist.CLIENT ? new ClientProxy() : new CommonProxy();
 
         DEConfig.load();
         DETags.init();
@@ -45,9 +48,15 @@ public class DraconicEvolution {
         DraconicNetwork.init(modBus);
         DEEventHandler.init(modBus);
 
-        Utils.loadOptionalMod("computercraft", () -> () -> modBus.register(new ComputerCraftCompatEventHandler()));
+        // port-26.1.2: BC Utils.loadOptionalMod удалён -> ModList.get().isLoaded
+        if (ModList.get().isLoaded("computercraft")) {
+            modBus.register(new ComputerCraftCompatEventHandler());
+        }
 
-        Utils.unsafeRunWhenOn(Dist.CLIENT, () -> () -> DEClient.init(modBus));
+        // port-26.1.2: BC Utils.unsafeRunWhenOn удалён
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
+            DEClient.init(modBus);
+        }
         DraconicAPI.addModuleProvider(MODID);
     }
 }

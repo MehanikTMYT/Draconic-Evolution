@@ -1,20 +1,38 @@
 package com.brandon3055.draconicevolution.client.keybinding;
 
 import com.brandon3055.draconicevolution.client.gui.DislocatorGui;
+
 import com.brandon3055.draconicevolution.client.gui.modular.itemconfig.ConfigurableItemGui;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.items.tools.DislocatorAdvanced;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
+
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
+
 import com.brandon3055.draconicevolution.network.InputSync;
+
 import net.minecraft.client.Minecraft;
+
 import net.minecraft.client.Options;
+
 import net.minecraft.world.entity.player.Player;
+
 import net.minecraft.world.item.ItemStack;
+
 import net.neoforged.api.distmarker.Dist;
+
 import net.neoforged.api.distmarker.OnlyIn;
+
 import net.neoforged.bus.api.EventPriority;
+
 import net.neoforged.bus.api.SubscribeEvent;
+
 import net.neoforged.neoforge.client.event.InputEvent;
+
+
 
 /**
  * Created by Brandon on 14/08/2014.

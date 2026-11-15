@@ -1,45 +1,128 @@
 package com.brandon3055.draconicevolution.handlers;
 
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.utils.EnergyUtils;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.api.IReaperItem;
+
 import com.brandon3055.draconicevolution.api.capability.DECapabilities;
+
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleTypes;
+
 import com.brandon3055.draconicevolution.api.modules.entities.EnderCollectionEntity;
+
 import com.brandon3055.draconicevolution.api.modules.entities.JunkFilterEntity;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleEntity;
+
 import com.brandon3055.draconicevolution.entity.guardian.DraconicGuardianEntity;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.covers1624.quack.util.CrashLock;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.WaterAnimal;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.dimension.end.EndDragonFight;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
 
 import java.util.*;
+
 import java.util.function.Predicate;
+
+import net.covers1624.quack.util.CrashLock;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.EntityType;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.animal.Animal;
+
+import net.minecraft.world.entity.animal.fish.WaterAnimal;
+
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+
+import net.minecraft.world.item.enchantment.Enchantments;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.Blocks;
+
+import net.minecraft.world.level.dimension.end.EnderDragonFight;
+
+import net.minecraft.world.level.levelgen.Heightmap;
+
+import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
+
+import net.neoforged.bus.api.EventPriority;
+
+import net.neoforged.neoforge.common.NeoForge;
+
+import net.neoforged.neoforge.common.Tags;
+
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
+
+import org.apache.logging.log4j.LogManager;
+
+import org.apache.logging.log4j.Logger;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 25/01/2023
@@ -91,7 +174,7 @@ public class LootEventHandler {
 
         if (entity instanceof EnderDragon dragon) {
             deadDragons.add(entity.getUUID());
-            EndDragonFight manager = dragon.getDragonFight();
+            EnderDragonFight manager = dragon.getDragonFight();
             if (manager == null) return;
 
             ItemEntity item = EntityType.ITEM.create(entity.level());
@@ -112,14 +195,14 @@ public class LootEventHandler {
 
         if (entity instanceof EnderDragon || entity instanceof DraconicGuardianEntity) {
             if (DEConfig.dragonDustLootModifier > 0) {
-                double count = (DEConfig.dragonDustLootModifier * 0.9D) + (entity.level().random.nextDouble() * (DEConfig.dragonDustLootModifier * 0.2));
+                double count = (DEConfig.dragonDustLootModifier * 0.9D) + (entity.level().getRandom().nextDouble() * (DEConfig.dragonDustLootModifier * 0.2));
                 for (int i = 0; i < (int) count; i++) {
                     float mm = 0.3F;
-                    ItemEntity dust = new ItemEntity(entity.level(), entity.getX() - 2 + entity.level().random.nextInt(4), entity.getY() - 2 + entity.level().random.nextInt(4), entity.getZ() - 2 + entity.level().random.nextInt(4), new ItemStack(DEContent.DUST_DRACONIUM.get()));
+                    ItemEntity dust = new ItemEntity(entity.level(), entity.getX() - 2 + entity.level().getRandom().nextInt(4), entity.getY() - 2 + entity.level().getRandom().nextInt(4), entity.getZ() - 2 + entity.level().getRandom().nextInt(4), new ItemStack(DEContent.DUST_DRACONIUM.get()));
                     dust.setDeltaMovement(
-                            mm * ((((float) entity.level().random.nextInt(100)) / 100F) - 0.5F),
-                            mm * ((((float) entity.level().random.nextInt(100)) / 100F) - 0.5F),
-                            mm * ((((float) entity.level().random.nextInt(100)) / 100F) - 0.5F)
+                            mm * ((((float) entity.level().getRandom().nextInt(100)) / 100F) - 0.5F),
+                            mm * ((((float) entity.level().getRandom().nextInt(100)) / 100F) - 0.5F),
+                            mm * ((((float) entity.level().getRandom().nextInt(100)) / 100F) - 0.5F)
                     );
                     entity.level().addFreshEntity(dust);
                 }

@@ -1,29 +1,52 @@
 package com.brandon3055.draconicevolution.blocks.machines;
 
 import codechicken.lib.math.MathHelper;
+
 import com.brandon3055.brandonscore.blocks.BlockBCore;
+
 import com.brandon3055.brandonscore.blocks.EntityBlockBCore;
+
 import com.brandon3055.brandonscore.blocks.PropertyString;
+
 import com.brandon3055.draconicevolution.blocks.StructureBlock;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyPylon;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.Locale;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.util.StringRepresentable;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.Block;
+
+import net.minecraft.world.level.block.EntityBlock;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.level.block.state.StateDefinition;
+
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+
+import net.minecraft.world.level.block.state.properties.EnumProperty; // port-26.1.2: DirectionProperty удалён
+
 
 /**
  * Created by brandon3055 on 30/3/2016.
@@ -31,7 +54,7 @@ import java.util.Locale;
 public class EnergyPylon extends EntityBlockBCore {
 
     public static final EnumProperty<Mode> MODE = EnumProperty.create("mode", Mode.class);
-    public static final DirectionProperty FACING = DirectionProperty.create("facing");
+    public static final EnumProperty<Direction> FACING = EnumProperty.create("facing", Direction.class);
 
     public EnergyPylon(Properties properties) {
         super(properties);
@@ -47,7 +70,7 @@ public class EnergyPylon extends EntityBlockBCore {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof TileEnergyPylon tile) {
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 if (player.isShiftKeyDown()) {
                     tile.selectNextCore();
                 } else {

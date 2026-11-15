@@ -1,19 +1,34 @@
 package com.brandon3055.draconicevolution.command;
 
 import com.brandon3055.brandonscore.worldentity.WorldEntityHandler;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileChaosCrystal;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianFightManager;
+
 import com.mojang.brigadier.CommandDispatcher;
+
 import com.mojang.brigadier.context.CommandContext;
+
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+
 import net.minecraft.ChatFormatting;
+
 import net.minecraft.commands.CommandSourceStack;
+
 import net.minecraft.commands.Commands;
+
 import net.minecraft.core.BlockPos;
+
 import net.minecraft.network.chat.Component;
+
 import net.minecraft.world.level.block.entity.BlockEntity;
+
 import net.minecraft.world.phys.Vec3;
+
+
 
 /**
  * Created by brandon3055 on 23/06/2017.
@@ -33,7 +48,7 @@ public class CommandRespawnGuardian {
         if (spawnHere) {
             return spawnHere(ctx);
         }
-        Vec3 pos = ctx.getSource().getPosition();
+        Vec3 pos = ctx.getSource().position();
 //        ServerPlayerEntity player = ctx.getSource().getPlayerOrException();
         TileChaosCrystal tile = BlockPos.betweenClosedStream(BlockPos.containing(pos).offset(-60, -60, -60), BlockPos.containing(pos).offset(60, 60, 60))
                 .filter(e -> ctx.getSource().getLevel().getBlockEntity(e) instanceof TileChaosCrystal)

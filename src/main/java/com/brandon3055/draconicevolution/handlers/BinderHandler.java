@@ -1,44 +1,120 @@
 package com.brandon3055.draconicevolution.handlers;
 
 import codechicken.lib.render.CCModel;
-import codechicken.lib.render.RenderUtils;
-import codechicken.lib.render.buffer.TransformingVertexConsumer;
-import codechicken.lib.vec.Cuboid6;
-import com.brandon3055.brandonscore.lib.ChatHelper;
-import com.brandon3055.draconicevolution.api.energy.ICrystalBinder;
-import com.brandon3055.draconicevolution.api.energy.ICrystalLink;
-import com.brandon3055.draconicevolution.api.render.DERenderTypes;
-import com.brandon3055.draconicevolution.blocks.energynet.tileentity.TileCrystalBase;
-import com.brandon3055.draconicevolution.init.ItemData;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.GlobalPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-import javax.annotation.Nonnull;
+import codechicken.lib.render.RenderUtils;
+
+import codechicken.lib.render.buffer.TransformingVertexConsumer;
+
+import codechicken.lib.vec.Cuboid6;
+
+import com.brandon3055.brandonscore.lib.ChatHelper;
+
+import com.brandon3055.draconicevolution.api.energy.ICrystalBinder;
+
+import com.brandon3055.draconicevolution.api.energy.ICrystalLink;
+
+import com.brandon3055.draconicevolution.api.render.DERenderTypes;
+
+import com.brandon3055.draconicevolution.blocks.energynet.tileentity.TileCrystalBase;
+
+import com.brandon3055.draconicevolution.init.ItemData;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import com.mojang.blaze3d.vertex.VertexFormat;
+
 import java.util.HashMap;
+
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.Camera;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.player.LocalPlayer;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.core.GlobalPos;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.AABB;
+
+import net.minecraft.world.phys.Vec3;
+
+import net.minecraft.world.phys.shapes.Shapes;
+
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
 import static com.brandon3055.draconicevolution.init.ItemData.BINDER_POS;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 26/11/2016.
@@ -58,7 +134,7 @@ public class BinderHandler {
         //If the tile is linkable and the player is sneaking bind the tile to the tool.
         if (tile instanceof ICrystalLink && player.isShiftKeyDown()) {
             bind(binder, blockClicked, level);
-            if (level.isClientSide) {
+            if (level.isClientSide()) {
                 ChatHelper.sendIndexed(player, Component.translatable("gui.draconicevolution.energy_net.pos_saved_to_tool").withStyle(ChatFormatting.GREEN), TileCrystalBase.MSG_ID);
                 player.swing(hand);
             }
@@ -145,7 +221,7 @@ public class BinderHandler {
 
         MultiBufferSource.BufferSource source = Minecraft.getInstance().renderBuffers().bufferSource();
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        Vec3 cameraPos = camera.getPosition();
+        Vec3 cameraPos = camera.position();
 
         pStack.pushPose();
         pStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);

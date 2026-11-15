@@ -1,15 +1,25 @@
 package com.brandon3055.draconicevolution.entity.guardian.control;
 
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.entity.guardian.DraconicGuardianEntity;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianFightManager;
+
 import com.brandon3055.draconicevolution.entity.guardian.GuardianProjectileEntity;
-import net.minecraft.core.Vec3i;
-import net.minecraft.world.level.pathfinder.Path;
-import net.minecraft.world.phys.Vec3;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.core.Vec3i;
+
+import net.minecraft.world.level.pathfinder.Path;
+
+import net.minecraft.world.phys.Vec3;
+
+import org.apache.logging.log4j.Logger;
+
+
+
 
 /**
  * For when players are getting just a little to close
@@ -45,7 +55,7 @@ public class CoverFirePhase extends Phase {
          guardian.level().levelEvent(null, 1017, guardian.blockPosition(), 0);
       }
       GuardianProjectileEntity projectile = new GuardianProjectileEntity(this.guardian.level(), this.guardian, targetRelX, targetRelY, targetRelZ, targetPos, 25, GuardianFightManager.COVER_FIRE_POWER);
-      projectile.moveTo(headX, headY, headZ, 0.0F, 0.0F);
+      projectile.snapTo(headX, headY, headZ, 0.0F, 0.0F);
       guardian.level().addFreshEntity(projectile);
 
       double distanceFromTarget = targetLocation == null ? 0.0D : targetLocation.distanceToSqr(guardian.getX(), guardian.getY(), guardian.getZ());

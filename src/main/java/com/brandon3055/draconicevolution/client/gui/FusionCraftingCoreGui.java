@@ -1,36 +1,66 @@
 package com.brandon3055.draconicevolution.client.gui;
 
-import codechicken.lib.gui.modular.ModularGui;
-import codechicken.lib.gui.modular.ModularGuiContainer;
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.container.ContainerGuiProvider;
-import codechicken.lib.gui.modular.lib.container.ContainerScreenAccess;
-import codechicken.lib.gui.modular.lib.geometry.Direction;
-import codechicken.lib.gui.modular.lib.geometry.GuiParent;
 import com.brandon3055.brandonscore.client.BCGuiTextures;
+
 import com.brandon3055.brandonscore.client.gui.GuiToolkit;
+
+import com.brandon3055.brandonscore.client.gui.modular.ModularGui;
+
+import com.brandon3055.brandonscore.client.gui.modular.ModularGuiContainer;
+
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerGuiProvider;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerScreenAccess;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Direction;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GuiParent;
+
 import com.brandon3055.brandonscore.client.gui.modulargui.templates.ButtonRow;
+
 import com.brandon3055.draconicevolution.api.DraconicAPI;
+
 import com.brandon3055.draconicevolution.api.crafting.IFusionInjector;
+
 import com.brandon3055.draconicevolution.api.crafting.IFusionRecipe;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileFusionCraftingCore;
+
 import com.brandon3055.draconicevolution.client.DEGuiTextures;
+
 import com.brandon3055.draconicevolution.inventory.FusionCraftingCoreMenu;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+
 import java.util.List;
+
 import java.util.function.Supplier;
+
 import java.util.stream.Collectors;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.literal;
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.relative;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.world.entity.player.Inventory;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.crafting.RecipeHolder;
+
+import org.jetbrains.annotations.NotNull;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.literal;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.relative;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
+
+
+
+
 
 public class FusionCraftingCoreGui extends ContainerGuiProvider<FusionCraftingCoreMenu> {
     private static final GuiToolkit TOOLKIT = new GuiToolkit("gui.draconicevolution.fusion_craft");
@@ -106,7 +136,7 @@ public class FusionCraftingCoreGui extends ContainerGuiProvider<FusionCraftingCo
         Constraints.bind(new IngredRenderer(craftArea, tile), craftArea);
 
         gui.onTick(() -> {
-            currentRecipe = tile.getLevel().getRecipeManager().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), tile, tile.getLevel()).orElse(null);
+            currentRecipe = tile.getLevel().recipeAccess().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), tile, tile.getLevel()).orElse(null);
             if (currentRecipe == null) {
                 stackIcon.setStack(ItemStack.EMPTY);
             } else {

@@ -1,41 +1,113 @@
 package com.brandon3055.draconicevolution.items.equipment;
 
 import codechicken.lib.inventory.InventoryUtils;
+
 import codechicken.lib.raytracer.RayTracer;
+
 import com.brandon3055.brandonscore.inventory.BlockToStackHelper;
+
 import com.brandon3055.brandonscore.inventory.InventoryDynamic;
+
 import com.brandon3055.brandonscore.lib.Pair;
+
 import com.brandon3055.brandonscore.utils.EnergyUtils;
+
 import com.brandon3055.draconicevolution.api.capability.DECapabilities;
+
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
+
 import com.brandon3055.draconicevolution.api.capability.PropertyProvider;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleHelper;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleTypes;
+
 import com.brandon3055.draconicevolution.api.modules.data.AOEData;
+
 import com.brandon3055.draconicevolution.init.EquipCfg;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
-import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.event.level.BlockEvent;
-import org.antlr.v4.runtime.misc.IntegerStack;
 
 import java.util.List;
+
 import java.util.Random;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.Block;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.level.material.FluidState;
+
+import net.minecraft.world.phys.AABB;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.HitResult;
+
+import net.neoforged.neoforge.common.CommonHooks;
+
+import net.neoforged.neoforge.event.EventHooks;
+
+import net.neoforged.neoforge.event.level.BlockEvent;
+
+import org.antlr.v4.runtime.misc.IntegerStack;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 16/6/20
@@ -85,7 +157,7 @@ public interface IModularMiningTool extends IModularTieredItem {
         if (aoeSafe) {
             for (BlockPos block : aoeBlocks) {
                 if (!player.level().isEmptyBlock(block) && player.level().getBlockEntity(block) != null) {
-                    if (player.level().isClientSide) player.sendSystemMessage(Component.translatable("item_prop.draconicevolution.aoe_safe.blocked"));
+                    if (player.level().isClientSide()) player.sendSystemMessage(Component.translatable("item_prop.draconicevolution.aoe_safe.blocked"));
                     else ((ServerPlayer) player).connection.send(new ClientboundBlockUpdatePacket(player.level(), block));
                     return true;
                 }
@@ -95,7 +167,7 @@ public interface IModularMiningTool extends IModularTieredItem {
         aoeBlocks.forEach(block -> breakAOEBlock(stack, player.level(), block, player, refStrength, inventoryDynamic, rand.nextInt(Math.max(5, (breakRadius * breakDepth) / 5)) == 0));
         List<ItemEntity> items = player.level().getEntitiesOfClass(ItemEntity.class, new AABB(aoe.key()));
         for (ItemEntity item : items) {
-            if (!player.level().isClientSide && item.isAlive()) {
+            if (!player.level().isClientSide() && item.isAlive()) {
                 InventoryUtils.insertItem(inventoryDynamic, item.getItem(), false);
                 item.discard();
             }
@@ -112,9 +184,9 @@ public interface IModularMiningTool extends IModularTieredItem {
         }
 
         if (!IModularItem.isCorrectToolForDrops(stack, state)) {
-            return player.getDigSpeed(state, pos) / hardness / 100F;
+            return player.getDestroySpeed(state, pos) / hardness / 100F;
         } else {
-            return player.getDigSpeed(state, pos) / hardness / 30F;
+            return player.getDestroySpeed(state, pos) / hardness / 30F;
         }
     }
 

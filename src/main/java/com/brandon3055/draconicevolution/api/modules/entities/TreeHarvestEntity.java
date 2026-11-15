@@ -1,56 +1,105 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
-import com.brandon3055.brandonscore.api.BCStreamCodec;
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.capability.CapabilityOP;
+
 import com.brandon3055.brandonscore.inventory.InventoryDynamic;
+
 import com.brandon3055.brandonscore.utils.EnergyUtils;
+
 import com.brandon3055.draconicevolution.api.config.BooleanProperty;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty;
+
 import com.brandon3055.draconicevolution.api.config.IntegerProperty;
+
 import com.brandon3055.draconicevolution.api.modules.Module;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleHelper;
+
 import com.brandon3055.draconicevolution.api.modules.data.TreeHarvestData;
+
 import com.brandon3055.draconicevolution.api.modules.entities.logic.ForestHarvestHandler;
+
 import com.brandon3055.draconicevolution.api.modules.entities.logic.IHarvestHandler;
+
 import com.brandon3055.draconicevolution.api.modules.entities.logic.TreeHarvestHandler;
+
 import com.brandon3055.draconicevolution.api.modules.lib.EntityOverridesItemUse;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleContext;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleEntity;
+
 import com.brandon3055.draconicevolution.init.DEModules;
+
 import com.brandon3055.draconicevolution.init.ItemData;
+
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import com.mojang.math.Axis;
+
 import com.mojang.serialization.Codec;
+
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.ICancellableEvent;
-import net.neoforged.neoforge.client.event.RenderHandEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.HashMap;
+
 import java.util.List;
+
 import java.util.Map;
+
 import java.util.UUID;
 
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.gui.screens.Screen;
+
+import net.minecraft.client.model.player.PlayerModel;
+
+import net.minecraft.network.RegistryFriendlyByteBuf;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.network.codec.ByteBufCodecs;
+
+import net.minecraft.network.codec.StreamCodec;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.util.Mth;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.Item;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.TooltipFlag;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.bus.api.ICancellableEvent;
+
+import net.neoforged.neoforge.client.event.RenderHandEvent;
+
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+
 import static com.brandon3055.draconicevolution.DraconicEvolution.MODID;
+
+
+import com.brandon3055.draconicevolution.lib.DEStreamCodecs; // port-26.1.2: BCStreamCodec удалён из BC-26
+
+
 
 public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements EntityOverridesItemUse {
 
@@ -69,7 +118,7 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
             IntegerProperty.CODEC.fieldOf("harvest_range").forGetter(e -> e.harvestRange)
     ).apply(builder, TreeHarvestEntity::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, TreeHarvestEntity> STREAM_CODEC = BCStreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, TreeHarvestEntity> STREAM_CODEC = DEStreamCodecs.composite(
             DEModules.streamCodec(), ModuleEntity::getModule,
             ByteBufCodecs.INT, ModuleEntity::getGridX,
             ByteBufCodecs.INT, ModuleEntity::getGridY,
@@ -188,7 +237,7 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
     @Override
     @OnlyIn (Dist.CLIENT)
     public void addHostHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (Screen.hasShiftDown()) {
+        if (Minecraft.getInstance().hasShiftDown()) {
             tooltip.add(Component.translatable("module." + MODID + ".tree_harvest.single").withStyle(ChatFormatting.DARK_GRAY));
             if (getModule().getData().range() > 0) {
                 tooltip.add(Component.translatable("module." + MODID + ".tree_harvest.area").withStyle(ChatFormatting.DARK_GRAY));

@@ -1,13 +1,13 @@
 package com.brandon3055.draconicevolution.client.gui;
 
-import codechicken.lib.gui.modular.ModularGui;
-import codechicken.lib.gui.modular.ModularGuiContainer;
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.container.ContainerGuiProvider;
-import codechicken.lib.gui.modular.lib.container.ContainerScreenAccess;
-import codechicken.lib.gui.modular.lib.geometry.Align;
-import codechicken.lib.gui.modular.lib.geometry.Direction;
+import com.brandon3055.brandonscore.client.gui.modular.ModularGui;
+import com.brandon3055.brandonscore.client.gui.modular.ModularGuiContainer;
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerGuiProvider;
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerScreenAccess;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Align;
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Direction;
 import com.brandon3055.brandonscore.client.BCGuiTextures;
 import com.brandon3055.brandonscore.client.gui.GuiToolkit;
 import com.brandon3055.brandonscore.client.gui.modulargui.templates.ButtonRow;
@@ -18,8 +18,8 @@ import com.brandon3055.draconicevolution.inventory.FlowGateMenu;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
 
 /**
  * Created by brandon3055 on 15/11/2016.

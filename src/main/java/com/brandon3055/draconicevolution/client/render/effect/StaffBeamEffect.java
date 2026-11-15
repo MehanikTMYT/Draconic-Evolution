@@ -1,25 +1,46 @@
 package com.brandon3055.draconicevolution.client.render.effect;
 
 import codechicken.lib.math.MathHelper;
+
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.utils.BCProfiler;
+
 import com.brandon3055.brandonscore.utils.MathUtils;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
-import com.mojang.blaze3d.platform.GlStateManager;
+
+import com.mojang.blaze3d.opengl.GlStateManager;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import com.mojang.blaze3d.vertex.*;
+
 import net.minecraft.client.Camera;
+
 import net.minecraft.client.multiplayer.ClientLevel;
+
 import net.minecraft.client.particle.Particle;
+
 import net.minecraft.client.particle.ParticleRenderType;
+
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
+
+import net.minecraft.resources.Identifier;
+
 import net.minecraft.world.entity.LivingEntity;
+
 import net.minecraft.world.phys.Vec3;
+
 import org.jetbrains.annotations.Nullable;
+
+
 
 /**
  * Created by brandon3055 on 29/4/21
@@ -76,7 +97,7 @@ public class StaffBeamEffect extends Particle {
         Vector3 targetPos = this.targetPos.copy();//MathUtils.interpolateVec3(this.origin, this.targetPos, MathUtils.clampMap(progress, 0, 0.1, 0, 1));
 
 
-        Vec3 viewVec = renderInfo.getPosition();
+        Vec3 viewVec = renderInfo.position();
         Vector3 source = origin.subtract(viewVec);
         Vector3 target = targetPos.subtract(viewVec);
 //        Vector3 source = new Vector3(x - viewVec.x, y - viewVec.y, z - viewVec.z);
@@ -127,7 +148,7 @@ public class StaffBeamEffect extends Particle {
     }
 
     private static ParticleRenderType renderType = new ParticleRenderType() {
-        private static ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_draconic.png");
+        private static Identifier texture = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_draconic.png");
 
         @Override
         public @Nullable BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {

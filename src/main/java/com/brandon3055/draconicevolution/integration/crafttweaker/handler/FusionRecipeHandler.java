@@ -7,7 +7,7 @@
 //import com.blamejared.crafttweaker.api.util.StringUtil;
 //import com.brandon3055.draconicevolution.api.crafting.FusionRecipe;
 //import com.brandon3055.draconicevolution.api.crafting.IFusionRecipe;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.world.item.crafting.Recipe;
 //
 //import java.util.BitSet;
@@ -31,7 +31,7 @@
 //    }
 //
 //    @Override
-//    public Optional<Function<ResourceLocation, FusionRecipe>> replaceIngredients(com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager manager, FusionRecipe recipe, List<IReplacementRule> rules) throws ReplacementNotSupportedException {
+//    public Optional<Function<Identifier, FusionRecipe>> replaceIngredients(com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager manager, FusionRecipe recipe, List<IReplacementRule> rules) throws ReplacementNotSupportedException {
 //        // fusionIngredients returns IFusionIngredient even though it's internal list is FusionIngredient, so lets just map it.
 //        List<FusionRecipe.FusionIngredient> iFusionIngredients = recipe.fusionIngredients().stream().map(iFusionIngredient -> (FusionRecipe.FusionIngredient) iFusionIngredient).collect(Collectors.toList());
 //        return ReplacementHandlerHelper.replaceIngredientList(iFusionIngredients, FusionRecipe.FusionIngredient.class, recipe, rules, newIngredients -> id -> new FusionRecipe(id, recipe.getResultItem(), recipe.getCatalyst(), recipe.getEnergyCost(), recipe.getRecipeTier(), newIngredients));

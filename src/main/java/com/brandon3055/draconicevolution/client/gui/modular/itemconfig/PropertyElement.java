@@ -1,30 +1,56 @@
 package com.brandon3055.draconicevolution.client.gui.modular.itemconfig;
 
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.BackgroundRender;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import codechicken.lib.gui.modular.lib.SliderState;
-import codechicken.lib.gui.modular.lib.geometry.Axis;
-import codechicken.lib.gui.modular.lib.geometry.GuiParent;
 import codechicken.lib.math.MathHelper;
+
 import com.brandon3055.brandonscore.client.BCGuiTextures;
+
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.BackgroundRender;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.SliderState;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Axis;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GuiParent;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+
 import java.util.function.Supplier;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.gui.screens.Screen;
+
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.sounds.SoundEvents;
+
+import org.jetbrains.annotations.NotNull;
+
 import static com.brandon3055.brandonscore.BCConfig.darkMode;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
+
 import static net.minecraft.ChatFormatting.AQUA;
+
 import static net.minecraft.ChatFormatting.DARK_AQUA;
+
+
+
+
 
 /**
  * Created by brandon3055 on 10/5/20.
@@ -250,9 +276,9 @@ public class PropertyElement extends GuiElement<PropertyElement> {
 //        if (slider.isEnabled()) {
 //            slider.setRange(data.minValue, data.maxValue);
 //            if (!slider.isDragging()) {
-//                if (data.type == ConfigProperty.Type.DECIMAL && slider.getPosition() != data.decimalValue) {
+//                if (data.type == ConfigProperty.Type.DECIMAL && slider.position() != data.decimalValue) {
 //                    slider.updatePos(data.decimalValue);
-//                } else if (data.type == ConfigProperty.Type.INTEGER && slider.getPosition() != data.integerValue) {
+//                } else if (data.type == ConfigProperty.Type.INTEGER && slider.position() != data.integerValue) {
 //                    slider.updatePos(data.integerValue);
 //                }
 //            }
@@ -292,7 +318,7 @@ public class PropertyElement extends GuiElement<PropertyElement> {
 
         @Override
         public boolean canScroll(Axis scrollAxis) {
-            return Screen.hasShiftDown();
+            return Minecraft.getInstance().hasShiftDown();
         }
     }
 

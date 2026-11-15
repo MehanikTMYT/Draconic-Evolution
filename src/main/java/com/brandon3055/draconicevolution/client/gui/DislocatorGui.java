@@ -1,37 +1,70 @@
 package com.brandon3055.draconicevolution.client.gui;
 
-import codechicken.lib.gui.modular.ModularGui;
-import codechicken.lib.gui.modular.ModularGuiScreen;
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.*;
-import codechicken.lib.gui.modular.lib.geometry.Align;
-import codechicken.lib.gui.modular.lib.geometry.Axis;
-import codechicken.lib.gui.modular.lib.geometry.Direction;
-import codechicken.lib.gui.modular.sprite.Material;
 import codechicken.lib.math.MathHelper;
+
 import com.brandon3055.brandonscore.BCConfig;
+
 import com.brandon3055.brandonscore.client.BCGuiTextures;
+
 import com.brandon3055.brandonscore.client.gui.GuiToolkit;
+
+import com.brandon3055.brandonscore.client.gui.modular.ModularGui;
+
+import com.brandon3055.brandonscore.client.gui.modular.ModularGuiScreen;
+
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.*;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Align;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Axis;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Direction;
+
+import com.brandon3055.brandonscore.client.gui.modular.sprite.Material;
+
 import com.brandon3055.brandonscore.client.gui.modulargui.templates.ButtonRow;
+
 import com.brandon3055.brandonscore.utils.DataUtils;
+
 import com.brandon3055.brandonscore.utils.TargetPos;
+
 import com.brandon3055.draconicevolution.client.DEGuiTextures;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import com.brandon3055.draconicevolution.items.tools.DislocatorAdvanced;
+
 import com.brandon3055.draconicevolution.items.tools.DislocatorAdvanced.DislocatorTarget;
+
+import com.brandon3055.draconicevolution.items.tools.DislocatorAdvanced;
+
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.network.chat.MutableComponent;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.Level;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
+
 import static net.minecraft.ChatFormatting.*;
+
+
+
+
 
 /**
  * Created by brandon3055 on 4/1/21
@@ -119,7 +152,7 @@ public class DislocatorGui implements GuiProvider {
                         Component.literal(GOLD + "X: " + (int) getTargetPos().getX()),
                         Component.literal(GOLD + "Y: " + (int) getTargetPos().getY()),
                         Component.literal(GOLD + "Z: " + (int) getTargetPos().getZ()),
-                        Component.literal(GOLD + (Screen.hasShiftDown() ? getTargetPos().getDimension().location().toString() : getTargetPos().getDimension().location().getPath()))
+                        Component.literal(GOLD + (Minecraft.getInstance().hasShiftDown() ? getTargetPos().getDimension().location().toString() : getTargetPos().getDimension().location().getPath()))
                 ));
 
         GuiText xLabel = new GuiText(infoBG)

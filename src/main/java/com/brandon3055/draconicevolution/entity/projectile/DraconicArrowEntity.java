@@ -1,63 +1,121 @@
 package com.brandon3055.draconicevolution.entity.projectile;
 
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.init.DEDamage;
+
 import com.google.common.collect.Lists;
+
 import com.google.common.collect.Sets;
+
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import net.covers1624.quack.util.SneakyUtils;
-import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.particles.ColorParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerEntity;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.*;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.event.EventHooks;
+
+import java.util.Arrays;
+
+import java.util.Collection;
+
+import java.util.Set;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
+
+import net.covers1624.quack.util.SneakyUtils;
+
+import net.minecraft.advancements.CriteriaTriggers;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.component.DataComponents;
+
+import net.minecraft.core.particles.ColorParticleOption;
+
+import net.minecraft.core.particles.ParticleTypes;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.ListTag;
+
+import net.minecraft.network.protocol.Packet;
+
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+
+import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+
+import net.minecraft.network.syncher.EntityDataAccessor;
+
+import net.minecraft.network.syncher.EntityDataSerializers;
+
+import net.minecraft.network.syncher.SynchedEntityData;
+
+import net.minecraft.server.level.ServerEntity;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.tags.DamageTypeTags;
+
+import net.minecraft.util.Mth;
+
+import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.effect.MobEffectInstance;
+
+import net.minecraft.world.effect.MobEffects;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.EntityType;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.Items;
+
+import net.minecraft.world.item.ShieldItem;
+
+import net.minecraft.world.item.alchemy.Potion;
+
+import net.minecraft.world.item.alchemy.PotionContents;
+
+import net.minecraft.world.item.alchemy.Potions;
+
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+
+import net.minecraft.world.level.ClipContext;
+
+import net.minecraft.world.level.Level;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.*;
+
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.event.EventHooks;
+
+
+
 
 /**
  * Created by brandon3055 on 8/7/21
@@ -163,7 +221,7 @@ public class DraconicArrowEntity extends AbstractArrow {
     public void tick() {
         superTick();
 
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             if (this.inGround) {
                 if (this.inGroundTime % 5 == 0) {
                     this.makeParticle(1);
@@ -183,7 +241,7 @@ public class DraconicArrowEntity extends AbstractArrow {
             this.leftOwner = this.checkLeftOwner();
         }
         //Entity Tick
-        if (!level().isClientSide) {
+        if (!level().isClientSide()) {
             this.setSharedFlag(6, this.isCurrentlyGlowing());
         }
         this.baseTick();
@@ -226,7 +284,7 @@ public class DraconicArrowEntity extends AbstractArrow {
         if (this.inGround && !flag) {
             if (this.lastState != blockstate && this.shouldFall()) {
                 this.startFalling();
-            } else if (!level().isClientSide) {
+            } else if (!level().isClientSide()) {
                 this.tickDespawn();
             }
 
@@ -352,7 +410,7 @@ public class DraconicArrowEntity extends AbstractArrow {
         }
 
         if (this.isCritArrow()) {
-            long j = (long) this.random.nextInt(damage / 2 + 2);
+            long j = (long) this.getRandom().nextInt(damage / 2 + 2);
             damage = (int) Math.min(j + (long) damage, 2147483647L);
         }
 
@@ -378,7 +436,7 @@ public class DraconicArrowEntity extends AbstractArrow {
             }
 
             if (entity instanceof LivingEntity livingentity) {
-                if (!level().isClientSide && this.getPierceLevel() <= 0 && penetration <= 0) {
+                if (!level().isClientSide() && this.getPierceLevel() <= 0 && penetration <= 0) {
                     livingentity.setArrowCount(livingentity.getArrowCount() + 1);
                 }
 
@@ -396,7 +454,7 @@ public class DraconicArrowEntity extends AbstractArrow {
                     this.piercedAndKilledEntities.add(livingentity);
                 }
 
-                if (!level().isClientSide && owner instanceof ServerPlayer serverPlayer) {
+                if (!level().isClientSide() && owner instanceof ServerPlayer serverPlayer) {
                     if (this.piercedAndKilledEntities != null && this.shotFromCrossbow()) {
                         CriteriaTriggers.KILLED_BY_CROSSBOW.trigger(serverPlayer, this.piercedAndKilledEntities);
                     } else if (!entity.isAlive() && this.shotFromCrossbow()) {
@@ -405,7 +463,7 @@ public class DraconicArrowEntity extends AbstractArrow {
                 }
             }
 
-            this.playSound(this.getHitGroundSoundEvent(), 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
+            this.playSound(this.getHitGroundSoundEvent(), 1.0F, 1.2F / (this.getRandom().nextFloat() * 0.2F + 0.9F));
             if (this.getPierceLevel() <= 0 && penetration <= 0) {
                 this.discard();
             }
@@ -414,7 +472,7 @@ public class DraconicArrowEntity extends AbstractArrow {
             this.setDeltaMovement(this.getDeltaMovement().scale(0));
             this.setYRot(getYRot() + 180.0F);
             this.yRotO += 180.0F;
-            if (!level().isClientSide && this.getDeltaMovement().lengthSqr() < 1.0E-7D) {
+            if (!level().isClientSide() && this.getDeltaMovement().lengthSqr() < 1.0E-7D) {
                 if (this.pickup == AbstractArrow.Pickup.ALLOWED) {
                     this.spawnAtLocation(this.getPickupItem(), 0.1F);
                 }
@@ -459,7 +517,7 @@ public class DraconicArrowEntity extends AbstractArrow {
                         }
                     }
                     if (canPass) {
-                        this.playSound(SoundEvents.ANCIENT_DEBRIS_BREAK, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
+                        this.playSound(SoundEvents.ANCIENT_DEBRIS_BREAK, 1.0F, 1.2F / (this.getRandom().nextFloat() * 0.2F + 0.9F));
                         for (int i = 0; i < 25; i++) {
                             Vec3 critPos = traceResult.getLocation().add(getDeltaMovement().normalize().multiply(2, 2, 2).add((-0.5 + random.nextGaussian()) * 0.2, (-0.5 + random.nextGaussian()) * 0.2, (-0.5 + random.nextGaussian()) * 0.2));
                             Vec3 critVel = getDeltaMovement().normalize().multiply(5, 5, 5);
@@ -488,7 +546,7 @@ public class DraconicArrowEntity extends AbstractArrow {
         this.setDeltaMovement(vector3d);
         Vec3 vector3d1 = vector3d.normalize().scale((double) 0.05F);
         this.setPosRaw(this.getX() - vector3d1.x, this.getY() - vector3d1.y, this.getZ() - vector3d1.z);
-        this.playSound(this.getHitGroundSoundEvent(), 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
+        this.playSound(this.getHitGroundSoundEvent(), 1.0F, 1.2F / (this.getRandom().nextFloat() * 0.2F + 0.9F));
         this.inGround = true;
         this.shakeTime = 7;
         this.setCritArrow(false);

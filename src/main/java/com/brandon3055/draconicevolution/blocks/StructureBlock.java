@@ -1,41 +1,77 @@
 package com.brandon3055.draconicevolution.blocks;
 
 import com.brandon3055.brandonscore.blocks.EntityBlockBCore;
+
 import com.brandon3055.brandonscore.lib.CustomTabHandling;
+
 import com.brandon3055.brandonscore.multiblock.StructurePart;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.MultiBlockController;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileStructureBlock;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.items.equipment.IModularItem;
+
 import com.brandon3055.draconicevolution.items.equipment.IModularMiningTool;
+
 import net.minecraft.core.BlockPos;
+
 import net.minecraft.core.NonNullList;
+
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+
+import net.minecraft.resources.Identifier;
+
 import net.minecraft.server.level.ServerLevel;
+
 import net.minecraft.tags.TagKey;
+
 import net.minecraft.util.RandomSource;
+
 import net.minecraft.world.entity.player.Player;
+
 import net.minecraft.world.item.CreativeModeTab;
+
 import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.world.level.BlockGetter;
+
 import net.minecraft.world.level.Level;
+
 import net.minecraft.world.level.LevelReader;
+
 import net.minecraft.world.level.block.Block;
+
 import net.minecraft.world.level.block.Blocks;
+
 import net.minecraft.world.level.block.RenderShape;
+
 import net.minecraft.world.level.block.entity.BlockEntity;
+
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.minecraft.world.level.material.FluidState;
+
 import net.minecraft.world.phys.HitResult;
+
 import net.minecraft.world.phys.shapes.CollisionContext;
+
 import net.minecraft.world.phys.shapes.Shapes;
+
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 import net.neoforged.api.distmarker.Dist;
+
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.event.RenderHighlightEvent;
+
 import net.neoforged.neoforge.common.CommonHooks;
+
 import net.neoforged.neoforge.event.EventHooks;
+
+
+import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent; // port-26.1.2: RenderHighlightEvent удалён
 
 /**
  * An invisible placeholder block used by multi-block structures.
@@ -85,7 +121,7 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
         BlockEntity tile = world.getBlockEntity(pos);
 
         if (tile instanceof TileStructureBlock structureTile) {
-            ResourceLocation blockName = structureTile.blockName.get();
+            Identifier blockName = structureTile.blockName.get();
             if (blockName != null) {
                 Block block = BuiltInRegistries.BLOCK.get(blockName);
                 MultiBlockController controller = structureTile.getController();
@@ -106,7 +142,7 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
     public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader world, BlockPos pos, Player player) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileStructureBlock structureTile) {
-            ResourceLocation blockName = structureTile.blockName.get();
+            Identifier blockName = structureTile.blockName.get();
             if (blockName != null) {
                 Block block = BuiltInRegistries.BLOCK.get(blockName);
                 return new ItemStack(block);
@@ -155,7 +191,7 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
 
     public static Block getBlock(Level level, BlockPos pos) {
         if (level.getBlockEntity(pos) instanceof TileStructureBlock tile) {
-            ResourceLocation name = tile.blockName.get();
+            Identifier name = tile.blockName.get();
             if (name != null) {
                 return BuiltInRegistries.BLOCK.get(name);
             }
@@ -176,13 +212,13 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
             return 0.0F;
         } else {
             int i = IModularItem.isCorrectToolForDrops(player.getMainHandItem(), state) ? 30 : 100;
-            return player.getDigSpeed(state, pos) / f / (float)i;
+            return player.getDestroySpeed(state, pos) / f / (float)i;
         }
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean renderSelectionBox(RenderHighlightEvent.Block event, Level level) {
+    public boolean renderSelectionBox(ExtractBlockOutlineRenderStateEvent event, Level level) {
         if (level.getBlockEntity(event.getTarget().getBlockPos()) instanceof TileStructureBlock tile) {
             return tile.renderSelectionBox(event);
         }

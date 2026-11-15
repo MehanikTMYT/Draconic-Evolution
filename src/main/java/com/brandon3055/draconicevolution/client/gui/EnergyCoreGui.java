@@ -1,40 +1,76 @@
 package com.brandon3055.draconicevolution.client.gui;
 
-import codechicken.lib.gui.modular.ModularGui;
-import codechicken.lib.gui.modular.ModularGuiContainer;
-import codechicken.lib.gui.modular.elements.*;
-import codechicken.lib.gui.modular.lib.ColourState;
-import codechicken.lib.gui.modular.lib.Constraints;
-import codechicken.lib.gui.modular.lib.GuiRender;
-import codechicken.lib.gui.modular.lib.TextState;
-import codechicken.lib.gui.modular.lib.container.ContainerGuiProvider;
-import codechicken.lib.gui.modular.lib.container.ContainerScreenAccess;
-import codechicken.lib.gui.modular.lib.geometry.Direction;
-import codechicken.lib.gui.modular.lib.geometry.GuiParent;
 import codechicken.lib.math.MathHelper;
+
 import com.brandon3055.brandonscore.api.power.IOInfo;
+
 import com.brandon3055.brandonscore.client.BCGuiTextures;
+
 import com.brandon3055.brandonscore.client.gui.GuiToolkit;
+
+import com.brandon3055.brandonscore.client.gui.modular.ModularGui;
+
+import com.brandon3055.brandonscore.client.gui.modular.ModularGuiContainer;
+
+import com.brandon3055.brandonscore.client.gui.modular.elements.*;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.ColourState;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.Constraints;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.TextState;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerGuiProvider;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ContainerScreenAccess;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Direction;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GuiParent;
+
 import com.brandon3055.brandonscore.client.gui.modulargui.ShaderEnergyBar;
+
 import com.brandon3055.brandonscore.client.gui.modulargui.templates.ButtonRow;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyCore;
+
 import com.brandon3055.draconicevolution.client.DEGuiTextures;
+
 import com.brandon3055.draconicevolution.inventory.EnergyCoreMenu;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Inventory;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+
 import java.math.RoundingMode;
+
 import java.util.Locale;
+
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import java.util.function.Supplier;
 
-import static codechicken.lib.gui.modular.lib.geometry.Constraint.*;
-import static codechicken.lib.gui.modular.lib.geometry.GeoParam.*;
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.world.entity.player.Inventory;
+
+import org.jetbrains.annotations.NotNull;
+
 import static com.brandon3055.brandonscore.BCConfig.darkMode;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.Constraint.*;
+
+import static com.brandon3055.brandonscore.client.gui.modular.lib.geometry.GeoParam.*;
+
 import static net.minecraft.ChatFormatting.*;
+
+
+
+
 
 /**
  * Created by brandon3055 on 7/4/2016.
@@ -278,7 +314,7 @@ public class EnergyCoreGui extends ContainerGuiProvider<EnergyCoreMenu> {
         if (ioInfo == null) return Component.literal("[Not Available]"); //Should never hit this
         String pfx = "mod_gui.brandonscore.energy_bar.";
 
-        if (Screen.hasShiftDown()) {
+        if (Minecraft.getInstance().hasShiftDown()) {
             return Component.empty().copy()
                     .append(Component.literal("+")
                             .withStyle(GREEN)

@@ -1,42 +1,76 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
-
 import codechicken.lib.vec.Vector3;
+
 import com.brandon3055.brandonscore.api.TimeKeeper;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
-import com.brandon3055.brandonscore.client.particle.IntParticleData;
+
+import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
+
 import com.brandon3055.brandonscore.lib.IInteractTile;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedBool;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedEnum;
+
 import com.brandon3055.brandonscore.lib.datamanager.ManagedPos;
+
 import com.brandon3055.brandonscore.utils.FacingUtils;
+
 import com.brandon3055.draconicevolution.blocks.StructureBlock;
+
 import com.brandon3055.draconicevolution.blocks.machines.EnergyCoreStabilizer;
+
 import com.brandon3055.draconicevolution.client.DEParticles;
+
 import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
+
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.core.Direction;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.world.phys.BlockHitResult;
+
+import net.minecraft.world.phys.shapes.CollisionContext;
+
+import net.minecraft.world.phys.shapes.Shapes;
+
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import org.jetbrains.annotations.Nullable;
+
+
+
+
 
 /**
  * Created by brandon3055 on 30/3/2016.
@@ -61,7 +95,7 @@ public class TileEnergyCoreStabilizer extends TileBCore implements IInteractTile
 
     @Override
     public InteractionResult handleRemoteClick(Player player, BlockHitResult hit) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 
@@ -86,7 +120,7 @@ public class TileEnergyCoreStabilizer extends TileBCore implements IInteractTile
     // ### Form Multi-block
 
     public void onPlaced() {
-        if (level.isClientSide || checkAndFormMultiBlock()) {
+        if (level.isClientSide() || checkAndFormMultiBlock()) {
             return;
         }
 
@@ -283,7 +317,7 @@ public class TileEnergyCoreStabilizer extends TileBCore implements IInteractTile
         @Override
     public void tick() {
         super.tick();
-        if (level.isClientSide && coreOffset.get() != null && isCoreActive.get()) {
+        if (level.isClientSide() && coreOffset.get() != null && isCoreActive.get()) {
             rotation = TimeKeeper.getClientTick();
             updateVisual();
             if (isValidMultiBlock.get()) {
@@ -296,30 +330,30 @@ public class TileEnergyCoreStabilizer extends TileBCore implements IInteractTile
     private void updateVisual() {
         Vec3D spawn = new Vec3D(worldPosition);
         spawn.add(0.5, 0.5, 0.5);
-        double rand = level.random.nextInt(100) / 12D;
+        double rand = level.getRandom().nextInt(100) / 12D;
         double randOffset = rand * (Math.PI * 2D);
         double offsetX = Math.sin((ClientEventHandler.elapsedTicks / 180D * Math.PI) + randOffset);
         double offsetY = Math.cos((ClientEventHandler.elapsedTicks / 180D * Math.PI) + randOffset);
 
-        if (!isValidMultiBlock.get() || level.random.nextBoolean()) {
+        if (!isValidMultiBlock.get() || level.getRandom().nextBoolean()) {
             double d = isValidMultiBlock.get() ? 1.1 : 0.25;
             double inset = isValidMultiBlock.get() ? 1 : 0;
             if (coreDirection.get().getAxis() == Direction.Axis.Z) {
-                spawn.add(offsetX * d, offsetY * d, (level.random.nextBoolean() ? -0.38 : 0.38) * inset);
+                spawn.add(offsetX * d, offsetY * d, (level.getRandom().nextBoolean() ? -0.38 : 0.38) * inset);
             } else if (coreDirection.get().getAxis() == Direction.Axis.Y) {
-                spawn.add(offsetX * d, (level.random.nextBoolean() ? -0.38 : 0.38) * inset, offsetY * d);
+                spawn.add(offsetX * d, (level.getRandom().nextBoolean() ? -0.38 : 0.38) * inset, offsetY * d);
             } else if (coreDirection.get().getAxis() == Direction.Axis.X) {
-                spawn.add((level.random.nextBoolean() ? -0.38 : 0.38) * inset, offsetY * d, offsetX * d);
+                spawn.add((level.getRandom().nextBoolean() ? -0.38 : 0.38) * inset, offsetY * d, offsetX * d);
             }
             Vector3 target = Vector3.fromBlockPosCenter(worldPosition).subtract(coreOffset.get());
             level.addParticle(new IntParticleData(DEParticles.ENERGY_CORE.get(), 1, (int) (randOffset * 100D), isValidMultiBlock.get() ? 1 : 0), spawn.x, spawn.y, spawn.z, target.x, target.y, target.z);
         } else {
             if (coreDirection.get().getAxis() == Direction.Axis.Z) {
-                spawn.add(offsetX * 1.2, offsetY * 1.2, level.random.nextBoolean() ? -0.38 : 0.38);
+                spawn.add(offsetX * 1.2, offsetY * 1.2, level.getRandom().nextBoolean() ? -0.38 : 0.38);
             } else if (coreDirection.get().getAxis() == Direction.Axis.Y) {
-                spawn.add(offsetX * 1.2, level.random.nextBoolean() ? -0.38 : 0.38, offsetY * 1.2);
+                spawn.add(offsetX * 1.2, level.getRandom().nextBoolean() ? -0.38 : 0.38, offsetY * 1.2);
             } else if (coreDirection.get().getAxis() == Direction.Axis.X) {
-                spawn.add(level.random.nextBoolean() ? -0.38 : 0.38, offsetY * 1.2, offsetX * 1.2);
+                spawn.add(level.getRandom().nextBoolean() ? -0.38 : 0.38, offsetY * 1.2, offsetX * 1.2);
             }
             Vector3 target = Vector3.fromBlockPosCenter(worldPosition);
             level.addParticle(new IntParticleData(DEParticles.ENERGY_CORE.get(), 0), spawn.x, spawn.y, spawn.z, target.x, target.y, target.z);

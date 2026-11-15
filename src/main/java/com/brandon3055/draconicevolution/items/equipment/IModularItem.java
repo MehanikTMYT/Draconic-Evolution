@@ -1,55 +1,107 @@
 package com.brandon3055.draconicevolution.items.equipment;
 
 import codechicken.lib.math.MathHelper;
+
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.utils.EnergyUtils;
+
 import com.brandon3055.draconicevolution.api.capability.DECapabilities;
+
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
+
 import com.brandon3055.draconicevolution.api.capability.PropertyProvider;
+
 import com.brandon3055.draconicevolution.api.config.BooleanProperty;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty.BooleanFormatter;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty.DecimalFormatter;
+
 import com.brandon3055.draconicevolution.api.config.ConfigProperty.IntegerFormatter;
+
 import com.brandon3055.draconicevolution.api.config.DecimalProperty;
+
 import com.brandon3055.draconicevolution.api.config.IntegerProperty;
+
 import com.brandon3055.draconicevolution.api.crafting.IFusionDataTransfer;
+
 import com.brandon3055.draconicevolution.api.event.ModularItemInitEvent;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleCategory;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleTypes;
+
 import com.brandon3055.draconicevolution.api.modules.data.AOEData;
+
 import com.brandon3055.draconicevolution.api.modules.data.SpeedData;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModularOPStorage;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleHostImpl;
+
 import com.brandon3055.draconicevolution.api.modules.lib.StackModuleContext;
+
 import com.brandon3055.draconicevolution.client.keybinding.KeyBindings;
+
 import com.brandon3055.draconicevolution.init.EquipCfg;
+
 import com.brandon3055.draconicevolution.init.ItemData;
+
 import com.mojang.serialization.Codec;
+
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.Tool;
-import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.extensions.IItemExtension;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+import java.util.Objects;
+
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Supplier;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.client.Minecraft;
+
+import net.minecraft.client.gui.screens.Screen;
+
+import net.minecraft.core.component.DataComponents;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.util.Mth;
+
+import net.minecraft.world.entity.EquipmentSlot;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.Item;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.TooltipFlag;
+
+import net.minecraft.world.item.component.Tool;
+
+import net.minecraft.world.level.block.state.BlockState;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.common.NeoForge;
+
+import net.neoforged.neoforge.common.extensions.IItemExtension;
+
+import org.jetbrains.annotations.NotNull;
+
+
+
 
 /**
  * Created by brandon3055 on 16/6/20
@@ -160,7 +212,7 @@ public interface IModularItem extends IItemExtension, IFusionDataTransfer {
 
     @OnlyIn (Dist.CLIENT)
     default void addModularItemInformation(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        if (!Screen.hasShiftDown()) {
+        if (!Minecraft.getInstance().hasShiftDown()) {
             tooltip.add(Component.translatable("[Modular Item]").withStyle(ChatFormatting.BLUE));
         }
 

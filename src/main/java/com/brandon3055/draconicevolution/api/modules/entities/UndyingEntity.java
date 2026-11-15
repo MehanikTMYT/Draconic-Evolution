@@ -1,44 +1,83 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
-import codechicken.lib.gui.modular.elements.GuiElement;
-import codechicken.lib.gui.modular.lib.GuiRender;
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
+import com.brandon3055.brandonscore.client.gui.modular.elements.GuiElement;
+
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
+
 import com.brandon3055.brandonscore.utils.MathUtils;
+
 import com.brandon3055.draconicevolution.api.capability.DECapabilities;
+
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
+
 import com.brandon3055.draconicevolution.api.modules.Module;
+
 import com.brandon3055.draconicevolution.api.modules.ModuleTypes;
+
 import com.brandon3055.draconicevolution.api.modules.data.UndyingData;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleContext;
+
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleEntity;
+
 import com.brandon3055.draconicevolution.api.modules.lib.StackModuleContext;
+
 import com.brandon3055.draconicevolution.init.DEDamage;
+
 import com.brandon3055.draconicevolution.init.DEModules;
+
 import com.brandon3055.draconicevolution.init.ItemData;
+
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
+
 import com.mojang.serialization.Codec;
+
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.fml.util.thread.EffectiveSide;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 import java.util.Iterator;
+
 import java.util.Objects;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.network.RegistryFriendlyByteBuf;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.network.codec.ByteBufCodecs;
+
+import net.minecraft.network.codec.StreamCodec;
+
+import net.minecraft.sounds.SoundEvents;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.effect.MobEffectInstance;
+
+import net.minecraft.world.entity.EquipmentSlot;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.fml.util.thread.EffectiveSide;
+
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+
+
+
 
 public class UndyingEntity extends ModuleEntity<UndyingData> {
 
@@ -92,9 +131,9 @@ public class UndyingEntity extends ModuleEntity<UndyingData> {
                 LivingEntity entity = ((StackModuleContext) moduleContext).getEntity();
                 if (entity instanceof Player) {
                     if (invulnerableTime == 0) {
-                        ((Player) entity).displayClientMessage(Component.literal(""), true);
+                        ((Player) entity).sendOverlayMessage(Component.literal(""));
                     } else {
-                        ((Player) entity).displayClientMessage(Component.translatable("module.draconicevolution.undying.invuln.active", MathUtils.round(invulnerableTime / 20D, 10)).withStyle(ChatFormatting.GOLD), true);
+                        ((Player) entity).sendOverlayMessage(Component.translatable("module.draconicevolution.undying.invuln.active", MathUtils.round(invulnerableTime / 20D, 10)).withStyle(ChatFormatting.GOLD));
                     }
                 }
             }
@@ -183,7 +222,7 @@ public class UndyingEntity extends ModuleEntity<UndyingData> {
             }
             charge = 0;
             DraconicNetwork.sendUndyingActivation(entity, module.getItem());
-            entity.level().playSound(null, entity.blockPosition(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 5F, (0.95F + (entity.level().random.nextFloat() * 0.1F)));
+            entity.level().playSound(null, entity.blockPosition(), SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 5F, (0.95F + (entity.level().getRandom().nextFloat() * 0.1F)));
             invulnerableTime = data.invulnerableTime();
             markDirty();
             return true;

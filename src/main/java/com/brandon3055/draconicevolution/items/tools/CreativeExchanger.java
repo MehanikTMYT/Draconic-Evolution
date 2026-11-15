@@ -70,7 +70,7 @@
 //            return super.use(world, player, hand);
 //        }
 //
-//        if (world.isClientSide) {
+//        if (world.isClientSide()) {
 //            return super.use(world, player, hand);
 //        }
 //
@@ -90,7 +90,7 @@
 //        PlayerEntity player = context.getPlayer();
 //        BlockPos pos = context.getClickedPos();
 //
-//        if (world.isClientSide) {
+//        if (world.isClientSide()) {
 //            return ActionResultType.PASS;
 //        }
 //
@@ -111,7 +111,7 @@
 //            return ActionResultType.SUCCESS;
 //        }
 //        else {
-////            Block newBlock = Block.REGISTRY.getObject(new ResourceLocation(ItemNBTHelper.getString(stack, "BlockName", "")));
+////            Block newBlock = Block.REGISTRY.getObject(new Identifier(ItemNBTHelper.getString(stack, "BlockName", "")));
 ////            BlockState newState = newBlock.getStateFromMeta(ItemNBTHelper.getByte(stack, "BlockData", (byte) 0));
 ////            List<BlockPos> toReplace = getBlocksToReplace(stack, pos, world, side);
 //
@@ -137,7 +137,7 @@
 //
 //    @Override
 //    public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, PlayerEntity player) {
-////        Block newBlock = Block.REGISTRY.getObject(new ResourceLocation(ItemNBTHelper.getString(stack, "BlockName", "")));
+////        Block newBlock = Block.REGISTRY.getObject(new Identifier(ItemNBTHelper.getString(stack, "BlockName", "")));
 ////        if (newBlock == Blocks.AIR) {
 ////            if (player.world.isRemote) {
 ////                player.sendMessage(new StringTextComponent("[ERROR-404] Set Block not Found").setStyle(new Style().setColor(TextFormatting.DARK_RED)));
@@ -236,7 +236,7 @@
 //        ItemConfigFieldRegistry registry = new ItemConfigFieldRegistry();
 //        getFields(stack, registry);
 //
-////        Block newBlock = Block.REGISTRY.getObject(new ResourceLocation(ItemNBTHelper.getString(stack, "BlockName", "")));
+////        Block newBlock = Block.REGISTRY.getObject(new Identifier(ItemNBTHelper.getString(stack, "BlockName", "")));
 //        String opMode = TextFormatting.DARK_RED + "Clear Mode";
 //
 ////        if (newBlock != Blocks.AIR) {

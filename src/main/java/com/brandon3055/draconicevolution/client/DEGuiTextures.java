@@ -1,7 +1,7 @@
 package com.brandon3055.draconicevolution.client;
 
-import codechicken.lib.gui.modular.sprite.GuiTextures;
-import codechicken.lib.gui.modular.sprite.Material;
+import com.brandon3055.brandonscore.client.gui.modular.sprite.GuiTextures;
+import com.brandon3055.brandonscore.client.gui.modular.sprite.Material;
 import com.brandon3055.brandonscore.BCConfig;
 import net.neoforged.bus.api.IEventBus;
 

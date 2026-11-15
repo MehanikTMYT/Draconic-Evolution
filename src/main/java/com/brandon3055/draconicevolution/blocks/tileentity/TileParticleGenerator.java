@@ -62,9 +62,9 @@
 //    public void tick() {
 //        super.tick();
 //
-//        if (level.isClientSide && (inverted.get() != level.hasNeighborSignal(worldPosition))) {
+//        if (level.isClientSide() && (inverted.get() != level.hasNeighborSignal(worldPosition))) {
 //            if (tick >= delay.get()) {
-//                Random rand = level.random;
+//                Random rand = level.getRandom();
 //
 //                final double X = worldPosition.getX() + spawnX.get() + randomSpawnX.get() * rand.nextDouble() + .5D;
 //                final double Y = worldPosition.getY() + spawnY.get() + randomSpawnY.get() * rand.nextDouble() + .5D;

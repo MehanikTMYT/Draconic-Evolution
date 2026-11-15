@@ -1,7 +1,7 @@
 package com.brandon3055.draconicevolution.client;
 
 import codechicken.lib.data.MCDataInput;
-import codechicken.lib.gui.modular.lib.GuiRender;
+import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
 import codechicken.lib.render.buffer.TransformingVertexConsumer;
 import com.brandon3055.brandonscore.api.TimeKeeper;
 import com.brandon3055.draconicevolution.DEConfig;
@@ -12,7 +12,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.LerpingBossEvent;
@@ -23,10 +23,10 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -42,10 +42,10 @@ import java.util.UUID;
  */
 public class CustomBossInfoHandler {
     //TODO Update this to sprites.
-    private static final ResourceLocation GUI_BARS_LOCATION = ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/gui/bars.png");
+    private static final Identifier GUI_BARS_LOCATION = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/gui/bars.png");
     private static final Map<UUID, BossShieldInfo> events = Maps.newLinkedHashMap();
 
-    private static final ResourceLocation ENDER_CRYSTAL_TEXTURES = ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/entity/guardian_crystal.png");
+    private static final Identifier ENDER_CRYSTAL_TEXTURES = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/entity/guardian_crystal.png");
     private static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(ENDER_CRYSTAL_TEXTURES);
     private static final float SIN_45 = (float) Math.sin((Math.PI / 4D));
 
@@ -90,13 +90,8 @@ public class CustomBossInfoHandler {
         MultiBufferSource.BufferSource getter = Minecraft.getInstance().renderBuffers().bufferSource();//IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
 
         if (DEConfig.guardianShaders) {
-            if (shieldInfo.isImmune()) {
-                DEShaders.shieldColour.glUniform4f(0F, 1F, 1F, 2F);
-            } else {
-                DEShaders.shieldColour.glUniform4f(1F, 0F, 0F, 2F);
-            }
-            DEShaders.shieldBarMode.glUniform1i(1);
-            DEShaders.shieldActivation.glUniform1f(shield);
+            // port-26.1.2: shield core-shader (CCShaderInstance) на этапе 3 (BCShader/BCParams, решение владельца);
+            // uniform-хуки временно отключены (визуальная деградация: босс-бар щита без цветового шейдинга)
             VertexConsumer builder = new TransformingVertexConsumer(getter.getBuffer(DraconicGuardianRenderer.SHIELD_TYPE), poseStack);
             drawShieldRect(builder, x, y, 182, 6);
             getter.endBatch();

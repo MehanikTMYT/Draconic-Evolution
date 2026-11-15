@@ -1,20 +1,36 @@
 package com.brandon3055.draconicevolution.api.modules.entities.logic;
 
 import com.brandon3055.brandonscore.api.power.IOPStorage;
+
 import com.brandon3055.brandonscore.inventory.BlockToStackHelper;
+
 import com.brandon3055.brandonscore.inventory.InventoryDynamic;
+
 import com.brandon3055.draconicevolution.init.EquipCfg;
+
 import net.minecraft.core.BlockPos;
+
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+
 import net.minecraft.server.level.ServerPlayer;
+
 import net.minecraft.world.entity.player.Player;
+
 import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.world.level.Level;
+
 import net.minecraft.world.level.block.Block;
+
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.minecraft.world.level.material.FluidState;
+
 import net.neoforged.neoforge.common.CommonHooks;
+
 import net.neoforged.neoforge.event.level.BlockEvent;
+
+
 
 /**
  * Created by brandon3055 on 31/01/2023
@@ -46,7 +62,7 @@ public interface IHarvestHandler {
     void stop(Level level, ServerPlayer player);
 
     default void doHarvest(ItemStack stack, Player player, Level level, BlockPos pos, IOPStorage storage, InventoryDynamic stackCollector) {
-        if (level.isClientSide || (storage.getOPStored() < EquipCfg.energyHarvest && !player.getAbilities().instabuild)) return;
+        if (level.isClientSide() || (storage.getOPStored() < EquipCfg.energyHarvest && !player.getAbilities().instabuild)) return;
 
         BlockState state = level.getBlockState(pos);
         FluidState fluidState = level.getFluidState(pos);

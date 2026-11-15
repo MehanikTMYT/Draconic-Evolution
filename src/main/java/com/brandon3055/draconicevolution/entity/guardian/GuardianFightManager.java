@@ -1,45 +1,128 @@
 package com.brandon3055.draconicevolution.entity.guardian;
 
 import com.brandon3055.brandonscore.api.TechLevel;
+
 import com.brandon3055.brandonscore.worldentity.ITickableWorldEntity;
+
 import com.brandon3055.brandonscore.worldentity.WorldEntity;
+
 import com.brandon3055.draconicevolution.DEConfig;
+
 import com.brandon3055.draconicevolution.DraconicEvolution;
+
 import com.brandon3055.draconicevolution.api.IDraconicMelee;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileChaosCrystal;
+
 import com.brandon3055.draconicevolution.entity.GuardianCrystalEntity;
+
 import com.brandon3055.draconicevolution.entity.guardian.control.PhaseType;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.init.DEDamage;
+
+import com.brandon3055.draconicevolution.lib.TagUtils26;
+
 import com.brandon3055.draconicevolution.world.ShieldedServerBossInfo;
+
 import com.google.common.collect.Sets;
+
 import com.google.common.collect.Streams;
-import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.TicketType;
-import net.minecraft.util.Unit;
-import net.minecraft.world.BossEvent;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.minecraft.world.phys.AABB;
-import org.apache.logging.log4j.Logger;
 
 import java.util.*;
+
 import java.util.function.Predicate;
+
+import net.minecraft.advancements.CriteriaTriggers;
+
+import net.minecraft.core.BlockPos;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.NbtUtils;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.server.level.ServerPlayer;
+
+import net.minecraft.server.level.TicketType;
+
+import net.minecraft.util.Unit;
+
+import net.minecraft.world.BossEvent;
+
+import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.EntitySelector;
+
+import net.minecraft.world.entity.EntityType;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.level.ChunkPos;
+
+import net.minecraft.world.level.block.entity.BlockEntity;
+
+import net.minecraft.world.level.chunk.ChunkAccess;
+
+import net.minecraft.world.level.chunk.LevelChunk;
+
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+
+import net.minecraft.world.phys.AABB;
+
+import org.apache.logging.log4j.Logger;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 16/12/20
@@ -93,7 +176,7 @@ public class GuardianFightManager extends WorldEntity implements ITickableWorldE
 
         //This is just using the player list in boss info to check if there are any players in the area.
         if (!this.bossInfo.getPlayers().isEmpty()) {
-            world.getChunkSource().addRegionTicket(TicketType.DRAGON, new ChunkPos(arenaOrigin), 12, Unit.INSTANCE); //Is this chunk loading?
+            world.getChunkSource().addRegionTicket(TicketType.DRAGON, new ChunkPos(arenaOrigin.getX() >> 4, arenaOrigin.getZ() >> 4), 12, Unit.INSTANCE); //Is this chunk loading?
             boolean areaLoaded = this.isFightAreaLoaded();
 
             if (this.respawnState != null) {
@@ -112,7 +195,7 @@ public class GuardianFightManager extends WorldEntity implements ITickableWorldE
                 }
             }
         } else {
-            world.getChunkSource().removeRegionTicket(TicketType.DRAGON, new ChunkPos(arenaOrigin), 12, Unit.INSTANCE);
+            world.getChunkSource().removeRegionTicket(TicketType.DRAGON, new ChunkPos(arenaOrigin.getX() >> 4, arenaOrigin.getZ() >> 4), 12, Unit.INSTANCE);
         }
     }
 
@@ -151,7 +234,7 @@ public class GuardianFightManager extends WorldEntity implements ITickableWorldE
     private boolean isFightAreaLoaded() {
         for (int x = -8; x <= 8; ++x) {
             for (int z = 8; z <= 8; ++z) {
-                ChunkPos pos = new ChunkPos(arenaOrigin);
+                ChunkPos pos = new ChunkPos(arenaOrigin.getX() >> 4, arenaOrigin.getZ() >> 4);
                 ChunkAccess ichunk = level.getChunk(pos.x + x, pos.z + z, ChunkStatus.FULL, false);
                 if (!(ichunk instanceof LevelChunk)) {
                     return false;
@@ -214,7 +297,7 @@ public class GuardianFightManager extends WorldEntity implements ITickableWorldE
         DraconicGuardianEntity guardian = DEContent.ENTITY_DRACONIC_GUARDIAN.get().create(world);
         assert guardian != null;
         guardian.getPhaseManager().setPhase(PhaseType.START);
-        guardian.moveTo(guardianSpawnPos().getX(), guardianSpawnPos().getY(), guardianSpawnPos().getZ(), this.level.random.nextFloat() * 360.0F, 0.0F);
+        guardian.moveTo(guardianSpawnPos().getX(), guardianSpawnPos().getY(), guardianSpawnPos().getZ(), this.level.getRandom().nextFloat() * 360.0F, 0.0F);
         guardian.setFightManager(this);
         guardian.setArenaOrigin(arenaOrigin);
         world.addFreshEntity(guardian);
@@ -240,7 +323,7 @@ public class GuardianFightManager extends WorldEntity implements ITickableWorldE
     }
 
     private void cleanUpAndDispose() {
-        ((ServerLevel) level).getChunkSource().removeRegionTicket(TicketType.DRAGON, new ChunkPos(arenaOrigin), 12, Unit.INSTANCE);
+        ((ServerLevel) level).getChunkSource().removeRegionTicket(TicketType.DRAGON, new ChunkPos(arenaOrigin.getX() >> 4, arenaOrigin.getZ() >> 4), 12, Unit.INSTANCE);
         bossInfo.removeAllPlayers();
         removeEntity();
     }
@@ -364,7 +447,7 @@ public class GuardianFightManager extends WorldEntity implements ITickableWorldE
     public void write(CompoundTag nbt) {
         super.write(nbt);
         if (guardianUniqueId != null) {
-            nbt.putUUID("guardian", guardianUniqueId);
+            TagUtils26.putUUID(TagUtils26, nbt, "guardian", guardianUniqueId);
         }
 
         nbt.putBoolean("guardian_killed", guardianKilled);
@@ -377,8 +460,8 @@ public class GuardianFightManager extends WorldEntity implements ITickableWorldE
     @Override
     public void read(CompoundTag nbt) {
         super.read(nbt);
-        if (nbt.hasUUID("guardian")) {
-            guardianUniqueId = nbt.getUUID("guardian");
+        if (TagUtils26.hasUUID(TagUtils26, nbt, "guardian")) {
+            guardianUniqueId = TagUtils26.getUUID(TagUtils26, nbt, "guardian");
         }
         guardianKilled = nbt.getBoolean("guardian_killed");
         arenaOrigin = NbtUtils.readBlockPos(nbt, "arena_origin").orElse(arenaOrigin);

@@ -1,32 +1,60 @@
 package com.brandon3055.draconicevolution.blocks;
 
 import com.brandon3055.brandonscore.blocks.EntityBlockBCore;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
+
 import com.brandon3055.brandonscore.lib.CustomTabHandling;
+
 import com.brandon3055.brandonscore.utils.FacingUtils;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TileDislocatorReceptacle;
+
 import com.brandon3055.draconicevolution.blocks.tileentity.TilePortal;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import net.minecraft.core.BlockPos;
+
 import net.minecraft.core.Direction;
+
 import net.minecraft.server.level.ServerLevel;
+
 import net.minecraft.util.RandomSource;
+
 import net.minecraft.world.entity.Entity;
+
 import net.minecraft.world.level.BlockGetter;
+
 import net.minecraft.world.level.Level;
+
 import net.minecraft.world.level.LevelReader;
+
 import net.minecraft.world.level.block.Block;
+
 import net.minecraft.world.level.block.entity.BlockEntity;
+
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
+
 import net.minecraft.world.level.block.entity.BlockEntityType;
+
 import net.minecraft.world.level.block.state.BlockState;
+
 import net.minecraft.world.level.block.state.StateDefinition;
+
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+
 import net.minecraft.world.phys.shapes.CollisionContext;
+
 import net.minecraft.world.phys.shapes.Shapes;
+
 import net.minecraft.world.phys.shapes.VoxelShape;
+
 import org.jetbrains.annotations.Nullable;
+
+
 
 /**
  * Created by brandon3055 on 16/07/2016.
@@ -105,7 +133,7 @@ public class Portal extends EntityBlockBCore implements CustomTabHandling {
 
     @Override
     public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        if (world.isClientSide) return;
+        if (world.isClientSide()) return;
 
         if (!canSurvive(state, world, pos)) {
             BlockEntity tile = world.getBlockEntity(pos);

@@ -1,36 +1,95 @@
 package com.brandon3055.draconicevolution.items.tools;
 
 import com.brandon3055.brandonscore.api.hud.IHudItem;
+
 import com.brandon3055.brandonscore.lib.DelayedTask;
+
 import com.brandon3055.brandonscore.network.BCoreNetwork;
+
 import com.brandon3055.brandonscore.utils.TargetPos;
+
 import com.brandon3055.draconicevolution.handlers.DESounds;
+
 import com.brandon3055.draconicevolution.init.DEContent;
+
 import com.brandon3055.draconicevolution.init.ItemData;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.event.AnvilUpdateEvent;
+
+import java.util.List;
 
 import javax.annotation.Nonnull;
+
 import javax.annotation.Nullable;
-import java.util.List;
+
+import net.minecraft.ChatFormatting;
+
+import net.minecraft.network.chat.Component;
+
+import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.sounds.SoundSource;
+
+import net.minecraft.world.InteractionHand;
+
+import net.minecraft.world.InteractionResult;
+
+import net.minecraft.world.damagesource.DamageSource;
+
+import net.minecraft.world.damagesource.DamageTypes;
+
+import net.minecraft.world.entity.Entity;
+
+import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.world.entity.item.ItemEntity;
+
+import net.minecraft.world.entity.player.Player;
+
+import net.minecraft.world.item.Item;
+
+import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.world.item.TooltipFlag;
+
+import net.minecraft.world.level.Level;
+
+import net.neoforged.api.distmarker.Dist;
+
+import net.neoforged.api.distmarker.OnlyIn;
+
+import net.neoforged.neoforge.event.AnvilUpdateEvent;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Created by brandon3055 on 16/07/2016.
@@ -52,7 +111,7 @@ public class Dislocator extends Item implements IHudItem {
      * @param target The entity being teleported if not the user.
      */
     public Entity dislocateEntity(ItemStack stack, @Nonnull Entity user, @Nonnull Entity target, TargetPos targetPos) {
-        if (target.level().isClientSide) {
+        if (target.level().isClientSide()) {
             return target;
         }
 
@@ -61,17 +120,17 @@ public class Dislocator extends Item implements IHudItem {
             return target;
         }
 
-        BCoreNetwork.sendSound(target.level(), target.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, target.level().random.nextFloat() * 0.1F + 0.9F, false);
+        BCoreNetwork.sendSound(target.level(), target.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, target.level().getRandom().nextFloat() * 0.1F + 0.9F, false);
         target = targetPos.teleport(target);
         Entity finalTarget = target;
-        DelayedTask.run(1, () -> BCoreNetwork.sendSound(finalTarget.level(), finalTarget.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, finalTarget.level().random.nextFloat() * 0.1F + 0.9F, false));
+        DelayedTask.run(1, () -> BCoreNetwork.sendSound(finalTarget.level(), finalTarget.blockPosition(), DESounds.PORTAL.get(), SoundSource.PLAYERS, 0.1F, finalTarget.level().getRandom().nextFloat() * 0.1F + 0.9F, false));
         return target;
     }
 
     public void messageUser(Entity user, Component message) {
         if (user instanceof Player) {
 //            ChatHelper.sendIndexed((PlayerEntity) user, message, 576);
-            ((Player) user).displayClientMessage(message, true);
+            ((Player) user).sendOverlayMessage(message);
         }
     }
 
@@ -87,11 +146,11 @@ public class Dislocator extends Item implements IHudItem {
         }
         TargetPos location = getTargetPos(stack, player.level());
         ServerLevel targetLevel = serverLevel.getServer().getLevel(location.getDimension());
-        if (entity.level() != targetLevel && !entity.canChangeDimensions(entity.level(), targetLevel)) {
+        if (entity.level() != targetLevel && !entity.canTeleport(entity.level(), targetLevel)) {
             return true;
         }
 
-        player.getCooldowns().addCooldown(this, 20);
+        player.getCooldowns().addCooldown(new ItemStack(this), 20);
         dislocateEntity(stack, player, entity, location);
         stack.hurtAndBreak(1, serverLevel, player, e -> {});
         if (location != null) {
@@ -103,29 +162,29 @@ public class Dislocator extends Item implements IHudItem {
 
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) { // port-26.1.2: InteractionResultHolder удалён
         ItemStack stack = player.getItemInHand(hand);
         if (!(level instanceof ServerLevel serverLevel)) {
-            return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+            return InteractionResult.PASS;
         }
 
         TargetPos targetPos = getTargetPos(stack, level);
 
         if (player.isShiftKeyDown()) {
             if (targetPos == null) {
-                setLocation(stack, targetPos = TargetPos.of(player));
+                setLocation(stack, targetPos = new TargetPos(player));
                 messageUser(player, Component.translatable("dislocate.draconicevolution.bound_to").append("{" + targetPos.getReadableName(false) + "}").withStyle(ChatFormatting.GREEN));
             } else {
                 messageUser(player, Component.translatable("dislocate.draconicevolution.already_bound").withStyle(ChatFormatting.RED));
             }
-            return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+            return InteractionResult.PASS;
         } else {
             if (targetPos == null) {
                 messageUser(player, Component.translatable("dislocate.draconicevolution.not_set").withStyle(ChatFormatting.RED));
-                return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+                return InteractionResult.PASS;
             }
             if (player.getHealth() > 2 || player.getAbilities().instabuild) {
-                player.getCooldowns().addCooldown(this, 20);
+                player.getCooldowns().addCooldown(new ItemStack(this), 20);
                 dislocateEntity(stack, player, player, targetPos);
                 stack.hurtAndBreak(1, serverLevel, player, e -> {});
 
@@ -135,7 +194,7 @@ public class Dislocator extends Item implements IHudItem {
             } else {
                 messageUser(player, Component.translatable("dislocate.draconicevolution.low_health").withStyle(ChatFormatting.RED));
             }
-            return new InteractionResultHolder<>(InteractionResult.PASS, stack);
+            return InteractionResult.PASS;
         }
     }
 

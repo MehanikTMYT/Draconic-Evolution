@@ -1,12 +1,19 @@
 package com.brandon3055.draconicevolution.client.render.particle;
 
-import com.brandon3055.brandonscore.client.particle.IntParticleData;
+import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.utils.Utils;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
 
 import java.util.List;
+
+import net.minecraft.client.multiplayer.ClientLevel;
+
+import net.minecraft.client.particle.*;
+
+
+
 
 public class ParticleEnergy extends TextureSheetParticle {
 
@@ -17,7 +24,7 @@ public class ParticleEnergy extends TextureSheetParticle {
         super(world, xPos, yPos, zPos);
         this.targetPos = targetPos;
         this.spriteSet = spriteSet;
-        setSprite(spriteSet.get(world.random));
+        setSprite(spriteSet.get(world.getRandom()));
         hasPhysics = false;
     }
 
@@ -31,7 +38,7 @@ public class ParticleEnergy extends TextureSheetParticle {
         this.xo = this.x;
         this.yo = this.y;
         this.zo = this.z;
-        setSprite(spriteSet.get(level.random));
+        setSprite(spriteSet.get(level.getRandom()));
 
         Vec3D dir = Vec3D.getDirectionVec(new Vec3D(x, y, z), targetPos);
         double speed = 0.5D;

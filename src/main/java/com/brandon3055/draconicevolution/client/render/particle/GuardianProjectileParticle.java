@@ -22,7 +22,7 @@ public class GuardianProjectileParticle extends SimpleAnimatedParticle {
         this.yd = motionY;
         this.zd = motionZ;
         this.quadSize *= 0.75F;
-        this.lifetime = 48 + this.random.nextInt(12);
+        this.lifetime = 48 + this.getRandom().nextInt(12);
         this.setSpriteFromAge(spriteWithAge);
     }
 

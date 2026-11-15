@@ -14,17 +14,17 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Created by brandon3055 on 4/06/2017.
  */
 public class DraconiumChestTileRenderer implements BlockEntityRenderer<TileDraconiumChest> {
-    private static final RenderType renderType = RenderType.entityCutout(ResourceLocation.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/draconium_chest.png"));
+    private static final RenderType renderType = RenderType.entityCutout(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/draconium_chest.png"));
     private final ModelPart lid;
     private final ModelPart bottom;
     private final ModelPart lock;

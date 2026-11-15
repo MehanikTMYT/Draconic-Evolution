@@ -1,29 +1,53 @@
 package com.brandon3055.draconicevolution.client.render.effect;
 
 import codechicken.lib.colour.Colour;
+
 import codechicken.lib.colour.ColourARGB;
+
 import codechicken.lib.math.MathHelper;
+
 import codechicken.lib.render.CCRenderState;
+
 import com.brandon3055.brandonscore.lib.Vec3D;
+
 import com.brandon3055.brandonscore.utils.Utils;
+
 import com.brandon3055.draconicevolution.blocks.reactor.tileentity.TileReactorCore;
+
 import com.brandon3055.draconicevolution.client.DEShaders;
+
 import com.mojang.blaze3d.vertex.*;
+
 import net.minecraft.client.Camera;
+
 import net.minecraft.client.Minecraft;
+
 import net.minecraft.client.multiplayer.ClientLevel;
+
 import net.minecraft.client.particle.Particle;
+
 import net.minecraft.client.particle.ParticleRenderType;
+
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+
 import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
+
+import net.minecraft.client.renderer.rendertype.RenderType;
+
 import net.minecraft.client.renderer.texture.TextureManager;
+
 import net.minecraft.core.Direction;
+
 import net.minecraft.world.phys.AABB;
+
 import net.minecraft.world.phys.Vec3;
+
 import org.jetbrains.annotations.Nullable;
 
 import static com.brandon3055.draconicevolution.DraconicEvolution.MODID;
+
+
+
 
 /**
  * Created by brandon3055 on 12/02/2017.
@@ -56,7 +80,7 @@ public class ReactorBeamFX extends Particle {
         this.facing = facing;
         this.isInjectorEffect = isInjectorEffect;
         this.dist = (float) Utils.getDistance(pos, Vec3D.getCenter(tile.getBlockPos()));
-        this.random.setSeed(worldIn.random.nextLong());
+        this.getRandom().setSeed(worldIn.getRandom().nextLong());
         setBoundingBox(new AABB(x, y, z, tile.getBlockPos().getX(), tile.getBlockPos().getY(), tile.getBlockPos().getZ()));
     }
 
@@ -95,7 +119,7 @@ public class ReactorBeamFX extends Particle {
         BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer buffer = bindBuffer(ccrs, buffers);
 
-        Vec3 viewVec = renderInfo.getPosition();
+        Vec3 viewVec = renderInfo.position();
         Vec3D pos1 = new Vec3D(x - viewVec.x, y - viewVec.y, z - viewVec.z).offset(facing, -0.35D);
 
         float coreSize = (float) tile.getCoreDiameter() / 2.3F;
