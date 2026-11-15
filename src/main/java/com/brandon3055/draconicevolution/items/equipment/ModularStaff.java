@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.items.equipment;
 
+import net.minecraft.world.item.Item;
 import com.brandon3055.brandonscore.api.TechLevel;
 
 import com.brandon3055.draconicevolution.api.IReaperItem;
@@ -48,7 +49,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 
 import net.minecraft.world.entity.player.Player;
 
-import net.minecraft.world.item.DiggerItem;
 
 import net.minecraft.world.item.ItemStack;
 
@@ -68,14 +68,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by brandon3055 on 21/5/20.
  */
-public class ModularStaff extends DiggerItem implements IReaperItem, IModularMiningTool, IModularMelee, IModularEnergyItem {
+public class ModularStaff extends Item implements IReaperItem, IModularMiningTool, IModularMelee, IModularEnergyItem {
     private final TechLevel techLevel;
     private final DETier itemTier;
 
     public ModularStaff(DETier tier, TechProperties props) {
-        super(tier, DETags.Blocks.MINEABLE_WITH_STAFF, props);
+        super(props.tool(tier.material(), DETags.Blocks.MINEABLE_WITH_STAFF, 3, -2.4F, 0)); // port-26.1.2: DiggerItem/Tier удалены -> Item.Properties.tool
         this.techLevel = props.getTechLevel();
-        this.itemTier = (DETier) getTier();
+        this.itemTier = tier;
     }
 
     @Override
@@ -127,13 +127,14 @@ public class ModularStaff extends DiggerItem implements IReaperItem, IModularMin
 
     @Override
     public float getBaseEfficiency() {
-        return getTier().getSpeed() * EquipCfg.getStaffEffMult();
+        return getItemTier().getSpeed() * EquipCfg.getStaffEffMult();
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> builder, TooltipFlag flagIn) { // port-26.1.2: сигнатура 26 (TooltipDisplay+Consumer)
+        List<Component> tooltip = new java.util.ArrayList<>();
         addModularItemInformation(stack, context, tooltip, flagIn);
+        tooltip.forEach(builder);
     }
 
     @Override
@@ -177,11 +178,6 @@ public class ModularStaff extends DiggerItem implements IReaperItem, IModularMin
             entity.setExtendedLifetime();
         }
         return super.onEntityItemUpdate(stack, entity);
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack p_41456_) {
-        return true;
     }
 
     //Projectile Attack Handling

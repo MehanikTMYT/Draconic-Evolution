@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.items.equipment;
 
+import net.minecraft.world.item.Item;
 import com.brandon3055.brandonscore.api.TechLevel;
 import com.brandon3055.draconicevolution.api.IDraconicMelee;
 import com.brandon3055.draconicevolution.api.IReaperItem;
@@ -17,7 +18,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -33,14 +33,14 @@ import java.util.function.Supplier;
 /**
  * Created by brandon3055 on 21/5/20.
  */
-public class ModularAxe extends AxeItem implements IReaperItem, IModularMiningTool, IDraconicMelee, IModularEnergyItem {
+public class ModularAxe extends Item implements IReaperItem, IModularMiningTool, IDraconicMelee, IModularEnergyItem {
     private final TechLevel techLevel;
     private final DETier itemTier;
 
     public ModularAxe(DETier tier, TechProperties props) {
-        super(tier, props);
+        super(props.tool(tier.material(), net.minecraft.tags.BlockTags.MINEABLE_WITH_AXE, 5, -3.0F, 5.0F)); // port-26.1.2: axe() 3-arg // port-26.1.2: AxeItem/Tier удалены -> Item.Properties.tool-компоненты (эталон Items26)
         this.techLevel = props.getTechLevel();
-        this.itemTier = (DETier) getTier();
+        this.itemTier = tier;
     }
 
     @Override
@@ -83,13 +83,14 @@ public class ModularAxe extends AxeItem implements IReaperItem, IModularMiningTo
 
     @Override
     public float getBaseEfficiency() {
-        return getTier().getSpeed();
+        return getItemTier().getSpeed();
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> builder, TooltipFlag flagIn) { // port-26.1.2: сигнатура 26 (TooltipDisplay+Consumer)
+        List<Component> tooltip = new java.util.ArrayList<>();
         addModularItemInformation(stack, context, tooltip, flagIn);
+        tooltip.forEach(builder);
     }
 
     @Override
@@ -125,8 +126,4 @@ public class ModularAxe extends AxeItem implements IReaperItem, IModularMiningTo
         return super.onEntityItemUpdate(stack, entity);
     }
 
-    @Override
-    public boolean isEnchantable(ItemStack p_41456_) {
-        return true;
-    }
 }

@@ -2,7 +2,6 @@ package com.brandon3055.draconicevolution.client.model;
 
 import codechicken.lib.render.CCModel;
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.buffer.VBORenderType;
 import codechicken.lib.render.model.OBJParser;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Translation;
@@ -31,7 +30,6 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
@@ -45,14 +43,14 @@ import static com.brandon3055.draconicevolution.DraconicEvolution.MODID;
 /**
  * Created by brandon3055 on 13/11/2022
  */
-public class ModularChestpieceModel<T extends LivingEntity> extends HumanoidModel<T> implements EquippedItemModel {
+public class ModularChestpieceModel<T extends LivingEntity> extends HumanoidModel<net.minecraft.client.renderer.entity.state.HumanoidRenderState> implements EquippedItemModel {
 
     private final TechLevel techLevel;
     private int shieldColour;
     private float shieldState;
 
     public ModularChestpieceModel(TechLevel techLevel, boolean isOnArmor) {
-        super(createMesh(new CubeDeformation(1), 0).getRoot().bake(64, 64));
+        super(createEquipmentRoot());
         this.techLevel = techLevel;
         Map<String, CCModel> model = new OBJParser(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "models/item/equipment/chestpeice.obj")).ignoreMtl().parse();
         CCModel baseModel = model.get("base_model").backfacedCopy();
@@ -74,48 +72,16 @@ public class ModularChestpieceModel<T extends LivingEntity> extends HumanoidMode
         }
 
         String levelName = techLevel.name().toLowerCase(Locale.ROOT);
-        RenderType baseType = RenderType.create(MODID + ":base", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLES, 256, true, false, RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(DEShaders.TOOL_BASE_SHADER::getShaderInstance))
-                .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(MODID, "textures/item/equipment/" + levelName + "_chestpeice.png"), false, false))
-                .setLightmapState(RenderStateShard.LIGHTMAP)
-                .setOverlayState(RenderStateShard.OVERLAY)
-                .createCompositeState(true)
-        );
+        RenderType baseType = DEShaders.TOOL_BASE_SHADER.renderType(MODID + ":chestpiece_base",
+                Identifier.fromNamespaceAndPath(MODID, "textures/item/equipment/" + levelName + "_chestpeice.png"), VertexFormat.Mode.TRIANGLES);
+        RenderType chaoticType = BCShaders.CHAOS_ENTITY_SHADER.renderType(MODID + ":chestpiece_chaos",
+                Identifier.fromNamespaceAndPath(MODID, "textures/item/equipment/chaos_shader.png"), VertexFormat.Mode.TRIANGLES);
+        Identifier fallback = Identifier.fromNamespaceAndPath(MODID, "textures/item/equipment/shader_fallback_" + levelName + ".png");
+        RenderType gemType = DEShaders.TOOL_GEM_SHADER.renderType(MODID + ":chestpiece_gem", fallback, VertexFormat.Mode.TRIANGLES);
+        RenderType coreGemType = DEShaders.CHESTPIECE_GEM_SHADER.renderType(MODID + ":chestpiece_core", fallback, VertexFormat.Mode.TRIANGLES);
+        RenderType shieldType = DEShaders.CHESTPIECE_SHIELD_SHADER.renderType(MODID + ":armor_shield", null, VertexFormat.Mode.TRIANGLES);
 
-        RenderType chaoticType = RenderType.create(MODID + ":tool_chaos", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLES, 256, RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(BCShaders.CHAOS_ENTITY_SHADER::getShaderInstance))
-                .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(MODID, "textures/item/equipment/chaos_shader.png"), true, false))
-                .setLightmapState(RenderStateShard.LIGHTMAP)
-                .setOverlayState(RenderStateShard.OVERLAY)
-                .createCompositeState(false)
-        );
-
-        RenderType gemType = RenderType.create(MODID + ":tool_gem", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLES, 256, RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(DEShaders.TOOL_GEM_SHADER::getShaderInstance))
-                .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(MODID, "textures/item/equipment/shader_fallback_" + levelName + ".png"), false, false))
-                .setLightmapState(RenderStateShard.LIGHTMAP)
-                .setOverlayState(RenderStateShard.OVERLAY)
-                .createCompositeState(false)
-        );
-
-        RenderType coreGemType = RenderType.create(MODID + ":core_gem", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLES, 256, RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(DEShaders.CHESTPIECE_GEM_SHADER::getShaderInstance))
-                .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(MODID, "textures/item/equipment/shader_fallback_" + levelName + ".png"), false, false))
-                .setLightmapState(RenderStateShard.LIGHTMAP)
-                .setOverlayState(RenderStateShard.OVERLAY)
-                .createCompositeState(false)
-        );
-
-        RenderType shieldType = RenderType.create(MODID + ":armor_shield", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLES, 256, RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(DEShaders.CHESTPIECE_SHIELD_SHADER::getShaderInstance))
-                .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-                .setOutputState(RenderStateShard.ITEM_ENTITY_TARGET)
-                .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
-                .setLightmapState(RenderStateShard.LIGHTMAP)
-                .createCompositeState(false)
-        );
-
-        ExtendedModelPart body = new ExtendedModelPart();
+        ExtendedModelPart body = (ExtendedModelPart) this.body;
         if (!isOnArmor) {
             body.addChild(new ChestpieceModelPart(baseModel, baseType, DEShaders.TOOL_BASE_SHADER));
         }
@@ -126,25 +92,19 @@ public class ModularChestpieceModel<T extends LivingEntity> extends HumanoidMode
         }
         body.addChild(new ChestpieceModelPart(gemModel, gemType, DEShaders.TOOL_GEM_SHADER));
         body.addChild(new CoreGemModelPart(coreGemModel, coreGemType, DEShaders.CHESTPIECE_GEM_SHADER));
-        this.body = body;
 
-        head = new ShieldModelPart(shieldHeadModel, shieldType, DEShaders.CHESTPIECE_SHIELD_SHADER);
+        ((ExtendedModelPart) head).addChild(new ShieldModelPart(shieldHeadModel, shieldType, DEShaders.CHESTPIECE_SHIELD_SHADER));
         body.addChild(new ShieldModelPart(shieldBodyModel, shieldType, DEShaders.CHESTPIECE_SHIELD_SHADER));
-        leftArm = new ShieldModelPart(shieldLeftArmModel, shieldType, DEShaders.CHESTPIECE_SHIELD_SHADER);
-        rightArm = new ShieldModelPart(shieldRightArmModel, shieldType, DEShaders.CHESTPIECE_SHIELD_SHADER);
-        leftLeg = new ShieldModelPart(shieldLeftLegModel, shieldType, DEShaders.CHESTPIECE_SHIELD_SHADER);
-        rightLeg = new ShieldModelPart(shieldRightLegModel, shieldType, DEShaders.CHESTPIECE_SHIELD_SHADER);
+        ((ExtendedModelPart) leftArm).addChild(new ShieldModelPart(shieldLeftArmModel, shieldType, DEShaders.CHESTPIECE_SHIELD_SHADER));
+        ((ExtendedModelPart) rightArm).addChild(new ShieldModelPart(shieldRightArmModel, shieldType, DEShaders.CHESTPIECE_SHIELD_SHADER));
+        ((ExtendedModelPart) leftLeg).addChild(new ShieldModelPart(shieldLeftLegModel, shieldType, DEShaders.CHESTPIECE_SHIELD_SHADER));
+        ((ExtendedModelPart) rightLeg).addChild(new ShieldModelPart(shieldRightLegModel, shieldType, DEShaders.CHESTPIECE_SHIELD_SHADER));
     }
 
-    @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int packedLight, int packedOverlay, int colour) {}
-
-    @Override
     protected Iterable<ModelPart> headParts() {
         return ImmutableList.of(head);
     }
 
-    @Override
     protected Iterable<ModelPart> bodyParts() {
         return ImmutableList.of(body, leftArm, rightArm, leftLeg, rightLeg);
     }
@@ -169,20 +129,18 @@ public class ModularChestpieceModel<T extends LivingEntity> extends HumanoidMode
             }
         }
 
-        if (this.young) {
+        if (entity.isBaby()) {
             poseStack.pushPose();
-            if (this.scaleHead) {
-                float f = 1.5F / this.babyHeadScale;
-                poseStack.scale(f, f, f);
-            }
+            float headScale = 1.5F / 2F;
+            poseStack.scale(headScale, headScale, headScale);
 
-            poseStack.translate(0.0D, this.babyYHeadOffset / 16.0F, this.babyZHeadOffset / 16.0F);
+            poseStack.translate(0.0D, 16F / 16.0F, 0F / 16.0F);
             this.headParts().forEach(part -> ((ExtendedModelPart) part).render(poseStack, buffers, packedLight, packedOverlay));
             poseStack.popPose();
             poseStack.pushPose();
-            float f1 = 1.0F / this.babyBodyScale;
+            float f1 = 1.0F / 2F;
             poseStack.scale(f1, f1, f1);
-            poseStack.translate(0.0D, this.bodyYOffset / 16.0F, 0.0D);
+            poseStack.translate(0.0D, 24F / 16.0F, 0.0D);
             this.bodyParts().forEach(part -> ((ExtendedModelPart) part).render(poseStack, buffers, packedLight, packedOverlay));
             poseStack.popPose();
         } else {
@@ -191,85 +149,76 @@ public class ModularChestpieceModel<T extends LivingEntity> extends HumanoidMode
         }
     }
 
-    public class ChestpieceModelPart extends ExtendedModelPart {
-        protected final VBORenderType renderType;
-        protected final BCShader<?> shader;
-
-        public ChestpieceModelPart(CCModel model, RenderType baseType, BCShader<?> shader) {
-            this.shader = shader;
-            renderType = new VBORenderType(baseType, (format, builder) -> {
-                CCRenderState ccrs = CCRenderState.instance();
-                ccrs.reset();
-                ccrs.bind(builder, format);
-                model.render(ccrs);
-            });
+    private static ModelPart createEquipmentRoot() {
+        ModelPart vanilla = createMesh(new CubeDeformation(1), 0).getRoot().bake(64, 64);
+        Map<String, ModelPart> parts = new HashMap<>();
+        for (String name : new String[]{"head", "body", "left_arm", "right_arm", "left_leg", "right_leg"}) {
+            ExtendedModelPart part = new ExtendedModelPart();
+            part.loadPose(vanilla.getChild(name).storePose());
+            parts.put(name, part);
         }
+        // HumanoidModel's final fields are resolved from the root in MC26.
+        ModelPart headWithHat = new ExtendedModelPartWithHat();
+        headWithHat.loadPose(vanilla.getChild("head").storePose());
+        parts.put("head", headWithHat);
+        return new ModelPart(List.of(), parts);
+    }
 
+    private static class ExtendedModelPartWithHat extends ExtendedModelPart {
+        private final ModelPart hat = new ModelPart(List.of(), Map.of());
+        @Override public ModelPart getChild(String name) {
+            return name.equals("hat") ? hat : super.getChild(name);
+        }
+    }
+
+    public class ChestpieceModelPart extends ExtendedModelPart {
+        protected final CCModel model;
+        protected final RenderType renderType;
+        protected final BCShader<?> shader;
+        public ChestpieceModelPart(CCModel model, RenderType type, BCShader<?> shader) {
+            this.model = model; this.renderType = type; this.shader = shader;
+        }
+        protected boolean shouldDraw() { return visible; }
+        protected void configureColour() { ToolRenderBase.glUniformBaseColor(shader, techLevel, 1F); }
         @Override
-        public void render(PoseStack poseStack, MultiBufferSource buffers, int packedLight, int packedOverlay, float r, float g, float b, float a) {
-            if (this.visible) {
-                poseStack.pushPose();
-                this.translateAndRotate(poseStack);
-                Matrix4 mat = new Matrix4(poseStack);
-                renderType.withCallback(() -> {
-                    ToolRenderBase.glUniformBaseColor(shader, techLevel, 1F);
-                    shader.getModelMatUniform().glUniformMatrix4f(mat);
-                }).draw(buffers);
-
-                poseStack.popPose();
-            }
+        public void render(PoseStack pose, MultiBufferSource buffers, int light, int overlay, float r, float g, float b, float a) {
+            if (!shouldDraw()) return;
+            pose.pushPose();
+            translateAndRotate(pose);
+            configureColour();
+            shader.uniform(120).glUniform1f(1F);
+            shader.getModelMatUniform().glUniformMatrix4f(new Matrix4(pose));
+            shader.uniform(80).glUniform2i(overlay & 65535, overlay >>> 16);
+            shader.uniform(88).glUniform2i(light & 65535, light >>> 16);
+            shader.uniform(124).glUniform1i(0);
+            shader.uniform(128).glUniform1i(0);
+            shader.uniform(132).glUniform1i(0);
+            CCRenderState state = CCRenderState.instance();
+            state.reset(); state.brightness = light; state.overlay = overlay;
+            // BC's Capture freezes the shader block at getBuffer, before another part changes it.
+            state.bind(renderType, buffers);
+            com.brandon3055.draconicevolution.client.render.DEModelEmission.render(model, state);
+            pose.popPose();
         }
     }
 
     public class CoreGemModelPart extends ChestpieceModelPart {
-        private final ToolShader shader;
-
-        public CoreGemModelPart(CCModel model, RenderType baseType, ToolShader shader) {
-            super(model, baseType, shader);
-            this.shader = shader;
-        }
-
-        @Override
-        public void render(PoseStack poseStack, MultiBufferSource buffers, int packedLight, int packedOverlay, float r, float g, float b, float a) {
-            if (this.visible) {
-                poseStack.pushPose();
-                this.translateAndRotate(poseStack);
-                Matrix4 mat = new Matrix4(poseStack);
-                int color = shieldColour;
-                renderType.withCallback(() -> {
-                    shader.getBaseColorUniform().glUniform4f(((color >> 16) & 0xFF) / 255F, ((color >> 8) & 0xFF) / 255F, (color & 0xFF) / 255F, ((color >> 24) & 0xFF) / 255F);
-                    shader.getModelMatUniform().glUniformMatrix4f(mat);
-                }).draw(buffers);
-
-                poseStack.popPose();
-            }
-        }
+        public CoreGemModelPart(CCModel model, RenderType type, ToolShader shader) { super(model, type, shader); }
+        @Override protected void configureColour() { setShieldColour(shader); }
     }
 
     public class ShieldModelPart extends ChestpieceModelPart {
-        private final ShieldShader shader;
-
-        public ShieldModelPart(CCModel model, RenderType baseType, ShieldShader shader) {
-            super(model, baseType, shader);
-            this.shader = shader;
+        public ShieldModelPart(CCModel model, RenderType type, ShieldShader shader) { super(model, type, shader); }
+        @Override protected boolean shouldDraw() { return visible && shieldState > 0; }
+        @Override protected void configureColour() {
+            setShieldColour(shader);
+            ((ShieldShader) shader).getActivationUniform().glUniform1f(shieldState);
         }
+    }
 
-        @Override
-        public void render(PoseStack poseStack, MultiBufferSource buffers, int packedLight, int packedOverlay, float r, float g, float b, float a) {
-            if (shieldState > 0) {
-                poseStack.pushPose();
-                this.translateAndRotate(poseStack);
-                Matrix4 mat = new Matrix4(poseStack);
-                int color = shieldColour;
-                float state = shieldState;
-                renderType.withCallback(() -> {
-                    shader.getBaseColourUniform().glUniform4f(((color >> 16) & 0xFF) / 255F, ((color >> 8) & 0xFF) / 255F, (color & 0xFF) / 255F, ((color >> 24) & 0xFF) / 255F);
-                    shader.getActivationUniform().glUniform1f(state);
-                    shader.getModelMatUniform().glUniformMatrix4f(mat);
-                }).draw(buffers);
-
-                poseStack.popPose();
-            }
-        }
+    private void setShieldColour(BCShader<?> shader) {
+        shader.uniform(64).glUniform4f(((shieldColour >>> 16) & 255) / 255F,
+                ((shieldColour >>> 8) & 255) / 255F, (shieldColour & 255) / 255F,
+                ((shieldColour >>> 24) & 255) / 255F);
     }
 }

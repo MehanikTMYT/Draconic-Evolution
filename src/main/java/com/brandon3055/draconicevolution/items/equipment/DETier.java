@@ -5,38 +5,49 @@ import com.brandon3055.draconicevolution.init.DETags;
 import com.brandon3055.draconicevolution.init.EquipCfg;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.level.block.Block;
 
 /**
  * Created by brandon3055 on 16/6/20
+ * port-26.1.2: интерфейс Tier удалён из vanilla 26 (SwordItem/PickaxeItem/TieredItem удалены,
+ * инструменты = Item.Properties.tool(ToolMaterial, ...) — эталон ToolMaterial26/Items26).
+ * DETier теперь поставщик ToolMaterial-26 + источник статов для DE-логики (getSpeed/getAttackDamageBonus и т.п.
+ * оставлены как legacy-геттеры, их зовут Modular*-классы).
+ * Repair tag is explicitly empty, preserving the original Tier.getRepairIngredient() = Ingredient.EMPTY.
  */
-public class DETier implements Tier {
-    private TechLevel techLevel;
+public class DETier {
+    private final TechLevel techLevel;
+    private final ToolMaterial material;
 
     public DETier(TechLevel techLevel) {
         this.techLevel = techLevel;
+        this.material = new ToolMaterial(
+            incorrectBlocksForDrops(),
+            0, // Original Tier.getUses(); TechProperties suppresses vanilla durability.
+            getSpeed(),
+            getAttackDamageBonus(),
+            getEnchantability(techLevel),
+            TagKey.create(net.minecraft.core.registries.Registries.ITEM,
+                    net.minecraft.resources.Identifier.fromNamespaceAndPath("draconicevolution", "empty_tool_repair"))
+        );
     }
 
-    @Override
-    public int getUses() {
-        return 0;
+    public TechLevel getTechLevel() {
+        return techLevel;
     }
 
-    @Override
-    public TagKey<Block> getIncorrectBlocksForDrops() {
+    public ToolMaterial material() {
+        return material;
+    }
+
+    private TagKey<Block> incorrectBlocksForDrops() {
         return switch (techLevel) {
             case WYVERN -> DETags.Blocks.INCORRECT_FOR_WYVERN_TOOL;
             case DRACONIC -> DETags.Blocks.INCORRECT_FOR_AWAKENED_TOOL;
             case CHAOTIC -> DETags.Blocks.INCORRECT_FOR_CHAOTIC_TOOL;
             default -> BlockTags.INCORRECT_FOR_NETHERITE_TOOL;
         };
-    }
-
-    @Override
-    public int getEnchantmentValue() {
-        return getEnchantability(techLevel);
     }
 
     public static int getEnchantability(TechLevel techLevel) {
@@ -48,7 +59,6 @@ public class DETier implements Tier {
         };
     }
 
-    @Override
     public float getSpeed() { //Harvest Speed
         return switch (techLevel) {
             case DRACONIUM -> (float) EquipCfg.draconiumHarvestSpeed;
@@ -58,7 +68,6 @@ public class DETier implements Tier {
         };
     }
 
-    @Override
     public float getAttackDamageBonus() {
         return switch (techLevel) {
             case DRACONIUM -> (float) EquipCfg.draconiumDamage;
@@ -75,10 +84,5 @@ public class DETier implements Tier {
             case DRACONIC -> (float) (EquipCfg.draconicSwingSpeed);
             case CHAOTIC -> (float) (EquipCfg.chaoticSwingSpeed);
         };
-    }
-
-    @Override
-    public Ingredient getRepairIngredient() {
-        return Ingredient.EMPTY;
     }
 }

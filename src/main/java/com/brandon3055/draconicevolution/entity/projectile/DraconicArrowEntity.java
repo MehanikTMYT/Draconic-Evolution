@@ -39,6 +39,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import net.minecraft.nbt.ListTag;
 
@@ -608,45 +610,37 @@ public class DraconicArrowEntity extends AbstractArrow {
 //    private static final DataParameter<Float> INIT_VELOCITY = EntityDataManager.defineId(DraconicArrowEntity.class, DataSerializers.FLOAT); //(Grav comp will deactivate when velocity decreases by say 25%)
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
 
         if (this.fixedColor) {
-            compound.putInt("Color", this.getColor());
+            output.putInt("Color", this.getColor());
         }
 
         if (getSpectralTime() > 0) {
-            compound.putInt("spectral_time", entityData.get(SPECTRAL_TIME));
+            output.putInt("spectral_time", entityData.get(SPECTRAL_TIME));
         }
-        compound.putByte("tech_level", entityData.get(TECH_LEVEL));
-        compound.putByte("penetration", entityData.get(PENETRATION));
-        compound.putFloat("grav_comp", entityData.get(GRAV_COMPENSATION));
-        compound.putFloat("init_velocity", entityData.get(INIT_VELOCITY));
-        compound.putBoolean("proj_anti_immune", entityData.get(PROJ_ANTI_IMMUNE));
+        output.putByte("tech_level", entityData.get(TECH_LEVEL));
+        output.putByte("penetration", entityData.get(PENETRATION));
+        output.putFloat("grav_comp", entityData.get(GRAV_COMPENSATION));
+        output.putFloat("init_velocity", entityData.get(INIT_VELOCITY));
+        output.putBoolean("proj_anti_immune", entityData.get(PROJ_ANTI_IMMUNE));
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
         
-        if (compound.contains("spectral_time")) {
-            setSpectral(compound.getIntOr("spectral_time", 0));
-        }
-        if (compound.contains("tech_level")) {
-            entityData.set(TECH_LEVEL, compound.getByte("tech_level"));
-        }
-        if (compound.contains("penetration")) {
-            entityData.set(PENETRATION, compound.getByte("penetration"));
-        }
-        if (compound.contains("grav_comp")) {
-            entityData.set(GRAV_COMPENSATION, compound.getFloat("grav_comp"));
-        }
-        if (compound.contains("init_velocity")) {
-            entityData.set(INIT_VELOCITY, compound.getFloat("init_velocity"));
-        }
-        if (compound.contains("proj_anti_immune")) {
-            entityData.set(PROJ_ANTI_IMMUNE, compound.getBoolean("proj_anti_immune"));
-        }
+        setSpectral(input.getIntOr("spectral_time", 0));
+        input.getInt("Color").ifPresent(color -> {
+            fixedColor = true;
+            entityData.set(ID_EFFECT_COLOR, color);
+        });
+        entityData.set(TECH_LEVEL, input.getByteOr("tech_level", entityData.get(TECH_LEVEL)));
+        entityData.set(PENETRATION, input.getByteOr("penetration", entityData.get(PENETRATION)));
+        entityData.set(GRAV_COMPENSATION, input.getFloatOr("grav_comp", entityData.get(GRAV_COMPENSATION)));
+        entityData.set(INIT_VELOCITY, input.getFloatOr("init_velocity", entityData.get(INIT_VELOCITY)));
+        entityData.set(PROJ_ANTI_IMMUNE, input.getBooleanOr("proj_anti_immune", entityData.get(PROJ_ANTI_IMMUNE)));
 
     }
 

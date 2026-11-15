@@ -76,17 +76,17 @@ public class FusionRecipe implements IFusionRecipe {
 
     @Override
     public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return result;
+        return result.copy();
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<FusionRecipe> getSerializer() {
         return DraconicAPI.FUSION_RECIPE_SERIALIZER.get();
     }
 
     public static class FusionIngredient implements IFusionIngredient {
         private static final Codec<FusionIngredient> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                        Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(e -> e.ingredient),
+                        Ingredient.CODEC.fieldOf("ingredient").forGetter(e -> e.ingredient),
                         Codec.BOOL.fieldOf("consume").forGetter(e -> e.consume)
                 ).apply(builder, FusionIngredient::new)
         );
@@ -127,12 +127,22 @@ public class FusionRecipe implements IFusionRecipe {
 //        }
     }
 
-    public static class Serializer implements RecipeSerializer<FusionRecipe> {
+    public static final class Serializer {
+        private Serializer() {}
+        private static final Codec<TechLevel> TECH_LEVEL_CODEC = Codec.STRING.comapFlatMap(name -> {
+            for (TechLevel tier : TechLevel.values()) {
+                if (tier.name().toLowerCase(java.util.Locale.ROOT).equals(name)) {
+                    return com.mojang.serialization.DataResult.success(tier);
+                }
+            }
+            return com.mojang.serialization.DataResult.error(() -> "Unknown fusion tech level: " + name);
+        }, tier -> tier.name().toLowerCase(java.util.Locale.ROOT));
+        public static RecipeSerializer<FusionRecipe> create() { return new RecipeSerializer<>(CODEC, STREAM_CODEC); }
         private static final MapCodec<FusionRecipe> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
                         ItemStack.CODEC.fieldOf("result").forGetter(e -> e.result),
-                        Ingredient.CODEC_NONEMPTY.fieldOf("catalyst").forGetter(e -> e.catalyst),
+                        Ingredient.CODEC.fieldOf("catalyst").forGetter(e -> e.catalyst),
                         Codec.LONG.fieldOf("totalEnergy").forGetter(e -> e.totalEnergy),
-                        TechLevel.CODEC.fieldOf("techLevel").forGetter(e -> e.techLevel),
+                        TECH_LEVEL_CODEC.fieldOf("techLevel").forGetter(e -> e.techLevel),
                         Codec.list(FusionIngredient.CODEC).fieldOf("ingredients").forGetter(e -> e.ingredients)
                 ).apply(builder, FusionRecipe::new)
         );
@@ -141,12 +151,10 @@ public class FusionRecipe implements IFusionRecipe {
                 FusionRecipe.Serializer::toNetwork, FusionRecipe.Serializer::fromNetwork
         );
 
-        @Override
         public MapCodec<FusionRecipe> codec() {
             return CODEC;
         }
 
-        @Override
         public StreamCodec<RegistryFriendlyByteBuf, FusionRecipe> streamCodec() {
             return STREAM_CODEC;
         }
@@ -155,7 +163,7 @@ public class FusionRecipe implements IFusionRecipe {
             ItemStack result =  ItemStack.STREAM_CODEC.decode(buffer);
             Ingredient catalyst = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
 
-            int count = buffer.readByte();
+            int count = buffer.readUnsignedByte();
             List<FusionIngredient> fusionIngredients = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 fusionIngredients.add(FusionIngredient.STREAM_CODEC.decode(buffer));
@@ -171,6 +179,7 @@ public class FusionRecipe implements IFusionRecipe {
             ItemStack.STREAM_CODEC.encode(buffer, recipe.result);
             Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.catalyst);
 
+            if (recipe.ingredients.size() > 255) throw new IllegalArgumentException("Fusion recipe has more than 255 ingredients");
             buffer.writeByte(recipe.ingredients.size());
             for (FusionIngredient ingredient : recipe.ingredients) {
                 FusionIngredient.STREAM_CODEC.encode(buffer, ingredient);

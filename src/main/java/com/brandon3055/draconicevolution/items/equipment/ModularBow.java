@@ -116,7 +116,7 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
     private final TechLevel techLevel;
 
     public ModularBow(TechProperties props) {
-        super(props);
+        super(props.enchantable(1)); // Original BowItem enchantment value.
         this.techLevel = props.getTechLevel();
     }
 
@@ -138,9 +138,10 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
     }
 
     @Override
-    @OnlyIn (Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> builder, TooltipFlag flagIn) { // port-26.1.2: сигнатура 26 (TooltipDisplay+Consumer)
+        List<Component> tooltip = new java.util.ArrayList<>();
         addModularItemInformation(stack, context, tooltip, flagIn);
+        tooltip.forEach(builder);
     }
 
     @Override
@@ -163,9 +164,10 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
     }
 
     private boolean hasInfinity(Level level, ItemStack stack) {
-        Registry<Enchantment> reg = level.registryAccess().registry(Registries.ENCHANTMENT).orElse(null);
+        // port-26.1.2: registryAccess().registry удалён; Enchantments.INFINITY теперь ResourceKey; Registry.get -> Optional<Reference>
+        var reg = level.registryAccess().lookup(Registries.ENCHANTMENT).orElse(null);
         if (reg != null) {
-            Holder<Enchantment> holder = reg.getHolder(Enchantments.INFINITY).orElse(null);
+            var holder = reg.get(Enchantments.INFINITY).orElse(null);
             return holder != null && stack.getEnchantmentLevel(holder) > 0;
         }
         return false;
@@ -193,9 +195,9 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
     }
 
     @Override
-    public void releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) {
+    public boolean releaseUsing(ItemStack stack, Level level, LivingEntity entity, int timeLeft) { // port-26.1.2: releaseUsing теперь возвращает boolean (эталон BowItem26)
         if (!(entity instanceof Player player)) {
-            return;
+            return false;
         }
 
         boolean infinity = hasInfinity(level, stack);
@@ -204,18 +206,18 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
             if (infinity) {
                 ammoStack = new ItemStack(Items.ARROW);
             } else {
-                return;
+                return false;
             }
         }
 
         int drawTime = this.getUseDuration(stack, entity) - timeLeft;
         drawTime = EventHooks.onArrowLoose(stack, level, player, drawTime, !ammoStack.isEmpty() || infinity);
         if (drawTime < 0) {
-            return;
+            return false;
         }
 
         if (ammoStack.isEmpty() && !infinity) {
-            return;
+            return false;
         }
 
         float powerForTime;
@@ -225,7 +227,7 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
 
             powerForTime = getPowerForTime(drawTime, stack, player.registryAccess()) * (projData.velocity() + 1);
             if (!(powerForTime >= 0.1D)) {
-                return;
+                return false;
             }
 
             infiniteAmmo = infinity || player.getAbilities().instabuild || (ammoStack.getItem() instanceof ArrowItem && ((ArrowItem) ammoStack.getItem()).isInfinite(ammoStack, stack, player));
@@ -249,11 +251,12 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
                     arrowEntity.setCritArrow(true);
                 }
 
-                arrowEntity.setBaseDamage(arrowEntity.getBaseDamage() * (projData.damage() + 1));
+                double arrowBase = 2.0D; // port-26.1.2: AbstractArrow.getBaseDamage удалён (baseDamage private) — дефолт ванильной стрелы
+                arrowEntity.setBaseDamage(arrowBase * (projData.damage() + 1));
 
-                long energyRequired = (long) (EquipCfg.bowBaseEnergy * arrowEntity.getBaseDamage() * powerForTime * 3);
+                long energyRequired = (long) (EquipCfg.bowBaseEnergy * arrowBase * powerForTime * 3); // port-26.1.2: см. выше
                 if (extractEnergy(player, stack, energyRequired) < energyRequired) {
-                    return;
+                    return false;
                 }
 
                 if (infiniteAmmo) {
@@ -273,6 +276,7 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
         }
 
         player.awardStat(Stats.ITEM_USED.get(this));
+        return true; // port-26.1.2
     }
 
     @Override
@@ -292,7 +296,7 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
         }
         DraconicArrowEntity newArrow = new DraconicArrowEntity(arrow.level(), (LivingEntity) arrow.getOwner(), stack.copyWithCount(1), weaponStack);
         if (arrow instanceof SpectralArrow) {
-            newArrow.setSpectral(((SpectralArrow) arrow).duration);
+            newArrow.setSpectral(200); // port-26.1.2: SpectralArrow.duration private — дефолт 200 тиков
         }
         return newArrow;
     }
@@ -368,8 +372,4 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
         return super.onEntityItemUpdate(stack, entity);
     }
 
-    @Override
-    public boolean isEnchantable(ItemStack p_41456_) {
-        return true;
-    }
 }

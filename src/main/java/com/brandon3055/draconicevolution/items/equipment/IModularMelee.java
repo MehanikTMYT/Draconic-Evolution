@@ -72,7 +72,7 @@ public interface IModularMelee extends IModularTieredItem, IDraconicMelee {
                     entity.setRemainingFireTicks(20);
                 }
 
-                if (entity.hurt(entity.level().damageSources().playerAttack(player), damage)) {
+                if (entity.level() instanceof net.minecraft.server.level.ServerLevel sl && entity.hurtServer(sl, entity.level().damageSources().playerAttack(player), damage)) { // port-26.1.2: Entity.hurt -> hurtServer
                     float damageDealt = health - entity.getHealth();
                     entity.knockback(0.4F, MathHelper.sin(player.getYRot() * MathHelper.torad), (-MathHelper.cos(player.getYRot() * MathHelper.torad)));
 

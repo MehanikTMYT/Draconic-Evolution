@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.items.equipment;
 
+import net.minecraft.world.item.Item;
 import codechicken.lib.util.ItemUtils;
 
 import codechicken.lib.vec.Vector3;
@@ -112,14 +113,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by brandon3055 on 21/5/20.
  */
-public class ModularHoe extends HoeItem implements IModularTieredItem, IDraconicMelee, IModularEnergyItem {
+public class ModularHoe extends Item implements IModularTieredItem, IDraconicMelee, IModularEnergyItem {
     private final TechLevel techLevel;
     private final DETier itemTier;
 
     public ModularHoe(DETier tier, TechProperties props) {
-        super(tier, props);
+        super(props.hoe(tier.material(), 0, 0)); // port-26.1.2: HoeItem/Tier удалены -> Item.Properties.tool-компоненты (эталон Items26)
         this.techLevel = props.getTechLevel();
-        this.itemTier = (DETier) getTier();
+        this.itemTier = tier;
     }
 
     @Override
@@ -175,13 +176,14 @@ public class ModularHoe extends HoeItem implements IModularTieredItem, IDraconic
 
     @Override
     public float getBaseEfficiency() {
-        return getTier().getSpeed();
+        return getItemTier().getSpeed();
     }
 
     @Override
-    @OnlyIn (Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> builder, TooltipFlag flagIn) { // port-26.1.2: сигнатура 26 (TooltipDisplay+Consumer)
+        List<Component> tooltip = new java.util.ArrayList<>();
         addModularItemInformation(stack, context, tooltip, flagIn);
+        tooltip.forEach(builder);
     }
 
     @Override
@@ -210,11 +212,6 @@ public class ModularHoe extends HoeItem implements IModularTieredItem, IDraconic
             entity.setExtendedLifetime();
         }
         return super.onEntityItemUpdate(stack, entity);
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack p_41456_) {
-        return true;
     }
 
     @Override
@@ -291,7 +288,7 @@ public class ModularHoe extends HoeItem implements IModularTieredItem, IDraconic
         Level level = context.getLevel();
         BlockPos blockpos = context.getClickedPos();
         BlockState toolModifiedState = level.getBlockState(blockpos).getToolModifiedState(context, ItemAbilities.HOE_TILL, false);
-        Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = toolModifiedState == null ? null : Pair.of(ctx -> true, changeIntoState(toolModifiedState));
+        Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = toolModifiedState == null ? null : Pair.of(ctx -> true, HoeItem.changeIntoState(toolModifiedState));
         if (pair == null) {
             return false;
         }
@@ -304,7 +301,7 @@ public class ModularHoe extends HoeItem implements IModularTieredItem, IDraconic
             if (!level.isClientSide()) {
                 consumer.accept(context);
                 if (player != null) {
-                    context.getItemInHand().hurtAndBreak(1, player, LivingEntity.getSlotForHand(context.getHand()));
+                    context.getItemInHand().hurtAndBreak(1, player, context.getHand().asEquipmentSlot()); // port-26.1.2: getSlotForHand удалён (эталон HoeItem26)
                 }
             }
 

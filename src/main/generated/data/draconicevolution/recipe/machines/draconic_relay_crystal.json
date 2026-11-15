@@ -8,57 +8,39 @@
   "ingredients": [
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:wyvern_energy_core"
-      }
+      "ingredient": "draconicevolution:wyvern_energy_core"
     },
     {
       "consume": true,
-      "ingredient": {
-        "tag": "c:gems/diamond"
-      }
+      "ingredient": "#c:gems/diamond"
     },
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:wyvern_core"
-      }
+      "ingredient": "draconicevolution:wyvern_core"
     },
     {
       "consume": true,
-      "ingredient": {
-        "tag": "c:gems/diamond"
-      }
+      "ingredient": "#c:gems/diamond"
     },
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:wyvern_energy_core"
-      }
+      "ingredient": "draconicevolution:wyvern_energy_core"
     },
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:wyvern_energy_core"
-      }
+      "ingredient": "draconicevolution:wyvern_energy_core"
     },
     {
       "consume": true,
-      "ingredient": {
-        "tag": "c:gems/diamond"
-      }
+      "ingredient": "#c:gems/diamond"
     },
     {
       "consume": true,
-      "ingredient": {
-        "tag": "c:gems/diamond"
-      }
+      "ingredient": "#c:gems/diamond"
     },
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:wyvern_energy_core"
-      }
+      "ingredient": "draconicevolution:wyvern_energy_core"
     }
   ],
   "result": {

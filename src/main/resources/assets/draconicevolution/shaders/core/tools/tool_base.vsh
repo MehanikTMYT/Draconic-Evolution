@@ -1,7 +1,10 @@
-#version 150
+#version 330
 
-#moj_import <light.glsl>
-#moj_import <fog.glsl>
+#moj_import <minecraft:light.glsl>
+#moj_import <minecraft:fog.glsl>
+#moj_import <minecraft:projection.glsl>
+#moj_import <minecraft:dynamictransforms.glsl>
+#moj_import <brandonscore:bc_params.glsl>
 
 in vec3 Position;
 in vec4 Color;
@@ -13,25 +16,14 @@ in vec3 Normal;
 uniform sampler2D Sampler1;
 uniform sampler2D Sampler2;
 
-uniform mat4 ProjMat;
-uniform mat4 ModelViewMat;
-uniform mat4 ModelMat;
-uniform mat3 IViewRotMat;
-uniform int FogShape;
 
-uniform bool SimpleLight;
-uniform bool DisableLight;
-uniform vec3 Light0_Direction;
-uniform vec3 Light1_Direction;
 
-uniform bool DisableOverlay;
 
-uniform ivec2 UV1Override;
-uniform ivec2 UV2Override;
 
 out vec3 fPos;
 out vec3 vPos;
 out float vertexDistance;
+out float vertexCylindricalDistance;
 out vec4 vertexColor;
 out vec4 lightMapColor;
 out vec4 overlayColor;
@@ -45,7 +37,8 @@ void main() {
     gl_Position = ProjMat * ModelViewMat * ModelMat * vec4(Position, 1.0);
 
 //    vertexDistance = fog_distance(ModelViewMat, IViewRotMat * Position, FogShape);
-    vertexDistance = fog_distance(IViewRotMat * Position, FogShape);
+    vertexDistance = fog_spherical_distance(fPos);
+    vertexCylindricalDistance = fog_cylindrical_distance(fPos);
 
     ivec2 uv1 = UV1;
     if (UV1Override.x != -1 && UV1Override.y != -1) {
@@ -60,7 +53,7 @@ void main() {
         vertexColor = Color;
         lightMapColor = vec4(1.0);
     } else if (SimpleLight) {
-        vertexColor = Color * minecraft_sample_lightmap(Sampler2, uv2);
+        vertexColor = Color * texelFetch(Sampler2, clamp(uv2 / 16, ivec2(0), ivec2(15)), 0);
         lightMapColor = vec4(1.0);
     } else {
         vertexColor = minecraft_mix_light(Light0_Direction, Light1_Direction, Normal, Color);

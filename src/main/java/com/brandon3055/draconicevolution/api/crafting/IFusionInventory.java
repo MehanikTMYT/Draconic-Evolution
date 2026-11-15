@@ -17,6 +17,9 @@ import java.util.List;
  */
 public interface IFusionInventory extends RecipeInput {
 
+    /** Registry context used by MC26 recipe assembly and component transfer. */
+    net.minecraft.core.HolderLookup.Provider registryAccess();
+
     /**
      * Gets the stack in the catalyst slot of the core<br>
      */

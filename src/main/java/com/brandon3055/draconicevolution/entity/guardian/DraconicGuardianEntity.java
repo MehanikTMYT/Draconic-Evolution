@@ -35,6 +35,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import net.minecraft.nbt.NbtUtils;
 
@@ -904,24 +906,20 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
-        compound.putInt("dragon_phase", phaseManager.getCurrentPhase().getType().getId());
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putInt("dragon_phase", phaseManager.getCurrentPhase().getType().getId());
         if (getArenaOrigin() != null) {
-            compound.put("arena_origin", NbtUtils.writeBlockPos(getArenaOrigin()));
+            output.store("arena_origin", BlockPos.CODEC, getArenaOrigin());
         }
-        compound.putFloat("shield_power", getShieldPower());
+        output.putFloat("shield_power", getShieldPower());
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
-        if (compound.contains("dragon_phase")) {
-            phaseManager.setPhase(PhaseType.getById(compound.getIntOr("dragon_phase", 0)));
-        }
-        if (compound.contains("arena_origin")) {
-            setArenaOrigin(NbtUtils.readBlockPos(compound, "arena_origin").orElse(null));
-        }
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        input.getInt("dragon_phase").ifPresent(id -> phaseManager.setPhase(PhaseType.getById(id)));
+        input.read("arena_origin", com.brandon3055.draconicevolution.lib.TagUtils26.BLOCK_POS_CODEC).ifPresent(this::setArenaOrigin);
         if (level() instanceof ServerLevel) {
             fightManager = WorldEntityHandler.getWorldEntities()
                     .stream()
@@ -937,9 +935,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
         } else {
             fightManager = null;
         }
-        if (compound.contains("shield_power")) { // port-26.1.2
-            setShieldPower(compound.getFloatOr("shield_power", 0F));
-        }
+        setShieldPower(input.getFloatOr("shield_power", getShieldPower()));
     }
 
     @Override

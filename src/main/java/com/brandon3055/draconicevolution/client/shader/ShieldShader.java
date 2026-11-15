@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.resources.Identifier;
 
 // port-26.1.2: портирован на BCShader (BCParams); смещения: Activation=104, BaseColor=64 (как ContribShader.transition/baseColor).
-public final class ShieldShader extends BCShader<ShieldShader> {
+public final class ShieldShader extends DEEntityShader<ShieldShader> {
 
     public ShieldShader(String path, VertexFormat format) {
         this(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, path), format);

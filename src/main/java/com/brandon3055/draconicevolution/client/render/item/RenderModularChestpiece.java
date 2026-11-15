@@ -1,11 +1,9 @@
 package com.brandon3055.draconicevolution.client.render.item;
 
 import codechicken.lib.math.MathHelper;
-import codechicken.lib.model.PerspectiveModelState;
 import codechicken.lib.render.CCModel;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.model.OBJParser;
-import codechicken.lib.util.TransformUtils;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
 import com.brandon3055.brandonscore.api.TechLevel;
@@ -20,7 +18,6 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -73,22 +70,8 @@ public class RenderModularChestpiece extends ToolRenderBase {
         coreGemPart.render(buffers, mat, shieldColour);
     }
 
-    @Override
-    public @Nullable PerspectiveModelState getModelState() {
-        return TransformUtils.DEFAULT_BLOCK;
-    }
-
     protected CoreGemPart coreGemPart(CCModel model) {
-        String levelName = techLevel.name().toLowerCase(Locale.ROOT);
-        RenderType gemType = RenderType.create(MODID + ":core_gem", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.TRIANGLES, 256, RenderType.CompositeState.builder()
-                .setShaderState(new RenderStateShard.ShaderStateShard(DEShaders.CHESTPIECE_GEM_SHADER::getShaderInstance))
-                .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(MODID, "textures/item/equipment/shader_fallback_" + levelName + ".png"), false, false))
-                .setLightmapState(RenderStateShard.LIGHTMAP)
-                .setOverlayState(RenderStateShard.OVERLAY)
-                .createCompositeState(false)
-        );
-
-        return new CoreGemPart(model, gemType, DEShaders.CHESTPIECE_GEM_SHADER);
+        return new CoreGemPart(model, type(DEShaders.CHESTPIECE_GEM_SHADER, fallbackTexture()), DEShaders.CHESTPIECE_GEM_SHADER);
     }
 
     private class CoreGemPart extends SimpleToolPart {
@@ -105,10 +88,8 @@ public class RenderModularChestpiece extends ToolRenderBase {
         }
 
         public void render(MultiBufferSource buffers, Matrix4 mat, int color) {
-            vboType.get().withCallback(() -> {
-                shader.getBaseColorUniform().glUniform4f(((color >> 16) & 0xFF) / 255F, ((color >> 8) & 0xFF) / 255F, (color & 0xFF) / 255F, ((color >> 24) & 0xFF) / 255F);
-                shader.getModelMatUniform().glUniformMatrix4f(mat);
-            }).draw(buffers);
+            shader.getBaseColorUniform().glUniform4f(((color >> 16) & 0xFF) / 255F, ((color >> 8) & 0xFF) / 255F, (color & 0xFF) / 255F, ((color >> 24) & 0xFF) / 255F);
+            emit(buffers, mat, false);
         }
     }
 

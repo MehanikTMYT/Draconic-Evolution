@@ -1,16 +1,9 @@
 package com.brandon3055.draconicevolution.client.render.item;
 
 import codechicken.lib.colour.Colour;
-import codechicken.lib.model.PerspectiveModelState;
 import codechicken.lib.render.CCModel;
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.item.IItemRenderer;
 import codechicken.lib.render.model.OBJParser;
-import codechicken.lib.render.shader.ShaderObject;
-import codechicken.lib.render.shader.ShaderProgram;
-import codechicken.lib.render.shader.ShaderProgramBuilder;
-import codechicken.lib.render.shader.UniformType;
-import codechicken.lib.util.TransformUtils;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
 import com.brandon3055.brandonscore.api.TechLevel;
@@ -39,8 +32,10 @@ import static com.brandon3055.draconicevolution.client.render.tile.RenderTileEne
 /**
  * Created by brandon3055 on 21/11/2016.
  */
-public class RenderItemEnergyCrystal implements IItemRenderer {
-    public static final RenderType crystalBaseType = RenderType.entitySolid(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/models/crystal_base.png"));
+public class RenderItemEnergyCrystal implements DEItemRenderer {
+    public static final RenderType crystalBaseType = net.minecraft.client.renderer.rendertype.RenderTypes.entitySolid(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/models/crystal_base.png"));
+
+    private static final RenderType CRYSTAL = DEShaders.ENERGY_CRYSTAL.renderType("de_energy_crystal_item", null, com.mojang.blaze3d.vertex.VertexFormat.Mode.QUADS);
 
     private final CrystalType type;
     private final TechLevel techLevel;
@@ -58,25 +53,6 @@ public class RenderItemEnergyCrystal implements IItemRenderer {
         crystalBase = map.get("Base").backfacedCopy();
     }
 
-    //region Unused
-
-    @Override
-    public boolean useAmbientOcclusion() {
-        return false;
-    }
-
-    @Override
-    public boolean isGui3d() {
-        return false;
-    }
-
-    @Override
-    public boolean usesBlockLight() {
-        return false;
-    }
-
-    //endregion
-
     @Override
     public void renderItem(ItemStack stack, ItemDisplayContext context, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
         int tier = techLevel.index;
@@ -86,27 +62,43 @@ public class RenderItemEnergyCrystal implements IItemRenderer {
         ccrs.brightness = packedLight;
         ccrs.overlay = packedOverlay;
         mat.translate(0.5, type == CrystalType.CRYSTAL_IO ? 0 : 0.5, 0.5);
-        DEShaders.energyCrystalMipmap.glUniform1f(0);
-        DEShaders.energyCrystalColour.glUniform3f(COLOURS[tier][0], COLOURS[tier][1], COLOURS[tier][2]);
+        DEShaders.ENERGY_CRYSTAL.setMipmap(0);
+        DEShaders.ENERGY_CRYSTAL.setColour(COLOURS[tier][0], COLOURS[tier][1], COLOURS[tier][2]);
 
         if (type == CrystalType.CRYSTAL_IO) {
             ccrs.bind(crystalBaseType, getter);
-            crystalBase.render(ccrs, mat);
+            com.brandon3055.draconicevolution.client.render.DEModelEmission.render(crystalBase, ccrs, mat);
             mat.apply(new Rotation(TimeKeeper.getClientTick() / 400F, 0, 1, 0));
             ccrs.baseColour = Colour.packRGBA(r[tier], g[tier], b[tier], 1F);
-            ccrs.bind(RenderTileEnergyCrystal.crystalType, getter);
-            crystalHalf.render(ccrs, mat);
+            ccrs.bind(CRYSTAL, getter);
+            com.brandon3055.draconicevolution.client.render.DEModelEmission.render(crystalHalf, ccrs, mat);
         } else {
             ccrs.baseColour = Colour.packRGBA(r[tier], g[tier], b[tier], 1F);
             mat.apply(new Rotation(TimeKeeper.getClientTick() / 400F, 0, 1, 0));
-            ccrs.bind(RenderTileEnergyCrystal.crystalType, getter);
-            crystalFull.render(ccrs, mat);
+            ccrs.bind(CRYSTAL, getter);
+            com.brandon3055.draconicevolution.client.render.DEModelEmission.render(crystalFull, ccrs, mat);
         }
     }
 
     @Override
-    public @Nullable PerspectiveModelState getModelState() {
-        return TransformUtils.DEFAULT_BLOCK;
+    public void getExtents(java.util.function.Consumer<org.joml.Vector3fc> output) {
+        CCModel model = type == CrystalType.CRYSTAL_IO ? crystalHalf : crystalFull;
+        // Bound all animation angles, rather than a single frame, using the OBJ's swept radius.
+        double radius = 0, minY = Double.POSITIVE_INFINITY, maxY = Double.NEGATIVE_INFINITY;
+        for (var vertex : model.verts) {
+            var v = vertex.vec;
+            radius = Math.max(radius, Math.hypot(v.x, v.z));
+            minY = Math.min(minY, v.y); maxY = Math.max(maxY, v.y);
+        }
+        double yOffset = type == CrystalType.CRYSTAL_IO ? 0 : 0.5;
+        for (double x : new double[]{0.5 - radius, 0.5 + radius})
+            for (double z : new double[]{0.5 - radius, 0.5 + radius})
+                for (double y : new double[]{minY + yOffset, maxY + yOffset})
+                    output.accept(new org.joml.Vector3f((float)x, (float)y, (float)z));
+        if (type == CrystalType.CRYSTAL_IO) for (var vertex : crystalBase.verts) {
+            var v = vertex.vec;
+            output.accept(new org.joml.Vector3f((float)v.x + 0.5F, (float)v.y, (float)v.z + 0.5F));
+        }
     }
 
     private static float[] r = {0.0F, 0.47F, 1.0F};

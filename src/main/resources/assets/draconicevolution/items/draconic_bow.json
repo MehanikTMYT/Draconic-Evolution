@@ -1,0 +1,8 @@
+{
+  "model": {
+    "type": "draconicevolution:modular_tool",
+    "base": "draconicevolution:item/draconic_bow",
+    "family": "bow",
+    "tier": 2
+  }
+}

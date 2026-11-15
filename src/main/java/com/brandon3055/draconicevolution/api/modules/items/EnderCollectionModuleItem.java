@@ -1,12 +1,10 @@
 package com.brandon3055.draconicevolution.api.modules.items;
 
-import codechicken.enderstorage.api.Frequency;
 
-import codechicken.enderstorage.config.EnderStorageConfig;
 
-import codechicken.enderstorage.tile.TileEnderChest;
 
 import com.brandon3055.draconicevolution.api.modules.Module;
+import com.brandon3055.draconicevolution.integration.enderstorage.EnderStorageIntegration;
 
 import com.brandon3055.draconicevolution.api.modules.data.NoData;
 
@@ -91,6 +89,10 @@ import static com.brandon3055.draconicevolution.DraconicEvolution.MODID;
 
 public class EnderCollectionModuleItem extends ModuleItem<NoData> {
 
+    public EnderCollectionModuleItem(Properties properties, Supplier<Module<?>> moduleSupplier) {
+        super(properties, moduleSupplier);
+    }
+
     public EnderCollectionModuleItem(Supplier<Module<?>> moduleSupplier) {
         super(moduleSupplier);
     }
@@ -108,48 +110,33 @@ public class EnderCollectionModuleItem extends ModuleItem<NoData> {
 
     private InteractionResult bindFrequency(ItemStack stack, Level level, UseOnContext context) {
         BlockEntity tile = level.getBlockEntity(context.getClickedPos());
-        if (tile instanceof TileEnderChest chest && context.getPlayer() != null && context.getPlayer().isCrouching()) {
+        if (EnderStorageIntegration.isChest(tile) && context.getPlayer() != null && context.getPlayer().isCrouching()) {
             if (level.isClientSide()) {
                 return InteractionResult.SUCCESS;
             }
-            Frequency frequency = chest.getFrequency();
-            if (EnderStorageConfig.anarchyMode && !(frequency.owner().isPresent() && frequency.owner().get().equals(context.getPlayer().getUUID()))) {
-                frequency = frequency.withoutOwner();
-            }
-
             CompoundTag tag = stack.getOrDefault(ItemData.ENDER_MODULE_FREQUENCY, CustomData.EMPTY).copyTag();
-            tag.put("frequency", writeFrequency(frequency, level.registryAccess()));
+            tag.put("frequency", EnderStorageIntegration.bind(tile, context.getPlayer(), level.registryAccess()));
             stack.set(ItemData.ENDER_MODULE_FREQUENCY, CustomData.of(tag));
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }
 
-    private CompoundTag writeFrequency(Frequency frequency, HolderLookup.Provider provider) {
-        CompoundTag tagCompound = new CompoundTag();
-        tagCompound.putInt("left", frequency.left().getWoolMeta());
-        tagCompound.putInt("middle", frequency.middle().getWoolMeta());
-        tagCompound.putInt("right", frequency.right().getWoolMeta());
-        frequency.owner().ifPresent(uuid -> TagUtils26.putUUID(TagUtils26, tagCompound, "owner", uuid));
-        frequency.ownerName().ifPresent(component -> tagCompound.putString("owner_name", Component.Serializer.toJson(component, provider)));
-        return tagCompound;
-    }
-
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) { // port-26.1.2: InteractionResultHolder удалён
         ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide()) {
-            return InteractionResultHolder.pass(stack);
+            return InteractionResult.PASS;
         }
 
         CompoundTag tag = stack.getOrDefault(ItemData.ENDER_MODULE_FREQUENCY, CustomData.EMPTY).copyTag();
-        if (player.isCrouching() && ModHelper.ENDERSTORAGE && !tag.contains("frequency")) {
+        if (player.isCrouching() && ModHelper.ENDERSTORAGE && tag.contains("frequency")) {
             tag.remove("frequency");
             stack.set(ItemData.ENDER_MODULE_FREQUENCY, CustomData.of(tag));
             return InteractionResult.SUCCESS;
         }
 
-        return InteractionResultHolder.pass(stack);
+        return InteractionResult.PASS;
     }
 
     @Override
@@ -158,7 +145,7 @@ public class EnderCollectionModuleItem extends ModuleItem<NoData> {
 
         CompoundTag tag = stack.getOrDefault(ItemData.ENDER_MODULE_FREQUENCY, CustomData.EMPTY).copyTag();
         if (ModHelper.ENDERSTORAGE && tag.contains("frequency")) {
-            addEnderStorageInfo(tag, tooltip);
+            addEnderStorageInfo(tag, tooltip, context.registries());
         }
 
         tooltip.add(Component.translatable("module." + MODID + ".ender_storage.about").withStyle(ChatFormatting.DARK_GRAY));
@@ -166,22 +153,11 @@ public class EnderCollectionModuleItem extends ModuleItem<NoData> {
         tooltip.add(Component.translatable("module." + MODID + ".ender_storage.about_compat2").withStyle(ChatFormatting.DARK_GRAY));
     }
 
-    private void addEnderStorageInfo(CompoundTag tagIn, List<Component> tooltip) {
-        CompoundTag tag = tagIn.getCompound("frequency");
-        if (tag.isEmpty()) return;
-
-        Frequency frequency = new Frequency(tag);
-        if (frequency.hasOwner()) {
-            Component name = frequency.ownerName().get();
-            if (name instanceof MutableComponent mutable) {
-                mutable.withStyle(ChatFormatting.DARK_GREEN);
-            }
-            tooltip.add(Component.translatable("module." + MODID + ".ender_storage.owner").withStyle(ChatFormatting.GRAY).append(": ").append(name));
-        }
-        Component freq = frequency.getTooltip();
-        if (freq instanceof MutableComponent mutable) {
-            mutable.withStyle(ChatFormatting.DARK_GREEN);
-        }
-        tooltip.add(Component.translatable("module." + MODID + ".ender_storage.frequency").withStyle(ChatFormatting.GRAY).append(": ").append(freq));
+    private void addEnderStorageInfo(CompoundTag tag, List<Component> tooltip, HolderLookup.Provider registries) {
+        EnderStorageIntegration.ownerName(tag, registries).ifPresent(name -> tooltip.add(
+                Component.translatable("module." + MODID + ".ender_storage.owner").withStyle(ChatFormatting.GRAY)
+                        .append(": ").append(name.copy().withStyle(ChatFormatting.DARK_GREEN))));
+        tooltip.add(Component.translatable("module." + MODID + ".ender_storage.frequency").withStyle(ChatFormatting.GRAY)
+                .append(": ").append(EnderStorageIntegration.tooltip(tag, registries).copy().withStyle(ChatFormatting.DARK_GREEN)));
     }
 }

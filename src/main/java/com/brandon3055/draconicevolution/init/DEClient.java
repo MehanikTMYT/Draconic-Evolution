@@ -59,6 +59,18 @@ public class DEClient {
         modBus.addListener(DEClient::clientSetupEvent);
 //        modBus.addListener(ClientInit::onModelRegistryEvent);
         modBus.addListener(DEClient::registerRenderers);
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterItemModelsEvent event) ->
+                event.register(net.minecraft.resources.Identifier.fromNamespaceAndPath(MODID, "modular_tool"),
+                        com.brandon3055.draconicevolution.client.render.item.ModularToolItemModel.Unbaked.MAP_CODEC));
+        modBus.addListener(com.brandon3055.draconicevolution.client.render.item.RenderItemChaosShard::registerPipelines);
+        modBus.addListener(com.brandon3055.draconicevolution.client.render.modelfx.StaffModelEffect::registerPipelines);
+        modBus.addListener(com.brandon3055.draconicevolution.client.render.item.ToolSurfaceRenderTypes::registerPipelines);
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent event) ->
+                event.register(net.minecraft.resources.Identifier.fromNamespaceAndPath(MODID, "chaos_shard"),
+                        com.brandon3055.draconicevolution.client.render.item.DESpecialItemRenderers.ChaosShardUnbaked.MAP_CODEC));
+        modBus.addListener((net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent event) ->
+                event.register(net.minecraft.resources.Identifier.fromNamespaceAndPath(MODID, "energy_crystal"),
+                        com.brandon3055.draconicevolution.client.render.item.DESpecialItemRenderers.EnergyCrystalUnbaked.MAP_CODEC));
         modBus.addListener(DEClient::onAddRenderLayers);
         modBus.addListener(DEClient::onResourceReload);
         modBus.addListener(DEClient::registerClientExtensions);

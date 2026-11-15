@@ -49,13 +49,10 @@ neoForge {
     }
 }
 
-// port-26.1.2: EnderStorage-cluster excluded from compilation (two files with imports of codechicken.enderstorage.*,
-// EnderStorage 26.1.2 does not exist); references to them in 4 other files will yield an honest compile-cluster (see report)
+// EnderCollection uses an optional boundary to the actual installed EnderStorage API.
 sourceSets {
     main {
         java {
-            exclude 'com/brandon3055/draconicevolution/api/modules/items/EnderCollectionModuleItem.java'
-            exclude 'com/brandon3055/draconicevolution/api/modules/entities/EnderCollectionEntity.java'
             // port-26.1.2: datagen-кластер исключён до этапа datagen (ExistingFileHelper/модельные генераторы 26) — см. stage1/2 отчёт
             exclude 'com/brandon3055/draconicevolution/datagen/**'
         }
@@ -91,7 +88,6 @@ dependencies {
 
     compileOnly "cc.tweaked:cc-tweaked-${mc_version}-forge-api:${cct_version}"
 
-    // port-26.1.2: EnderStorage 26.1.2 does not exist (upstream 1.21.1 only) -> compile cluster EnderCollection* excluded, see recon/compile report
     // port-26.1.2: JEI removed (EMI-only policy), src/**/jei/** deleted
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
@@ -128,7 +124,7 @@ neoForge.ideSyncTask generateModMetadata
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.compilerArgs += ['-Xmaxerrs', '1000'] // port-26.1.2: remove the default limit of 100 (trap 69)
+    options.compilerArgs += ['-Xmaxerrs', '10000'] // port-26.1.2: remove the default limit of 100 (trap 69)
 }
 
 jar {

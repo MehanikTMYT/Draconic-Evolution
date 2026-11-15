@@ -29,6 +29,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import net.minecraft.nbt.NbtUtils;
 
@@ -246,27 +248,21 @@ public class GuardianCrystalEntity extends Entity {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
+    protected void addAdditionalSaveData(ValueOutput output) {
         if (getBeamTarget() != null) {
-            compound.put("BeamTarget", NbtUtils.writeBlockPos(getBeamTarget()));
+            output.store("BeamTarget", BlockPos.CODEC, getBeamTarget());
         }
 
-        compound.putBoolean("ShowBottom", showsBottom());
-        TagUtils26.putUUID(TagUtils26, compound, "manager_id", managerId);
+        output.putBoolean("ShowBottom", showsBottom());
+        output.storeNullable("manager_id", net.minecraft.core.UUIDUtil.CODEC, managerId);
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
-        if (compound.contains("BeamTarget")) { // port-26.1.2
-            setBeamTarget(NbtUtils.readBlockPos(compound, "BeamTarget").orElse(null));
-        }
+    protected void readAdditionalSaveData(ValueInput input) {
+        setBeamTarget(input.read("BeamTarget", TagUtils26.BLOCK_POS_CODEC).orElse(null));
 
-        if (compound.contains("ShowBottom")) { // port-26.1.2
-            setShowBottom(compound.getBooleanOr("ShowBottom", false));
-        }
-        if (compound.contains("manager_id")) {
-            managerId = TagUtils26.getUUID(TagUtils26, compound, "manager_id");
-        }
+        setShowBottom(input.getBooleanOr("ShowBottom", showsBottom()));
+        managerId = input.read("manager_id", net.minecraft.core.UUIDUtil.CODEC).orElse(null);
     }
 
     @Override

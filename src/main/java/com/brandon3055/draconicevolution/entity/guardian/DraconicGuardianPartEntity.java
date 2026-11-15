@@ -1,6 +1,8 @@
 package com.brandon3055.draconicevolution.entity.guardian;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import net.minecraft.network.protocol.Packet;
 
@@ -43,12 +45,12 @@ public class DraconicGuardianPartEntity extends PartEntity<DraconicGuardianEntit
    }
 
    @Override
-   protected void readAdditionalSaveData(CompoundTag compound) {
+   protected void readAdditionalSaveData(ValueInput input) {
 
    }
 
    @Override
-   protected void addAdditionalSaveData(CompoundTag compound) {
+   protected void addAdditionalSaveData(ValueOutput output) {
 
    }
 

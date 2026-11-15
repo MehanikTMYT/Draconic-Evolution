@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
  */
 public interface IFusionRecipe extends Recipe<IFusionInventory> {
 
-    @Override
     default ItemStack getToastSymbol() {
         if (DraconicAPI.CRAFTING_CORE != null) {
             return new ItemStack(DraconicAPI.CRAFTING_CORE);
@@ -35,9 +34,27 @@ public interface IFusionRecipe extends Recipe<IFusionInventory> {
     }
 
     @Override
-    default RecipeType<?> getType() {
+    default RecipeType<IFusionRecipe> getType() {
         return DraconicAPI.FUSION_RECIPE_TYPE.get();
     }
+
+    // Fusion is performed by the machine, never by vanilla recipe-book placement.
+    @Override
+    default net.minecraft.world.item.crafting.PlacementInfo placementInfo() {
+        return net.minecraft.world.item.crafting.PlacementInfo.NOT_PLACEABLE;
+    }
+    @Override
+    default boolean showNotification() { return false; }
+    @Override
+    default String group() { return ""; }
+    @Override
+    default net.minecraft.world.item.crafting.RecipeBookCategory recipeBookCategory() {
+        return net.minecraft.world.item.crafting.RecipeBookCategories.CRAFTING_MISC;
+    }
+    ItemStack getResultItem(net.minecraft.core.HolderLookup.Provider provider);
+    ItemStack assemble(IFusionInventory inv, net.minecraft.core.HolderLookup.Provider provider);
+    @Override
+    default ItemStack assemble(IFusionInventory inv) { return assemble(inv, inv.registryAccess()); }
 
     TechLevel getRecipeTier();
 
@@ -49,7 +66,6 @@ public interface IFusionRecipe extends Recipe<IFusionInventory> {
      *
      * @return A list of recipe ingredients NOT including the catalyst.
      */
-    @Override
     default NonNullList<Ingredient> getIngredients() {
         return fusionIngredients().stream().map(IFusionIngredient::get).collect(Collectors.toCollection(NonNullList::create));
     }
@@ -177,8 +193,9 @@ public interface IFusionRecipe extends Recipe<IFusionInventory> {
                     if (!ingredient.consume()) {
                         break;
                     }
-                    if (stack.hasCraftingRemainingItem()) {
-                        stack = stack.getItem().getCraftingRemainingItem(stack);
+                    var remainder = stack.getCraftingRemainder();
+                    if (remainder != null) {
+                        stack = remainder.create();
                     } else {
                         stack.shrink(1);
                     }
@@ -260,7 +277,6 @@ public interface IFusionRecipe extends Recipe<IFusionInventory> {
 
     }
 
-    @Override
     default boolean canCraftInDimensions(int width, int height) {
         return true;
     }

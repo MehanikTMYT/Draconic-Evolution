@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "draconicevolution:item/medium_chaos_frag",
+    "model": {
+      "type": "draconicevolution:chaos_shard"
+    }
+  }
+}

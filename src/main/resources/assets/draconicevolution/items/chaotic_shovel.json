@@ -1,0 +1,8 @@
+{
+  "model": {
+    "type": "draconicevolution:modular_tool",
+    "base": "draconicevolution:item/chaotic_shovel",
+    "family": "shovel",
+    "tier": 3
+  }
+}

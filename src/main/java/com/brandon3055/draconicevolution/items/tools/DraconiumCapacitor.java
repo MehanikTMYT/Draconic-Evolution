@@ -181,9 +181,10 @@ public class DraconiumCapacitor extends Item implements IInvCharge, IModularEner
     }
 
     @Override
-    @OnlyIn (Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> builder, TooltipFlag flagIn) { // port-26.1.2: сигнатура 26 (TooltipDisplay+Consumer)
+        List<Component> tooltip = new java.util.ArrayList<>();
         addModularItemInformation(stack, context, tooltip, flagIn);
+        tooltip.forEach(builder);
     }
 
     @Override

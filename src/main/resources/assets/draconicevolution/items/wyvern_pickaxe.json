@@ -1,0 +1,8 @@
+{
+  "model": {
+    "type": "draconicevolution:modular_tool",
+    "base": "draconicevolution:item/wyvern_pickaxe",
+    "family": "pickaxe",
+    "tier": 1
+  }
+}

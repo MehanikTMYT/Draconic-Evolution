@@ -1,10 +1,10 @@
-#version 150
+#version 330
 
 #moj_import <brandonscore:math.glsl>
 
-uniform float Time;
-uniform vec3 Colour;
-uniform float Mipmap;
+#moj_import <brandonscore:bc_params.glsl>
+#define Colour BaseColor.rgb
+#define Mipmap Decay
 //uniform vec2 Angle;
 
 in vec2 texCoord0;

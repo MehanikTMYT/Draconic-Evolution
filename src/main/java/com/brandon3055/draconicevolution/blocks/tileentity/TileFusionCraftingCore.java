@@ -178,26 +178,35 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
     public final ManagedShort craftAnimLength = register(new ManagedShort("craft_anim_length", DataFlags.SYNC_TILE));
     public final ManagedFloat progress = register(new ManagedFloat("progress", -1, DataFlags.SAVE_NBT_SYNC_CONTAINER));
 
-    public TileItemStackHandler itemHandler = new TileItemStackHandler(this, 2);
+    public com.brandon3055.draconicevolution.inventory.FusionItemHandler itemHandler = new com.brandon3055.draconicevolution.inventory.FusionItemHandler(this);
     public ITileFXHandler fxHandler;
 
     private List<IFusionInjector> injectorCache = null;
     private List<BlockPos> injectorPositions = new ArrayList<>();
     private RecipeHolder<IFusionRecipe> recipeCache = null;
+    // Vanilla only synchronizes recipe-book displays in 26; the machine needs its real recipe.
+    private CompoundTag synchronizedRecipe = new CompoundTag();
     private TechLevel minTierCache = null;
 
     public TileFusionCraftingCore(BlockPos pos, BlockState state) {
         super(DEContent.TILE_CRAFTING_CORE.get(), pos, state);
-        capManager.setInternalManaged("inventory", Capabilities.ItemHandler.BLOCK, itemHandler).saveBoth();
-        capManager.set(Capabilities.ItemHandler.BLOCK, new ItemHandlerIOControl(itemHandler).setInsertCheck((slot, stack) -> slot == 0).setExtractCheck((slot, stack) -> slot == 1));
+        capManager.setInternalManaged("inventory", Capabilities.Item.BLOCK, itemHandler).saveBoth();
+        capManager.set(Capabilities.Item.BLOCK, itemHandler.automation);
         itemHandler.setContentsChangeListener(i -> localInventoryChange());
         itemHandler.setStackValidator((slot, stack) -> slot == 0);
         fxHandler = DraconicEvolution.proxy.createFusionFXHandler(this);
         activeRecipe.addValueListener(e -> recipeCache = null);
     }
 
+    @Override
+    public void setLevel(net.minecraft.world.level.Level level) {
+        super.setLevel(level);
+        itemHandler.loadPending();
+    }
+
     public static void register(RegisterCapabilitiesEvent event) {
-        capability(event, DEContent.TILE_CRAFTING_CORE, Capabilities.ItemHandler.BLOCK);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_CRAFTING_CORE.get(),
+                (tile, side) -> tile.itemHandler.automation);
     }
 
     public void startCraft() {
@@ -207,7 +216,7 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
         }
 
         updateInjectors();
-        RecipeHolder<IFusionRecipe> holder = level.recipeAccess().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), this, level).orElse(null);
+        RecipeHolder<IFusionRecipe> holder = findRecipe();
         IFusionRecipe recipe = holder == null ? null : holder.value();
         setActiveRecipe(holder);
         if (recipe == null || !recipe.canStartCraft(this, level, null)) {
@@ -226,7 +235,10 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
 
     @Override
     public void receivePacketFromServer(MCDataInput data, int id) {
-        if (id == 0) {
+        if (id == 2) {
+            synchronizedRecipe = data.readCompoundNBT();
+            recipeCache = null;
+        } else if (id == 0) {
             injectorPositions.clear();
             int count = data.readShort();
             for (int i = 0; i < count; i++) {
@@ -299,7 +311,7 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
                 return false;
             }
 
-            if (Direction.getNearest((int) dirVec.x, (int) dirVec.y, (int) dirVec.z) == tile.getRotation().getOpposite()) {
+            if (Direction.getNearest((int) dirVec.x, (int) dirVec.y, (int) dirVec.z, Direction.NORTH) == tile.getRotation().getOpposite()) {
                 BlockPos pos = tile.getBlockPos();
                 Direction facing = tile.getRotation();
                 boolean obstructed = false;
@@ -337,7 +349,7 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
                 cancelCraft();
             }
         } else if (!level.isClientSide()) {
-            RecipeHolder<IFusionRecipe> recipe = level.recipeAccess().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), this, level).orElse(null);
+            RecipeHolder<IFusionRecipe> recipe = findRecipe();
             if (recipe != null) {
                 recipe.value().canStartCraft(this, level, e -> setFusionStatus(-1, e));
             } else {
@@ -353,7 +365,7 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (player instanceof ServerPlayer) {
             updateInjectors(); //TODO just have the injectors poke the core when placed so i dont need this
             player.openMenu(this, worldPosition);
@@ -400,6 +412,11 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
                     .collect(Collectors.toList());
         }
         return injectorCache;
+    }
+
+    @Override
+    public net.minecraft.core.HolderLookup.Provider registryAccess() {
+        return java.util.Objects.requireNonNull(level, "Fusion core is not attached to a level").registryAccess();
     }
 
     @Override
@@ -489,21 +506,44 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
     }
 
     @Nullable
+    private RecipeHolder<IFusionRecipe> findRecipe() {
+        return level instanceof net.minecraft.server.level.ServerLevel server
+                ? server.recipeAccess().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), this, server).orElse(null) : null;
+    }
+
+    @Nullable
     public RecipeHolder<IFusionRecipe> getActiveRecipe() {
-        if (recipeCache == null) {
-            if (activeRecipe.get() != null) {
-                RecipeHolder<?> recipe = level.recipeAccess().byKey(activeRecipe.get()).orElse(null);
-                if (recipe != null && recipe.value() instanceof IFusionRecipe fusionRecipe) {
-                    recipeCache = (RecipeHolder<IFusionRecipe>) recipe;
-                }
-            }
+        if (level == null || activeRecipe.get() == null) return null;
+        var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, activeRecipe.get());
+        if (level instanceof net.minecraft.server.level.ServerLevel server) {
+            // Resolve against the current manager so /reload cannot leave a stale cached recipe.
+            var holder = server.recipeAccess().byKey(key).orElse(null);
+            if (holder == null || !(holder.value() instanceof IFusionRecipe fusion)) return null;
+            var resolved = new RecipeHolder<IFusionRecipe>(key, fusion);
+            if (recipeCache == null || recipeCache.value() != fusion) setActiveRecipe(resolved);
+            return resolved;
+        }
+        if (recipeCache == null && synchronizedRecipe.getStringOr("id", "").equals(activeRecipe.get().toString())) {
+            var ops = registryAccess().createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE);
+            net.minecraft.world.item.crafting.Recipe.CODEC.parse(ops, synchronizedRecipe.getCompoundOrEmpty("recipe"))
+                    .result().filter(IFusionRecipe.class::isInstance).map(IFusionRecipe.class::cast)
+                    .ifPresent(recipe -> recipeCache = new RecipeHolder<>(key, recipe));
         }
         return recipeCache;
     }
 
     public void setActiveRecipe(@Nullable RecipeHolder<IFusionRecipe> recipe) {
+        activeRecipe.set(recipe == null ? null : recipe.id().identifier());
         recipeCache = recipe;
-        activeRecipe.set(recipe == null ? null : recipe.id());
+        synchronizedRecipe = new CompoundTag();
+        if (recipe != null && level != null) {
+            var ops = registryAccess().createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE);
+            synchronizedRecipe.putString("id", recipe.id().identifier().toString());
+            synchronizedRecipe.put("recipe", net.minecraft.world.item.crafting.Recipe.CODEC.encodeStart(ops, recipe.value()).getOrThrow());
+        }
+        if (level != null && !level.isClientSide()) {
+            sendPacketToChunk(data -> data.writeCompoundNBT(synchronizedRecipe), 2);
+        }
     }
 
     public int getComparatorOutput() {
@@ -512,7 +552,7 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
         } else if (crafting.get()) {
             return 1 + getFusionState().ordinal();
         } else {
-            RecipeHolder<IFusionRecipe> recipe = level.recipeAccess().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), this, level).orElse(null);
+            RecipeHolder<IFusionRecipe> recipe = findRecipe();
             if (recipe != null && recipe.value().canStartCraft(this, level, null)) {
                 return 1;
             }
@@ -521,15 +561,19 @@ public class TileFusionCraftingCore extends TileBCore implements IFusionInventor
     }
 
     @Override
-    public void writeExtraNBT(HolderLookup.Provider provider, CompoundTag compound) {
-        super.writeExtraNBT(provider, compound);
+    public void writeExtraNBT(CompoundTag compound) {
+        super.writeExtraNBT(compound);
+        if (level instanceof net.minecraft.server.level.ServerLevel && activeRecipe.get() != null) getActiveRecipe();
+        compound.put("fusion_recipe_sync", synchronizedRecipe.copy());
         compound.putLongArray("injector_positions", injectorPositions.stream().mapToLong(BlockPos::asLong).toArray());
     }
 
     @Override
-    public void readExtraNBT(HolderLookup.Provider provider, CompoundTag compound) {
-        super.readExtraNBT(provider, compound);
-        injectorPositions = Arrays.stream(compound.getLongArray("injector_positions")).mapToObj(BlockPos::of).collect(Collectors.toList());
+    public void readExtraNBT(CompoundTag compound) {
+        super.readExtraNBT(compound);
+        synchronizedRecipe = compound.getCompoundOrEmpty("fusion_recipe_sync").copy();
+        recipeCache = null;
+        injectorPositions = Arrays.stream(compound.getLongArray("injector_positions").orElseGet(() -> new long[0])).mapToObj(BlockPos::of).collect(Collectors.toList());
         injectorCache = null;
     }
 }

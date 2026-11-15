@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.items.equipment;
 
+import net.minecraft.world.item.Item;
 import com.brandon3055.brandonscore.api.TechLevel;
 import com.brandon3055.draconicevolution.api.IDraconicMelee;
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
@@ -14,7 +15,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,14 +29,14 @@ import java.util.function.Supplier;
 /**
  * Created by brandon3055 on 21/5/20.
  */
-public class ModularShovel extends ShovelItem implements IModularMiningTool, IDraconicMelee, IModularEnergyItem {
+public class ModularShovel extends Item implements IModularMiningTool, IDraconicMelee, IModularEnergyItem {
     private final TechLevel techLevel;
     private final DETier itemTier;
 
     public ModularShovel(DETier tier, TechProperties props) {
-        super(tier, props);
+        super(props.shovel(tier.material(), 1.5F, -3.0F)); // port-26.1.2: ShovelItem/Tier удалены -> Item.Properties.tool-компоненты (эталон Items26)
         this.techLevel = props.getTechLevel();
-        this.itemTier = (DETier) getTier();
+        this.itemTier = tier;
     }
 
     @Override
@@ -78,13 +78,14 @@ public class ModularShovel extends ShovelItem implements IModularMiningTool, IDr
 
     @Override
     public float getBaseEfficiency() {
-        return getTier().getSpeed();
+        return getItemTier().getSpeed();
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> builder, TooltipFlag flagIn) { // port-26.1.2: сигнатура 26 (TooltipDisplay+Consumer)
+        List<Component> tooltip = new java.util.ArrayList<>();
         addModularItemInformation(stack, context, tooltip, flagIn);
+        tooltip.forEach(builder);
     }
 
     @Override
@@ -115,8 +116,4 @@ public class ModularShovel extends ShovelItem implements IModularMiningTool, IDr
         return super.onEntityItemUpdate(stack, entity);
     }
 
-    @Override
-    public boolean isEnchantable(ItemStack p_41456_) {
-        return true;
-    }
 }

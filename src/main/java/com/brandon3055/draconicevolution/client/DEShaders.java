@@ -24,6 +24,8 @@ public class DEShaders {
 
     private static final CrashLock LOCK = new CrashLock("Already Initialized");
 
+    public static final com.brandon3055.draconicevolution.client.shader.ToolChaosShader TOOL_CHAOS_SHADER =
+            new com.brandon3055.draconicevolution.client.shader.ToolChaosShader();
     public static final ToolShader TOOL_BASE_SHADER = new ToolShader("tools/tool_base", DefaultVertexFormat.ENTITY);
     public static final ToolShader TOOL_GEM_SHADER = new ToolShader("tools/tool_gem", DefaultVertexFormat.ENTITY)
             .onShaderApplied(e -> e.getTimeUniform().glUniform1f((float) (ClientUtils.getRenderTime() / 20)));
@@ -38,11 +40,15 @@ public class DEShaders {
     public static final ShieldShader CHESTPIECE_SHIELD_SHADER = new ShieldShader("tools/chestpiece_shield", DefaultVertexFormat.ENTITY)
             .onShaderApplied(e -> e.getTimeUniform().glUniform1f((float) (ClientUtils.getRenderTime() / 20)));
 
+    public static final com.brandon3055.draconicevolution.client.shader.EnergyCrystalShader ENERGY_CRYSTAL =
+            new com.brandon3055.draconicevolution.client.shader.EnergyCrystalShader()
+                    .onShaderApplied(shader -> shader.getTimeUniform().glUniform1f((float) (ClientUtils.getRenderTime() / 20)));
+
     public static void init(IEventBus modBus) {
         LOCK.lock();
         modBus.addListener((RegisterRenderPipelinesEvent event) -> {
             for (var shader : new com.brandon3055.brandonscore.client.shader.BCShader<?>[]{TOOL_BASE_SHADER, TOOL_GEM_SHADER, TOOL_TRACE_SHADER, TOOL_BLADE_SHADER,
-                    BOW_STRING_SHADER, CHESTPIECE_GEM_SHADER, CHESTPIECE_SHIELD_SHADER}) {
+                    BOW_STRING_SHADER, CHESTPIECE_GEM_SHADER, CHESTPIECE_SHIELD_SHADER, ENERGY_CRYSTAL, TOOL_CHAOS_SHADER}) {
                 event.registerPipeline(shader.pipeline(com.mojang.blaze3d.vertex.VertexFormat.Mode.QUADS));
                 event.registerPipeline(shader.pipeline(com.mojang.blaze3d.vertex.VertexFormat.Mode.TRIANGLES));
             }

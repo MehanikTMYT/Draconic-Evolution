@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.items.equipment;
 
+import net.minecraft.world.item.equipment.ArmorType;
 import com.brandon3055.brandonscore.api.TechLevel;
 import com.brandon3055.brandonscore.client.model.DummyHumanoidModel;
 import com.brandon3055.brandonscore.client.render.EquippedItemModel;
@@ -29,13 +30,12 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
+
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
@@ -48,11 +48,11 @@ import java.util.function.Supplier;
 /**
  * Created by brandon3055 on 21/5/20.
  */
-public class ModularChestpiece extends ArmorItem implements IModularArmor, IDEEquipment, EquippedModelItem, IModularEnergyItem {
+public class ModularChestpiece extends Item implements IModularArmor, IDEEquipment, EquippedModelItem, IModularEnergyItem {
     private final TechLevel techLevel;
 
     public ModularChestpiece(TechProperties props) {
-        super(ArmorMaterials.DIAMOND, Type.CHESTPLATE, props);
+        super(DEArmorMaterials.apply(DEArmorMaterials.MODULAR_CHESTPIECE, props, net.minecraft.world.item.equipment.ArmorType.CHESTPLATE)); // port-26.1.2: ArmorItem удалён -> Item.Properties.humanoidArmor (эталон Items26)
         this.techLevel = props.getTechLevel();
     }
 
@@ -71,6 +71,11 @@ public class ModularChestpiece extends ArmorItem implements IModularArmor, IDEEq
         }
 
         return !(livingEntity.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof ModularChestpiece);
+    }
+
+    @Override
+    public boolean isCombineRepairable(ItemStack stack) {
+        return false; // port-26.1.2: neoforge-26 abstract в IItemExtension; DE-ремонт через энергию
     }
 
     @Override
@@ -115,22 +120,20 @@ public class ModularChestpiece extends ArmorItem implements IModularArmor, IDEEq
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> builder, TooltipFlag flagIn) { // port-26.1.2: сигнатура 26 (TooltipDisplay+Consumer)
+        List<Component> tooltip = new java.util.ArrayList<>();
         addModularItemInformation(stack, context, tooltip, flagIn);
+        tooltip.forEach(builder);
     }
 
-    @OnlyIn(Dist.CLIENT)
     private ModularChestpieceModel<?> model;
 
-    @OnlyIn(Dist.CLIENT)
     private ModularChestpieceModel<?> model_on_armor;
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public EquippedItemModel getExtendedModel(LivingEntity entity, ItemStack stack, @Nullable EquipmentSlot slot, HumanoidModel<?> parentModel, boolean slim) {
         ItemStack chest = entity.getItemBySlot(EquipmentSlot.CHEST);
-        boolean onArmor = slot == null && !chest.isEmpty() && chest.getItem() instanceof ArmorItem;
+        boolean onArmor = slot == null && !chest.isEmpty() && chest.has(net.minecraft.core.component.DataComponents.EQUIPPABLE); // port-26.1.2: ArmorItem удалён -> EQUIPPABLE-компонент
         if (model == null || model_on_armor == null) {
             model = new ModularChestpieceModel<>(techLevel, false);
             model_on_armor = new ModularChestpieceModel<>(techLevel, true);
@@ -151,11 +154,6 @@ public class ModularChestpiece extends ArmorItem implements IModularArmor, IDEEq
             entity.setExtendedLifetime();
         }
         return super.onEntityItemUpdate(stack, entity);
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack p_41456_) {
-        return true;
     }
 
     @Override

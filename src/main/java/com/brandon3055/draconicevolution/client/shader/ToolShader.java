@@ -9,7 +9,7 @@ import net.minecraft.resources.Identifier;
 // port-26.1.2: CCL CCUniform/CCShaderInstance удалены. Шейдеры портированы на BC-26 BCShader (BCParams uniform-block,
 // смещения как в ContribShader: UV1=80, UV2=88, BaseColor=64). GLSL у DE уже в shaders/core/ — требуется перевод
 // на bc_params.glsl-блок в этапе рендер-шейдеров (см. stage2-отчёт).
-public final class ToolShader extends BCShader<ToolShader> {
+public final class ToolShader extends DEEntityShader<ToolShader> {
 
     public ToolShader(String path, VertexFormat format) {
         this(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, path), format);

@@ -1,9 +1,7 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
-import codechicken.enderstorage.api.Frequency;
-import codechicken.enderstorage.manager.EnderStorageManager;
-import codechicken.enderstorage.storage.EnderItemStorage;
 import codechicken.lib.colour.EnumColour;
+import com.brandon3055.draconicevolution.integration.enderstorage.EnderStorageIntegration;
 import com.brandon3055.brandonscore.client.gui.modular.elements.GuiElement;
 import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
 import com.brandon3055.brandonscore.client.gui.modular.sprite.Material;
@@ -34,8 +32,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -111,7 +107,6 @@ public class EnderCollectionEntity extends FilteredModuleEntity<NoData> {
     }
 
     @Override
-    @OnlyIn (Dist.CLIENT)
     protected Material getSlotOverlay() {
         return BCGuiTextures.get("slots/filter");
     }
@@ -194,17 +189,14 @@ public class EnderCollectionEntity extends FilteredModuleEntity<NoData> {
         if (frequencyTag.isEmpty()) {
             return player.getEnderChestInventory();
         }
-        Frequency frequency = new Frequency(frequencyTag);
-        return EnderStorageManager.instance(false).getStorage(frequency, EnderItemStorage.TYPE);
+        return EnderStorageIntegration.storage(frequencyTag, player);
     }
 
     private EnumColour[] getColours() {
-        Frequency frequency = new Frequency(frequencyTag);
-        return new EnumColour[]{frequency.left(), frequency.middle(), frequency.right()};
+        return EnderStorageIntegration.colours(frequencyTag, net.minecraft.client.Minecraft.getInstance().level.registryAccess());
     }
 
     @Override
-    @OnlyIn (Dist.CLIENT)
     public void renderModule(GuiElement<?> parent, GuiRender render, int x, int y, int width, int height, double mouseX, double mouseY, boolean renderStack, float partialTicks) {
         super.renderModule(parent, render, x, y, width, height, mouseX, mouseY, renderStack, partialTicks);
         if (frequencyTag.isEmpty() || !ModHelper.ENDERSTORAGE) {

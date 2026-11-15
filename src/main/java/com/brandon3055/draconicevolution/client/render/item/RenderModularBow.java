@@ -1,12 +1,10 @@
 package com.brandon3055.draconicevolution.client.render.item;
 
 import codechicken.lib.math.MathHelper;
-import codechicken.lib.model.PerspectiveModelState;
 import codechicken.lib.render.CCModel;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.buffer.TransformingVertexConsumer;
 import codechicken.lib.render.model.OBJParser;
-import codechicken.lib.util.TransformUtils;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Vector3;
@@ -24,12 +22,9 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.entity.TippableArrowRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -50,23 +45,13 @@ public class RenderModularBow extends ToolRenderBase {
             {0.7F, 0.4F, 0.2F, 1F},
             {0.55F, 0.2F, 0.1F, 0.2F},
     };
-    private static final RenderType bowStringType = RenderType.create("shaderStringType", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, RenderType.CompositeState.builder()
-            .setShaderState(new RenderStateShard.ShaderStateShard(DEShaders.BOW_STRING_SHADER::getShaderInstance))
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/item/equipment/bow_string.png"), true, false))
-            .setTransparencyState(RenderStateShard.LIGHTNING_TRANSPARENCY)
-            .setCullState(RenderStateShard.NO_CULL)
-            .setWriteMaskState(RenderStateShard.WriteMaskStateShard.COLOR_WRITE)
-            .createCompositeState(false)
-    );
+    private static final RenderType bowStringType = DEShaders.BOW_STRING_SHADER.renderType(
+            DraconicEvolution.MODID + ":bow_string", Identifier.fromNamespaceAndPath(DraconicEvolution.MODID,
+            "textures/item/equipment/bow_string.png"), VertexFormat.Mode.QUADS);
 
     private final ToolPart basePart;
     private final ToolPart materialPart;
     private final ToolPart gemPart;
-
-    @Nullable
-    protected LivingEntity entity;
-    @Nullable
-    protected ClientLevel world;
 
     public RenderModularBow(TechLevel techLevel) {
         super(techLevel, "bow");
@@ -76,24 +61,10 @@ public class RenderModularBow extends ToolRenderBase {
         gemPart = gemPart(model.get("bow_gem").backfacedCopy());
     }
 
-    private final ItemOverrides overrideList = new ItemOverrides() {
-        @Override
-        public BakedModel resolve(BakedModel originalModel, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity entity, int i) {
-            RenderModularBow.this.entity = entity;
-            RenderModularBow.this.world = world == null ? entity == null ? null : (ClientLevel) entity.level() : null;
-            return originalModel;
-        }
-    };
-
-    @Override
-    public ItemOverrides getOverrides() {
-        return overrideList;
-    }
-
     @Override
     public void renderTool(CCRenderState ccrs, ItemStack stack, ItemDisplayContext context, Matrix4 mat, MultiBufferSource buffers, boolean gui) {
         transform(mat, 0.46, 0.54, 0.5, gui ? 0.9 : 1.125);
-        double drawAngle = getDrawAngle(stack, Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
+        double drawAngle = getDrawAngle(stack, partialTicks);
 
         basePart.render(context, buffers, mat);
 
@@ -103,12 +74,18 @@ public class RenderModularBow extends ToolRenderBase {
         materialPart.render(context, buffers, mat);
         materialPart.render(context, buffers, bottomMat);
 
-        boolean hasPower = isCreative(entity) || (stack.getCapability(DECapabilities.Host.ITEM) != null && ModularBow.calculateShotEnergy(stack, Minecraft.getInstance().level.registryAccess()) <= EnergyUtils.getEnergyStored(stack));
+        boolean hasPower = isCreative(entity) || (world != null && stack.getCapability(DECapabilities.Host.ITEM) != null && ModularBow.calculateShotEnergy(stack, world.registryAccess()) <= EnergyUtils.getEnergyStored(stack));
         drawStrings(ccrs, context, mat, bottomMat, buffers, drawAngle, hasPower);
     }
 
     private void drawStrings(CCRenderState ccrs, ItemDisplayContext context, Matrix4 topMat, Matrix4 bottomMat, MultiBufferSource buffers, double drawAngle, boolean isCharged) {
         glUniformStringBaseColor(DEShaders.BOW_STRING_SHADER);
+        DEShaders.BOW_STRING_SHADER.getModelMatUniform().glUniformMatrix4f(new Matrix4());
+        DEShaders.BOW_STRING_SHADER.uniform(80).glUniform2i(-1, -1);
+        DEShaders.BOW_STRING_SHADER.uniform(88).glUniform2i(-1, -1);
+        DEShaders.BOW_STRING_SHADER.uniform(124).glUniform1i(0);
+        DEShaders.BOW_STRING_SHADER.uniform(128).glUniform1i(0);
+        DEShaders.BOW_STRING_SHADER.uniform(132).glUniform1i(0);
         VertexConsumer builder = new TransformingVertexConsumer(buffers.getBuffer(bowStringType), topMat);
 
         double crystalX = 12.508D * 0.01D;
@@ -183,7 +160,7 @@ public class RenderModularBow extends ToolRenderBase {
 
     private void renderArrow(Matrix4 mat, MultiBufferSource getter, int packedLight) {
         mat.scale(0.05625F, 0.05625F, 0.05625F);
-        VertexConsumer builder = new TransformingVertexConsumer(getter.getBuffer(RenderType.entityCutout(TippableArrowRenderer.NORMAL_ARROW_LOCATION)), mat);
+        VertexConsumer builder = new TransformingVertexConsumer(getter.getBuffer(net.minecraft.client.renderer.rendertype.RenderTypes.entityCutout(TippableArrowRenderer.NORMAL_ARROW_LOCATION)), mat);
         bufferVertex(builder, -7, -2, -2, 0.0F, 0.15625F, -1, 0, 0, packedLight);
         bufferVertex(builder, -7, -2, 2, 0.15625F, 0.15625F, -1, 0, 0, packedLight);
         bufferVertex(builder, -7, 2, 2, 0.15625F, 0.3125F, -1, 0, 0, packedLight);
@@ -203,12 +180,7 @@ public class RenderModularBow extends ToolRenderBase {
     }
 
     public void bufferVertex(VertexConsumer builder, double x, double y, double z, float u, float v, float normX, float normZ, float normY, int light) {
-        builder.addVertex((float) x, (float) y, (float) z).setColor(255, 255, 255, 255).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setUv2(light, light).setNormal(normX, normY, normZ);
-    }
-
-    @Override
-    public @Nullable PerspectiveModelState getModelState() {
-        return TransformUtils.DEFAULT_BOW;
+        builder.addVertex((float) x, (float) y, (float) z).setColor(255, 255, 255, 255).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(normX, normY, normZ);
     }
 
     private void glUniformStringBaseColor(ToolShader shader) {
@@ -217,7 +189,7 @@ public class RenderModularBow extends ToolRenderBase {
     }
 
     private double getDrawAngle(ItemStack stack, float partialTicks) {
-        if (entity == null || !entity.getUseItem().is(stack.getItem())) {
+        if (entity == null || world == null || !entity.getUseItem().is(stack.getItem())) {
             return 0;
         }
         ModuleHost host1 = stack.getCapability(DECapabilities.Host.ITEM);
@@ -227,7 +199,7 @@ public class RenderModularBow extends ToolRenderBase {
         }
 
         float maxCount = entity.getTicksUsingItem() - partialTicks;
-        return Math.max(0, ModularBow.getPowerForTime((int) (maxCount), stack, Minecraft.getInstance().level.registryAccess()) * 45F);
+        return Math.max(0, ModularBow.getPowerForTime((int) (maxCount), stack, world.registryAccess()) * 45F);
     }
 
     private boolean isCreative(LivingEntity entity) {

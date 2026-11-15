@@ -733,5 +733,8 @@
   "tech_level.draconicevolution.wyvern": "Wyvern",
   "tile.draconicevolution.dislocation_inhibitor.info": "Prevents items dropped within 5 blocks from being collected by Item Dislocators.",
   "tooltip.draconicevolution.bow.damage": "%s Max Attack Damage",
-  "tooltip.draconicevolution.bow.energy_per_shot": "%s OP/shot"
+  "tooltip.draconicevolution.bow.energy_per_shot": "%s OP/shot",
+  "emi.category.draconicevolution.fusion_crafting": "Fusion Crafting",
+  "emi.draconicevolution.core_catalyst": "Core catalyst (consumed)",
+  "emi.draconicevolution.not_consumed": "Not consumed"
 }

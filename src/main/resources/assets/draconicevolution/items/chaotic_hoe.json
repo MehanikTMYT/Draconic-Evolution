@@ -1,0 +1,8 @@
+{
+  "model": {
+    "type": "draconicevolution:modular_tool",
+    "base": "draconicevolution:item/chaotic_hoe",
+    "family": "hoe",
+    "tier": 3
+  }
+}

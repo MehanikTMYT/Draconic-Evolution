@@ -68,7 +68,6 @@ import net.neoforged.neoforge.event.EventHooks;
 
 import net.neoforged.neoforge.event.level.BlockEvent;
 
-import org.antlr.v4.runtime.misc.IntegerStack;
 
 
 
@@ -279,16 +278,16 @@ public interface IModularMiningTool extends IModularTieredItem {
 //            }
 
             if (player.getAbilities().instabuild) {
-                if (block.onDestroyedByPlayer(state, world, pos, player, false, fluidState)) {
+                if (block.onDestroyedByPlayer(state, world, pos, player, stack, false, fluidState)) { // port-26.1.2: +ItemStack-tool
                     block.destroy(world, pos, state);
                 }
             } else {
                 stack.mineBlock(world, state, pos, player);
-                BlockToStackHelper.breakAndCollectWithPlayer(world, pos, inventory, player);
+                BlockToStackHelper.breakAndCollectWithPlayer(world, pos, inventory, player, 0); // port-26.1.2: BC-26 сигнатура (+int fortune); extractEnergy ниже по-прежнему
                 extractEnergy(player, stack, EquipCfg.energyHarvest);
             }
         } else {
-            if (block.onDestroyedByPlayer(state, world, pos, player, true, fluidState)) {
+            if (block.onDestroyedByPlayer(state, world, pos, player, stack, true, fluidState)) { // port-26.1.2: +ItemStack-tool
                 block.destroy(world, pos, state);
             }
 

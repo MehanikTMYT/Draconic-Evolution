@@ -1,5 +1,6 @@
 {
-  "parent": "minecraft:item/generated",
-  "class": "com.brandon3055.draconicevolution.client.render.item.RenderItemEnergyCrystal$ITEM_DRACONIC_WIRELESS_CRYSTAL",
-  "loader": "codechickenlib:class"
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "draconicevolution:models/crystal_base"
+  }
 }

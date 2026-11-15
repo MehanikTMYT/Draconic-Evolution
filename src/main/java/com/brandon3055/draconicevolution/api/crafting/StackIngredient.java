@@ -29,20 +29,16 @@ public class StackIngredient implements ICustomIngredient {
     public static final MapCodec<StackIngredient> CODEC = RecordCodecBuilder.mapCodec(
             builder -> builder
                     .group(
-                            HolderSetCodec.create(Registries.ITEM, BuiltInRegistries.ITEM.holderByNameCodec(), false).fieldOf("items").forGetter(StackIngredient::items),
+                            HolderSetCodec.create(Registries.ITEM, BuiltInRegistries.ITEM.holderByNameCodec(), false).fieldOf("items").forGetter(StackIngredient::itemSet),
                             Codec.INT.optionalFieldOf("count", 1).forGetter(StackIngredient::getCount))
                     .apply(builder, StackIngredient::new));
 
     private final int count;
     private final HolderSet<Item> items;
-    private final ItemStack[] stacks;
 
     public StackIngredient(HolderSet<Item> items, int count) {
         this.items = items;
         this.count = count;
-        this.stacks = items.stream()
-                .map(i -> new ItemStack(i, count))
-                .toArray(ItemStack[]::new);
     }
 
     public int getCount() {
@@ -60,17 +56,33 @@ public class StackIngredient implements ICustomIngredient {
     }
 
     @Override
-    public Stream<ItemStack> getItems() {
-        return Stream.of(stacks);
+    public Stream<Holder<Item>> items() { return items.stream(); }
+
+    @Override
+    public net.minecraft.world.item.crafting.display.SlotDisplay display() {
+        return new net.minecraft.world.item.crafting.display.SlotDisplay.Composite(items.stream()
+                .map(item -> (net.minecraft.world.item.crafting.display.SlotDisplay)
+                        new net.minecraft.world.item.crafting.display.SlotDisplay.ItemStackSlotDisplay(
+                                new net.minecraft.world.item.ItemStackTemplate(item, count)))
+                .toList());
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof StackIngredient ingredient && count == ingredient.count && items.equals(ingredient.items);
+    }
+
+    @Override
+    public int hashCode() { return java.util.Objects.hash(items, count); }
+
 
 
     @Override
     public boolean test(ItemStack stack) {
-        return this.items.contains(stack.getItemHolder()) && stack.getCount() >= count;
+        return this.items.contains(stack.typeHolder()) && stack.getCount() >= count;
     }
 
-    public HolderSet<Item> items() {
+    public HolderSet<Item> itemSet() {
         return items;
     }
 

@@ -1,5 +1,111 @@
 {
   "parent": "minecraft:item/generated",
-  "class": "com.brandon3055.draconicevolution.client.render.item.RenderModularSword$SWORD_DRACONIC",
-  "loader": "codechickenlib:class"
+  "gui_light": "front",
+  "textures": {
+    "particle": "draconicevolution:item/equipment/draconic_sword"
+  },
+  "display": {
+    "ground": {
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "fixed": {
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "thirdperson_righthand": {
+      "translation": [
+        0,
+        4,
+        0.5
+      ],
+      "rotation": [
+        0,
+        -90,
+        55
+      ],
+      "scale": [
+        0.85,
+        0.85,
+        0.85
+      ]
+    },
+    "thirdperson_lefthand": {
+      "translation": [
+        0,
+        4,
+        0.5
+      ],
+      "rotation": [
+        0,
+        -90,
+        55
+      ],
+      "scale": [
+        0.85,
+        0.85,
+        0.85
+      ]
+    },
+    "firstperson_righthand": {
+      "translation": [
+        1.13,
+        3.2,
+        1.13
+      ],
+      "rotation": [
+        0,
+        -90,
+        25
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    },
+    "firstperson_lefthand": {
+      "translation": [
+        -1.13,
+        3.2,
+        1.13
+      ],
+      "rotation": [
+        0,
+        -90,
+        25
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ]
+    }
+  }
 }

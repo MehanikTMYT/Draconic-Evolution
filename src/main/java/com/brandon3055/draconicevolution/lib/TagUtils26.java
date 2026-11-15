@@ -14,6 +14,16 @@ import java.util.UUID;
  */
 public class TagUtils26 {
 
+    // Accept the former NbtUtils {X,Y,Z} representation without reporting a failed
+    // ValueInput decode before trying the current compact BlockPos representation.
+    public static final com.mojang.serialization.Codec<BlockPos> BLOCK_POS_CODEC =
+            com.mojang.serialization.Codec.withAlternative(BlockPos.CODEC,
+                    com.mojang.serialization.codecs.RecordCodecBuilder.create(instance -> instance.group(
+                            com.mojang.serialization.Codec.INT.fieldOf("X").forGetter(BlockPos::getX),
+                            com.mojang.serialization.Codec.INT.fieldOf("Y").forGetter(BlockPos::getY),
+                            com.mojang.serialization.Codec.INT.fieldOf("Z").forGetter(BlockPos::getZ)
+                    ).apply(instance, BlockPos::new)));
+
     public static void putUUID(CompoundTag tag, String key, UUID uuid) {
         tag.putIntArray(key, UUIDUtil.uuidToIntArray(uuid));
     }

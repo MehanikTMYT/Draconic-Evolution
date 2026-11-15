@@ -8,45 +8,31 @@
   "ingredients": [
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:draconium_core"
-      }
+      "ingredient": "draconicevolution:draconium_core"
     },
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:draconium_core"
-      }
+      "ingredient": "draconicevolution:draconium_core"
     },
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:draconium_core"
-      }
+      "ingredient": "draconicevolution:draconium_core"
     },
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:dragon_heart"
-      }
+      "ingredient": "draconicevolution:dragon_heart"
     },
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:draconium_core"
-      }
+      "ingredient": "draconicevolution:draconium_core"
     },
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:draconium_core"
-      }
+      "ingredient": "draconicevolution:draconium_core"
     },
     {
       "consume": true,
-      "ingredient": {
-        "item": "draconicevolution:draconium_core"
-      }
+      "ingredient": "draconicevolution:draconium_core"
     }
   ],
   "result": {
