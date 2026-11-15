@@ -638,8 +638,8 @@ public class DislocatorAdvanced extends Dislocator {
 
         public void readFromNBT(CompoundTag nbt) {
             pos = new TargetPos(nbt);
-            name = nbt.getString("name");
-            locked = nbt.getBoolean("lock");
+            name = nbt.getStringOr("name", "");
+            locked = nbt.getBooleanOr("lock", false);
         }
 
         public void write(MCDataOutput output) {

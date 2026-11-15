@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.handlers;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import com.brandon3055.brandonscore.api.power.IOPStorage;
 
 import com.brandon3055.brandonscore.utils.EnergyUtils;
@@ -177,7 +178,7 @@ public class LootEventHandler {
             EnderDragonFight manager = dragon.getDragonFight();
             if (manager == null) return;
 
-            ItemEntity item = EntityType.ITEM.create(entity.level());
+            ItemEntity item = EntityType.ITEM.create(entity.level(), EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
             if (item != null) {
                 item.setItem(new ItemStack(DEContent.DRAGON_HEART.get()));
                 BlockPos podiumPos = entity.level().getHeightmapPos(Heightmap.Types.WORLD_SURFACE, EndPodiumFeature.getLocation(manager.origin)).offset(0, 3, 0);

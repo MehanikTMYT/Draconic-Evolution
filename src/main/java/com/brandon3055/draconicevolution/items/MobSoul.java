@@ -145,9 +145,9 @@ public class MobSoul extends Item {
             EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(getEntity(stack));
             Entity entity;
 
-            entity = type.create(level);
+            entity = type.create(level, EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
             if (entity == null) {
-                return EntityType.PIG.create(level);
+                return EntityType.PIG.create(level, EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
             }
             if (entityData != null) {
                 entity.load(entityData);
@@ -158,7 +158,7 @@ public class MobSoul extends Item {
             }
             return entity;
         } catch (Throwable e) {
-            return EntityType.PIG.create(level);
+            return EntityType.PIG.create(level, EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
         }
     }
 
@@ -198,12 +198,12 @@ public class MobSoul extends Item {
             Entity entity;
             try {
                 EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(name);
-                entity = type.create(level);
+                entity = type.create(level, EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
                 if (entity == null) {
-                    entity = EntityType.PIG.create(level);
+                    entity = EntityType.PIG.create(level, EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
                 }
             } catch (Throwable e) {
-                entity = EntityType.PIG.create(level);
+                entity = EntityType.PIG.create(level, EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
             }
             renderEntityMap.put(name, entity);
         }

@@ -18,7 +18,7 @@ public class ParticlePortal extends TextureSheetParticle {
     public float baseScale;
 
     public ParticlePortal(ClientLevel worldIn, Vector3 pos, Vector3 target) {
-        super(worldIn, pos.x, pos.y, pos.z);
+        super(worldIn, pos.x(), pos.y, pos.z());
         this.start = pos;
         this.target = target;
         float speed = 0.12F + (random.nextFloat() * 0.2F);
@@ -28,7 +28,7 @@ public class ParticlePortal extends TextureSheetParticle {
         sprite = AtlasTextureHelper.PORTAL_PARTICLE;
         this.lifetime = 120;
         this.rCol = this.gCol = this.bCol = 1.0f;
-        float baseSize = 0.05F + ((float) Math.sqrt(Minecraft.getInstance().player.distanceToSqr(pos.x, pos.y, pos.z))) * 0.007F;
+        float baseSize = 0.05F + ((float) Math.sqrt(Minecraft.getInstance().player.distanceToSqr(pos.x(), pos.y, pos.z()))) * 0.007F;
         this.baseScale = (baseSize + (random.nextFloat() * (baseSize * 2F))) * 0.1F;
         this.quadSize = 0;
         this.hasPhysics = false;

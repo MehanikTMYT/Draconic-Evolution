@@ -302,9 +302,9 @@ public class ModularArmorEventHandler {
 
         if (entity instanceof Player) {
             Player player = (Player) entity;
-            NonNullList<ItemStack> stacks = player.getInventory().items;
+            NonNullList<ItemStack> stacks = player.getInventory().getNonEquipmentItems();
             for (int i = 0; i < stacks.size(); ++i) {
-                getUndyingEntities(stacks.get(i), undyingModules, player.getInventory().selected == i ? EquipmentSlot.MAINHAND : null, false, entity.registryAccess());
+                getUndyingEntities(stacks.get(i), undyingModules, player.getInventory().getSelectedSlot() == i ? EquipmentSlot.MAINHAND : null, false, entity.registryAccess());
             }
             for (EquipmentSlot slot : ARMOR_SLOTS) {
                 getUndyingEntities(player.getInventory().armor.get(slot.getIndex()), undyingModules, slot, false, entity.registryAccess());
@@ -356,9 +356,9 @@ public class ModularArmorEventHandler {
 
         ArmorAbilities armorAbilities = new ArmorAbilities();
         if (entity instanceof Player player) {
-            NonNullList<ItemStack> stacks = player.getInventory().items;
+            NonNullList<ItemStack> stacks = player.getInventory().getNonEquipmentItems();
             for (int i = 0; i < stacks.size(); ++i) {
-                tryTickStack(stacks.get(i), player, player.getInventory().selected == i ? EquipmentSlot.MAINHAND : null, armorAbilities, false);
+                tryTickStack(stacks.get(i), player, player.getInventory().getSelectedSlot() == i ? EquipmentSlot.MAINHAND : null, armorAbilities, false);
             }
             for (EquipmentSlot slot : ARMOR_SLOTS) {
                 tryTickStack(player.getInventory().armor.get(slot.getIndex()), player, slot, armorAbilities, false);
@@ -553,7 +553,7 @@ public class ModularArmorEventHandler {
 
         FlightEntity flight = host.getEntitiesByType(ModuleTypes.FLIGHT).map(e -> (FlightEntity) e).findAny().orElse(null);
         if (flight != null) {
-            abilities.addFlightData(flight, () -> stack.getCapability(CapabilityOP.ITEM));
+            abilities.addFlightData(flight, () -> stack.getCapability(CapabilityOP.ITEM, net.neoforged.neoforge.transfer.access.ItemAccess.forStack(stack))); // port-26.1.2
         }
     }
 

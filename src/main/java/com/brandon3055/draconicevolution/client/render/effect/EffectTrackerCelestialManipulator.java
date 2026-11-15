@@ -71,12 +71,12 @@ public class EffectTrackerCelestialManipulator {
 //        CCRenderState ccrs = CCRenderState.instance();
         //region Icosahedron
 
-//        float relativeX = (float) (this.prevPos.x + (this.pos.x - this.prevPos.x) * (double) partialTicks - interpPosX);
+//        float relativeX = (float) (this.prevPos.x + (this.pos.x() - this.prevPos.x) * (double) partialTicks - interpPosX);
 //        float relativeY = (float) (this.prevPos.y + (this.pos.y - this.prevPos.y) * (double) partialTicks - interpPosY);
-//        float relativeZ = (float) (this.prevPos.z + (this.pos.z - this.prevPos.z) * (double) partialTicks - interpPosZ);
-//        float correctX = (float) (this.prevPos.x + (this.pos.x - this.prevPos.x) * (double) partialTicks);
+//        float relativeZ = (float) (this.prevPos.z + (this.pos.z() - this.prevPos.z) * (double) partialTicks - interpPosZ);
+//        float correctX = (float) (this.prevPos.x + (this.pos.x() - this.prevPos.x) * (double) partialTicks);
 //        float correctY = (float) (this.prevPos.y + (this.pos.y - this.prevPos.y) * (double) partialTicks);
-//        float correctZ = (float) (this.prevPos.z + (this.pos.z - this.prevPos.z) * (double) partialTicks);
+//        float correctZ = (float) (this.prevPos.z + (this.pos.z() - this.prevPos.z) * (double) partialTicks);
 //
 //        RenderSystem.pushMatrix();
 //        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

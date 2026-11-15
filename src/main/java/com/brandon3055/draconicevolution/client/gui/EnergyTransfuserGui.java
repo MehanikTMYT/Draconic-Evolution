@@ -122,7 +122,8 @@ public class EnergyTransfuserGui extends ContainerGuiProvider<TransfuserMenu> {
                     .constrain(RIGHT, relative(column.get(RIGHT), -3))
                     .constrain(BOTTOM, relative(button.get(TOP), -1));
             energyBar.bar()
-                    .setShaderEnabled(() -> tile.itemsCombined.getStackInSlot(fi).getCapability(CapabilityOP.ITEM) != null)
+                    // port-26.1.2: getCapability(ItemCapability) требует ItemAccess-контекст (эталон EnergyUtils-26)
+                    .setShaderEnabled(() -> { var acc = net.neoforged.neoforge.transfer.access.ItemAccess.forStack(tile.itemsCombined.getStackInSlot(fi)); return tile.itemsCombined.getStackInSlot(fi).getCapability(CapabilityOP.ITEM, acc) != null; })
                     .setItemSupplier(() -> tile.itemsCombined.getStackInSlot(fi))
                     .setDisabled(() -> !EnergyUtils.isEnergyItem(tile.itemsCombined.getStackInSlot(fi)));
         }

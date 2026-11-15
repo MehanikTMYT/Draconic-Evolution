@@ -20,6 +20,8 @@ import java.util.function.Supplier;
 @OnlyIn(Dist.CLIENT)
 public class KeyBindings {
 
+    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(net.minecraft.resources.Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "main")); // port-26.1.2: строка-категория -> Category record
+
 
     public static KeyMapping placeItem;
     public static KeyMapping toolConfig;
@@ -37,20 +39,20 @@ public class KeyBindings {
 
     public static void init(IEventBus eventBus) {
         //@formatter:off
-        placeItem           = new KeyMapping("key.draconicevolution.place_item",            new CustomContext(KeyConflictContext.IN_GAME, () -> placeItem),                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_P,         DraconicEvolution.MODNAME);
-        toolConfig          = new KeyMapping("key.draconicevolution.tool_config",           new CustomContext(KeyConflictContext.IN_GAME, () -> toolConfig),               InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C,         DraconicEvolution.MODNAME);
-        toggleFlight        = new KeyMapping("key.draconicevolution.toggle_flight",         new CustomContext(KeyConflictContext.IN_GAME, () -> toggleFlight),             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   DraconicEvolution.MODNAME);
-        toggleMagnet        = new KeyMapping("key.draconicevolution.toggle_magnet",         new CustomContext(KeyConflictContext.IN_GAME, () -> toggleMagnet),             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   DraconicEvolution.MODNAME);
-        dislocatorTeleport  = new KeyMapping("key.draconicevolution.dislocator_teleport",   new CustomContext(KeyConflictContext.IN_GAME, () -> dislocatorTeleport),       InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   DraconicEvolution.MODNAME);
-        dislocatorBlink     = new KeyMapping("key.draconicevolution.dislocator_blink",      new CustomContext(KeyConflictContext.IN_GAME, () -> dislocatorBlink),          InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   DraconicEvolution.MODNAME);
-        dislocatorGui       = new KeyMapping("key.draconicevolution.dislocator_gui",        new CustomContext(KeyConflictContext.IN_GAME, () -> dislocatorGui),            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   DraconicEvolution.MODNAME);
-        dislocatorUp        = new KeyMapping("key.draconicevolution.dislocator_up",       new CustomContext(KeyConflictContext.IN_GAME, () -> dislocatorUp),           InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   DraconicEvolution.MODNAME);
-        dislocatorDown      = new KeyMapping("key.draconicevolution.dislocator_down",       new CustomContext(KeyConflictContext.IN_GAME, () -> dislocatorDown),           InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   DraconicEvolution.MODNAME);
-//        cycleDigAOE        = new KeyBinding("key.cycleDigAOE",        new CustomContext(IN_GAME, () -> cycleDigAOE),        InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   DraconicEvolution.MODNAME);
-//        cycleAttackAOE     = new KeyBinding("key.cycleAttackAOE",     new CustomContext(IN_GAME, () -> cycleAttackAOE),     InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   DraconicEvolution.MODNAME);
+        placeItem           = new KeyMapping("key.draconicevolution.place_item",            new CustomContext(KeyConflictContext.IN_GAME, () -> placeItem),                InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_P,         CATEGORY);
+        toolConfig          = new KeyMapping("key.draconicevolution.tool_config",           new CustomContext(KeyConflictContext.IN_GAME, () -> toolConfig),               InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C,         CATEGORY);
+        toggleFlight        = new KeyMapping("key.draconicevolution.toggle_flight",         new CustomContext(KeyConflictContext.IN_GAME, () -> toggleFlight),             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   CATEGORY);
+        toggleMagnet        = new KeyMapping("key.draconicevolution.toggle_magnet",         new CustomContext(KeyConflictContext.IN_GAME, () -> toggleMagnet),             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   CATEGORY);
+        dislocatorTeleport  = new KeyMapping("key.draconicevolution.dislocator_teleport",   new CustomContext(KeyConflictContext.IN_GAME, () -> dislocatorTeleport),       InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   CATEGORY);
+        dislocatorBlink     = new KeyMapping("key.draconicevolution.dislocator_blink",      new CustomContext(KeyConflictContext.IN_GAME, () -> dislocatorBlink),          InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   CATEGORY);
+        dislocatorGui       = new KeyMapping("key.draconicevolution.dislocator_gui",        new CustomContext(KeyConflictContext.IN_GAME, () -> dislocatorGui),            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   CATEGORY);
+        dislocatorUp        = new KeyMapping("key.draconicevolution.dislocator_up",       new CustomContext(KeyConflictContext.IN_GAME, () -> dislocatorUp),           InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   CATEGORY);
+        dislocatorDown      = new KeyMapping("key.draconicevolution.dislocator_down",       new CustomContext(KeyConflictContext.IN_GAME, () -> dislocatorDown),           InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   CATEGORY);
+//        cycleDigAOE        = new KeyBinding("key.cycleDigAOE",        new CustomContext(IN_GAME, () -> cycleDigAOE),        InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   CATEGORY);
+//        cycleAttackAOE     = new KeyBinding("key.cycleAttackAOE",     new CustomContext(IN_GAME, () -> cycleAttackAOE),     InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,   CATEGORY);
 
-        toolModules         = new KeyMapping("key.draconicevolution.tool_modules",          new CustomContext(KeyConflictContext.IN_GAME, () -> toolModules),          KeyModifier.SHIFT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C,         DraconicEvolution.MODNAME);
-//        hudConfig         = new KeyBinding("key.tool_config",         new CustomContext(IN_GAME, () -> hudConfig),           InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,         DraconicEvolution.MODNAME);
+        toolModules         = new KeyMapping("key.draconicevolution.tool_modules",          new CustomContext(KeyConflictContext.IN_GAME, () -> toolModules),          KeyModifier.SHIFT, InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_C,         CATEGORY);
+//        hudConfig         = new KeyBinding("key.tool_config",         new CustomContext(IN_GAME, () -> hudConfig),           InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN,         CATEGORY);
         //@formatter:on
 
         eventBus.addListener(KeyBindings::registerKeyMappings);

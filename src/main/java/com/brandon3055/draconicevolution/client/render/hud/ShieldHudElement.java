@@ -119,7 +119,7 @@ public class ShieldHudElement extends AbstractHudElement {
         //Get and validate the armor chestpiece
         ItemStack chestStack = IModularArmor.getArmor(mc.player);
         try (ModuleHost host = DECapabilities.getHost(chestStack)) {
-            IOPStorage opStorage = chestStack.getCapability(CapabilityOP.ITEM);
+            IOPStorage opStorage = chestStack.getCapability(CapabilityOP.ITEM, net.neoforged.neoforge.transfer.access.ItemAccess.forStack(chestStack)); // port-26.1.2
             if (chestStack.isEmpty() || host == null || opStorage == null) {
                 renderHud = false; //The storage check is just a safety check. If the item has a ModuleHost it should always have storage unless something is broken (even without storage modules the capacity is just zero)
                 if (configuring) setupExample();
@@ -152,7 +152,7 @@ public class ShieldHudElement extends AbstractHudElement {
 
             if (energyMode > 0) {
                 List<ItemStack> capacitors = new ArrayList<>(EquipmentManager.findItems(e -> e.getItem() instanceof DraconiumCapacitor, mc.player));
-                for (ItemStack stack : mc.player.getInventory().items) {
+                for (ItemStack stack : mc.player.getInventory().getNonEquipmentItems()) {
                     if (stack.getItem() instanceof DraconiumCapacitor) {
                         capacitors.add(stack);
                     }
@@ -161,7 +161,7 @@ public class ShieldHudElement extends AbstractHudElement {
                 long capEnergy = 0;
 
                 for (ItemStack stack : capacitors) {
-                    IOPStorage storage = stack.getCapability(CapabilityOP.ITEM);
+                    IOPStorage storage = stack.getCapability(CapabilityOP.ITEM, net.neoforged.neoforge.transfer.access.ItemAccess.forStack(stack)); // port-26.1.2
                     if (storage != null) {
                         capMax = Utils.safeAdd(storage.getMaxOPStored(), capMax);
                         capEnergy = Utils.safeAdd(storage.getOPStored(), capEnergy);

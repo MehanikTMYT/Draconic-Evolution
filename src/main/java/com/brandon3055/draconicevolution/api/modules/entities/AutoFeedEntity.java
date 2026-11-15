@@ -137,7 +137,7 @@ public class AutoFeedEntity extends ModuleEntity<AutoFeedData> {
             if (entity instanceof ServerPlayer player && entity.tickCount % 10 == 0 && ((StackModuleContext) context).isEquipped()) {
                 if (getStoredFood() < data.foodStorage() && consumeFood.getValue()) {
                     //Do food consumption
-                    for (ItemStack stack : player.getInventory().items) {
+                    for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
                         FoodProperties food = stack.get(DataComponents.FOOD); // port-26.1.2: getFoodProperties удалён
                         if (!stack.isEmpty() && food != null) {
                             if (food != null && food.nutrition() > 0) { // port-26.1.2: FoodProperties.effects удалены (CONSUMABLE-компонент)

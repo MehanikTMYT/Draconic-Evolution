@@ -36,9 +36,9 @@ public interface IFusionDataTransfer {
             }
         }
 
-        IOPStorage catStorage = cat.getCapability(CapabilityOP.ITEM);
+        IOPStorage catStorage = cat.getCapability(CapabilityOP.ITEM, net.neoforged.neoforge.transfer.access.ItemAccess.forStack(cat)); // port-26.1.2
         if (catStorage != null) {
-            IOPStorage resStorage = result.getCapability(CapabilityOP.ITEM);
+            IOPStorage resStorage = result.getCapability(CapabilityOP.ITEM, net.neoforged.neoforge.transfer.access.ItemAccess.forStack(result)); // port-26.1.2
             if (resStorage != null) {
                 resStorage.modifyEnergyStored(Math.min(resStorage.getMaxOPStored(), catStorage.getOPStored()));
             }

@@ -166,9 +166,9 @@ public class RenderTileFusionCraftingCore implements BlockEntityRenderer<TileFus
             float rotX = (float) (rand.nextFloat() * Math.PI * 2 + anim / 10);
             float rotY = (float) (rand.nextFloat() * Math.PI * 2 + anim / 15);
             double radius = 0.25;
-            double x = ingred.pos.x + radius * Mth.cos(rotX) * Mth.sin(rotY);
+            double x = ingred.pos.x() + radius * Mth.cos(rotX) * Mth.sin(rotY);
             double y = ingred.pos.y + radius * Mth.sin(rotX) * Mth.sin(rotY);
-            double z = ingred.pos.z + radius * Mth.cos(rotY);
+            double z = ingred.pos.z() + radius * Mth.cos(rotY);
             EffectLib.drawParticle(cameraRotation, builder, ENERGY_PARTICLE[(TimeKeeper.getClientTick() + rand.nextInt(6423)) % ENERGY_PARTICLE.length], 0F, 0.8F + (rand.nextFloat() * 0.2F), 1F, x, y, z, scale, 240);
         }
 
@@ -191,7 +191,7 @@ public class RenderTileFusionCraftingCore implements BlockEntityRenderer<TileFus
             pos.normalize();
             pos.multiply(MathUtils.nextFloat() * 0.1875);
             pos.add(ingred.pos);
-            EffectLib.drawParticle(cameraRotation, builder, SPELL_PARTICLE[(rand.nextInt(SPELL_PARTICLE.length) + TimeKeeper.getClientTick()) % SPELL_PARTICLE.length], 0.7F, 0F, 0F, pos.x, pos.y, pos.z, scale * pScale, 240);
+            EffectLib.drawParticle(cameraRotation, builder, SPELL_PARTICLE[(rand.nextInt(SPELL_PARTICLE.length) + TimeKeeper.getClientTick()) % SPELL_PARTICLE.length], 0.7F, 0F, 0F, pos.x(), pos.y, pos.z(), scale * pScale, 240);
         }
 
 
@@ -209,7 +209,7 @@ public class RenderTileFusionCraftingCore implements BlockEntityRenderer<TileFus
                 Vector3 start = ingred.pos.copy().add((0.5 - rand.nextDouble()) * (randOffset * 2), (0.5 - rand.nextDouble()) * (randOffset * 2), (0.5 - rand.nextDouble()) * (randOffset * 2));
                 Vector3 end = new Vector3((0.5 - rand.nextDouble()) * (randOffset * 2), (0.5 - rand.nextDouble()) * (randOffset * 2), (0.5 - rand.nextDouble()) * (randOffset * 2));
                 pos = MathUtils.interpolateVec3(start, end, (anim / 10) % 1D);
-                EffectLib.drawParticle(cameraRotation, builder, SPARK_PARTICLE[(rand.nextInt(SPARK_PARTICLE.length) + TimeKeeper.getClientTick()) % SPARK_PARTICLE.length], 0.7F + ((((float) anim / 10F) % 1F) * 0.3F), 0F, 0F, pos.x, pos.y, pos.z, scale, 240);
+                EffectLib.drawParticle(cameraRotation, builder, SPARK_PARTICLE[(rand.nextInt(SPARK_PARTICLE.length) + TimeKeeper.getClientTick()) % SPARK_PARTICLE.length], 0.7F + ((((float) anim / 10F) % 1F) * 0.3F), 0F, 0F, pos.x(), pos.y, pos.z(), scale, 240);
             }
         }
     }

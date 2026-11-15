@@ -83,9 +83,9 @@ public class GuardianChargeParticle extends SingleQuadParticle {
         float anim = (age + partialTicks) / lifetime;
         Vector3 pos = MathUtils.interpolateVec3(startPos, endPos, anim);
         float radius = (anim * 2) + (Mth.sin(anim * (float) Math.PI) * 5);
-        float x = (float) (pos.x - vector3d.x()) + (Mth.sin((float) (angularPos * Math.PI * 2) + anim) * radius);
+        float x = (float) (pos.x() - vector3d.x()) + (Mth.sin((float) (angularPos * Math.PI * 2) + anim) * radius);
         float y = (float) (pos.y - vector3d.y());
-        float z = (float) (pos.z - vector3d.z()) + (Mth.cos((float) (angularPos * Math.PI * 2) + anim) * radius);
+        float z = (float) (pos.z() - vector3d.z()) + (Mth.cos((float) (angularPos * Math.PI * 2) + anim) * radius);
         Quaternionf quaternion;
         if (this.roll == 0.0F) {
             quaternion = camera.rotation();

@@ -126,7 +126,7 @@ public class ExplosionFX extends Particle {
     public final int radius;
 
     public ExplosionFX(ClientLevel worldIn, Vector3 pos, int radius) {
-        super(worldIn, pos.x, pos.y, pos.z);
+        super(worldIn, pos.x(), pos.y, pos.z());
         this.pos = pos;
         this.radius = radius;
         lifetime = 20 * 12;

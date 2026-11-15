@@ -917,7 +917,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         if (compound.contains("dragon_phase")) {
-            phaseManager.setPhase(PhaseType.getById(compound.getInt("dragon_phase")));
+            phaseManager.setPhase(PhaseType.getById(compound.getIntOr("dragon_phase", 0)));
         }
         if (compound.contains("arena_origin")) {
             setArenaOrigin(NbtUtils.readBlockPos(compound, "arena_origin").orElse(null));
@@ -937,8 +937,8 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
         } else {
             fightManager = null;
         }
-        if (compound.contains("shield_power", 5)) {
-            setShieldPower(compound.getFloat("shield_power"));
+        if (compound.contains("shield_power")) { // port-26.1.2
+            setShieldPower(compound.getFloatOr("shield_power", 0F));
         }
     }
 

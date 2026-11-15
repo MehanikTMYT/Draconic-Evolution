@@ -409,7 +409,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 );
                 double speed = 0.3 / 10;
                 Vector3 pos = Vector3.fromTileCenter(this).add(dir.getStepX() * -0.3, 0, dir.getStepZ() * -0.3);
-                level.addParticle(data, pos.x, pos.y, pos.z, speed * dir.getStepX(), 0, speed * dir.getStepZ());
+                level.addParticle(data, pos.x(), pos.y, pos.z(), speed * dir.getStepX(), 0, speed * dir.getStepZ());
             }
         }
 
@@ -427,7 +427,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                         //Set velocity direct
                 );
                 Vector3 pos = Vector3.fromTileCenter(this);
-                level.addParticle(data, pos.x, pos.y, pos.z, 0.5 * level.getRandom().nextGaussian(), 0, 0.5 * level.getRandom().nextGaussian());
+                level.addParticle(data, pos.x(), pos.y, pos.z(), 0.5 * level.getRandom().nextGaussian(), 0, 0.5 * level.getRandom().nextGaussian());
             }
         }
 
@@ -551,7 +551,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 (int) (0) //Gravity
         );
         Vector3 pos = Vector3.fromTileCenter(this);
-        level.addParticle(data, pos.x, pos.y, pos.z, 0.002D, 0.04, 0.002D);
+        level.addParticle(data, pos.x(), pos.y, pos.z(), 0.002D, 0.04, 0.002D);
 
         Direction dir = Direction.values()[2 + level.getRandom().nextInt(4)];
         data = new IntParticleData(DEParticles.SPARK.get(),
@@ -567,7 +567,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
         );
         double speed = 0.3 / 10;
         pos = Vector3.fromTileCenter(this).add(dir.getStepX() * -0.3, 0, dir.getStepZ() * -0.3);
-        level.addParticle(data, pos.x, pos.y, pos.z, speed * dir.getStepX(), 0, speed * dir.getStepZ());
+        level.addParticle(data, pos.x(), pos.y, pos.z(), speed * dir.getStepX(), 0, speed * dir.getStepZ());
 
 
         double rotation = (level.getDayTime() % 24000) / 24000D;
@@ -631,7 +631,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 (int) (0) //Gravity
         );
         Vector3 pos = Vector3.fromTileCenter(this);
-        level.addParticle(data, pos.x, pos.y, pos.z, 0.002D, 0.01, 0.002D);
+        level.addParticle(data, pos.x(), pos.y, pos.z(), 0.002D, 0.01, 0.002D);
 
 
         //        SubParticle particle = new SubParticle(world, Vec3D.getCenter(pos));

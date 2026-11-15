@@ -202,9 +202,9 @@ public class OPStorageOP implements INBTSerializable<CompoundTag>, IValueHashabl
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-        valueStorage = nbt.getLong("storage");
-        if (nbt.contains("overflow", 7)) {
-            overflowCount = new BigInteger(nbt.getByteArray("overflow"));
+        valueStorage = nbt.getLongOr("storage", 0L);
+        if (nbt.contains("overflow")) { // port-26.1.2
+            overflowCount = new BigInteger(nbt.getByteArray("overflow").orElse(new byte[0]));
         }
     }
 

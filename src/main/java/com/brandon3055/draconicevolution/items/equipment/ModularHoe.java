@@ -315,7 +315,7 @@ public class ModularHoe extends HoeItem implements IModularTieredItem, IDraconic
     }
 
     public boolean consumeItem(Item target, Inventory inventory) {
-        for (ItemStack item : inventory.items) {
+        for (ItemStack item : inventory.getNonEquipmentItems()) {
             if (!item.isEmpty() && item.is(target)) {
                 item.shrink(1);
                 inventory.setChanged();

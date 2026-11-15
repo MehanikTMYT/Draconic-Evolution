@@ -59,7 +59,7 @@ public class SimpleSoundImpl extends SimpleSoundInstance implements TickableSoun
     }
 
     public SimpleSoundImpl setPos(Vector3 pos) {
-        return setPos(pos.x, pos.y, pos.z);
+        return setPos(pos.x(), pos.y, pos.z());
     }
 
     public SimpleSoundImpl setPos(BlockPos pos) {

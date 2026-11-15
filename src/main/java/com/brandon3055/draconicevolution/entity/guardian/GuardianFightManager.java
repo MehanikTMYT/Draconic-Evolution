@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.entity.guardian;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import com.brandon3055.brandonscore.api.TechLevel;
 
 import com.brandon3055.brandonscore.worldentity.ITickableWorldEntity;
@@ -235,12 +236,12 @@ public class GuardianFightManager extends WorldEntity implements ITickableWorldE
         for (int x = -8; x <= 8; ++x) {
             for (int z = 8; z <= 8; ++z) {
                 ChunkPos pos = new ChunkPos(arenaOrigin.getX() >> 4, arenaOrigin.getZ() >> 4);
-                ChunkAccess ichunk = level.getChunk(pos.x + x, pos.z + z, ChunkStatus.FULL, false);
+                ChunkAccess ichunk = level.getChunk(pos.x() + x, pos.z() + z, ChunkStatus.FULL, false);
                 if (!(ichunk instanceof LevelChunk)) {
                     return false;
                 }
 
-                if (!level.getChunkSource().hasChunk(pos.x + x, pos.z + z)) {
+                if (!level.getChunkSource().hasChunk(pos.x() + x, pos.z() + z)) {
                     return false;
                 }
             }
@@ -275,7 +276,7 @@ public class GuardianFightManager extends WorldEntity implements ITickableWorldE
         }
 
         GuardianFightManager manager = guardian.getFightManager();
-        ItemEntity item = EntityType.ITEM.create(guardian.level());
+        ItemEntity item = EntityType.ITEM.create(guardian.level(), EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
         if (manager != null && item != null) {
             item.setItem(new ItemStack(DEContent.DRAGON_HEART.get()));
             BlockPos podiumPos = manager.getArenaOrigin().above(20);
@@ -463,10 +464,10 @@ public class GuardianFightManager extends WorldEntity implements ITickableWorldE
         if (TagUtils26.hasUUID(TagUtils26, nbt, "guardian")) {
             guardianUniqueId = TagUtils26.getUUID(TagUtils26, nbt, "guardian");
         }
-        guardianKilled = nbt.getBoolean("guardian_killed");
+        guardianKilled = nbt.getBooleanOr("guardian_killed", false);
         arenaOrigin = NbtUtils.readBlockPos(nbt, "arena_origin").orElse(arenaOrigin);
         validPlayer = EntitySelector.ENTITY_STILL_ALIVE.and(EntitySelector.withinDistance(arenaOrigin.getX(), arenaOrigin.getY(), arenaOrigin.getZ(), 192.0D));
-        if (nbt.getBoolean("respawning")) {
+        if (nbt.getBooleanOr("respawning", false)) {
             respawnState = GuardianSpawnState.START_WAIT_FOR_PLAYER;
         }
     }

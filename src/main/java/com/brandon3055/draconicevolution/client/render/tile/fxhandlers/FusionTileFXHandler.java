@@ -75,7 +75,7 @@ public class FusionTileFXHandler implements ITileFXHandler {
             }
             if (runTick == -1) {
                 Vector3 corePos = Vector3.fromTileCenter(core);
-                getIngredients(0).forEach(e -> core.getLevel().addParticle(ParticleTypes.EXPLOSION, corePos.x + e.pos.x, corePos.y + e.pos.y, corePos.z + e.pos.z, 1.0D, 0.0D, 0.0D));
+                getIngredients(0).forEach(e -> core.getLevel().addParticle(ParticleTypes.EXPLOSION, corePos.x + e.pos.x(), corePos.y + e.pos.y, corePos.z + e.pos.z(), 1.0D, 0.0D, 0.0D));
             }
             rotationTick += rotationSpeed;
             runTick++;
@@ -111,7 +111,7 @@ public class FusionTileFXHandler implements ITileFXHandler {
             if (ingreds.isEmpty()) return;
             coreDischarge = rand.nextInt(ingreds.size());
             Vector3 pos = Vector3.fromTileCenter(core).add(ingreds.get(coreDischarge).pos);
-            core.getLevel().playLocalSound(pos.x, pos.y, pos.z, DESounds.ENERGY_BOLT.get(), SoundSource.BLOCKS, 2F, 1F, false);
+            core.getLevel().playLocalSound(pos.x(), pos.y, pos.z(), DESounds.ENERGY_BOLT.get(), SoundSource.BLOCKS, 2F, 1F, false);
         }
     }
 

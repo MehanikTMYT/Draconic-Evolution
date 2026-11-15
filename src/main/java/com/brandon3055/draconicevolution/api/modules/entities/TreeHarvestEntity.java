@@ -155,7 +155,7 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
         IHarvestHandler activeHandler = activeHandlers.get(event.getEntity().getUUID());
         if (activeHandler == null || !(event.getEntity() instanceof ServerPlayer player)) return;
         ItemStack stack = event.getItem();
-        IOPStorage storage = stack.getCapability(CapabilityOP.ITEM);
+        IOPStorage storage = stack.getCapability(CapabilityOP.ITEM, net.neoforged.neoforge.transfer.access.ItemAccess.forStack(stack)); // port-26.1.2
         if (storage == null) {
             return;
         }

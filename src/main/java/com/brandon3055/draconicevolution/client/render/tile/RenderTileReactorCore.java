@@ -91,15 +91,15 @@ public class RenderTileReactorCore implements BlockEntityRendererTransparent<Til
 //                Vec3D pos = te.roller.pos;
 //                Vec3D lastPos = te.roller.lastPos;
 //                Vec3D tePos = Vec3D.getCenter(te);
-//                double xOffset = (pos.x - tePos.x) + ((pos.x - lastPos.x) * partialTicks);
+//                double xOffset = (pos.x() - tePos.x) + ((pos.x() - lastPos.x) * partialTicks);
 //                double yOffset = (pos.y - tePos.y) + ((pos.y - lastPos.y) * partialTicks);
-//                double zOffset = (pos.z - tePos.z) + ((pos.z - lastPos.z) * partialTicks);
+//                double zOffset = (pos.z() - tePos.z) + ((pos.z() - lastPos.z) * partialTicks);
 //
 //                x += xOffset;
 //                y += yOffset;
 //                z += zOffset;
 //
-//                float travel = (float) Utils.getDistanceAtoB(te.getPos().getX(), te.getPos().getZ(), pos.x, pos.z);
+//                float travel = (float) Utils.getDistanceAtoB(te.getPos().getX(), te.getPos().getZ(), pos.x(), pos.z());
 //                RenderSystem.translated(x + 0.5, y + 0.5, z + 0.5);
 //                RenderSystem.rotatef(travel * (360 / (float) (te.getCoreDiameter() * Math.PI)), (float) Math.sin(te.roller.direction), 0, (float) Math.cos(te.roller.direction) * -1);
 //                RenderSystem.translated(-(x + 0.5), -(y + 0.5), -(z + 0.5));

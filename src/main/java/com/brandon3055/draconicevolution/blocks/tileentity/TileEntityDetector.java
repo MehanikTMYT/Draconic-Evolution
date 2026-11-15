@@ -244,7 +244,7 @@ public class TileEntityDetector extends TileBCore implements MenuProvider, IInte
                 (int) (-0.005*1000) //Gravity
         );
         Vector3 pos = Vector3.fromTileCenter(this).add((-0.5 + level.getRandom().nextDouble()) * 0.1, 0.005, (-0.5 + level.getRandom().nextDouble()) * 0.1);
-        level.addParticle(data, pos.x, pos.y, pos.z, 0.02D, 0, 0.02D);
+        level.addParticle(data, pos.x(), pos.y, pos.z(), 0.02D, 0, 0.02D);
 
         int i = level.getRandom().nextInt(4);
         double x = i / 2;
@@ -261,7 +261,7 @@ public class TileEntityDetector extends TileBCore implements MenuProvider, IInte
                 (int) (-0.005*1000) //Gravity
         );
         pos = Vector3.fromTile(this).add(0.14 + (x * 0.72), 0.17, 0.14 + (z * 0.72));
-        level.addParticle(data, pos.x, pos.y, pos.z, 0.002D, 0, 0.002D);
+        level.addParticle(data, pos.x(), pos.y, pos.z(), 0.002D, 0, 0.002D);
 
         //endregion
     }
@@ -423,10 +423,10 @@ public class TileEntityDetector extends TileBCore implements MenuProvider, IInte
     public void receivePacketFromServer(MCDataInput data, int id) {
         super.receivePacketFromServer(data, id);
         if (id == 16) {
-            ListTag list = data.readCompoundNBT().getList("List", 8);
+            ListTag list = data.readCompoundNBT().getListOrEmpty("List");
             playerNames.clear();
             for (int i = 0; i < list.size(); i++) {
-                playerNames.add(list.getString(i));
+                playerNames.add(list.getStringOr(i, ""));
             }
         }
     }

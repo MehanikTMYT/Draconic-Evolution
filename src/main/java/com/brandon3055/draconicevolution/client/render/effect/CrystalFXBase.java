@@ -48,7 +48,7 @@ public abstract class CrystalFXBase<T extends BlockEntity & IENetEffectTile> ext
     }
 
     protected void setPosition(Vec3D pos) {
-        setPos(pos.x, pos.y, pos.z);
+        setPos(pos.x(), pos.y, pos.z());
     }
 
     protected Vector3f[] getRenderVectors(Camera renderInfo, float viewX, float viewY, float viewZ, float scale) {

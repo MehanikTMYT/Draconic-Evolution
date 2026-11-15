@@ -136,11 +136,11 @@ public class DraconiumCapacitor extends Item implements IInvCharge, IModularEner
         if (entity instanceof Player) {
             Player player = (Player) entity;
             if (hot_bar && main) {
-                stacks.addAll(player.getInventory().items);
+                stacks.addAll(player.getInventory().getNonEquipmentItems());
             } else if (hot_bar) {
-                stacks.addAll(player.getInventory().items.subList(0, 9));
+                stacks.addAll(player.getInventory().getNonEquipmentItems().subList(0, 9));
             } else if (main) {
-                stacks.addAll(player.getInventory().items.subList(9, 36));
+                stacks.addAll(player.getInventory().getNonEquipmentItems().subList(9, 36));
             }
             if (held) {
                 if (!hot_bar) {
@@ -166,7 +166,7 @@ public class DraconiumCapacitor extends Item implements IInvCharge, IModularEner
     }
 
     public void updateEnergy(ItemStack capacitor, LivingEntity player, List<ItemStack> stacks) {
-        IOPStorage storage = capacitor.getCapability(CapabilityOP.ITEM);
+        IOPStorage storage = capacitor.getCapability(CapabilityOP.ITEM, net.neoforged.neoforge.transfer.access.ItemAccess.forStack(capacitor)); // port-26.1.2
         if (storage != null) {
             for (ItemStack stack : stacks) {
                 if (EnergyUtils.canReceiveEnergy(stack)) {

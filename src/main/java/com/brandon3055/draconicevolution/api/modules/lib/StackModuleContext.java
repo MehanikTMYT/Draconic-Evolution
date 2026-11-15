@@ -34,7 +34,7 @@ public class StackModuleContext extends ModuleContext {
     @Override
     @Nullable
     public IOPStorage getOpStorage() {
-        return stack.getCapability(CapabilityOP.ITEM);
+        return stack.getCapability(CapabilityOP.ITEM, net.neoforged.neoforge.transfer.access.ItemAccess.forStack(stack)); // port-26.1.2
     }
 
     @Override

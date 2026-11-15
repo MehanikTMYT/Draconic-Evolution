@@ -139,7 +139,7 @@ public interface IModularArmor extends IModularItem, ElytraEnabledItem {
 
     @Override
     default boolean elytraFlightTickBC(ItemStack stack, LivingEntity entity, int flightTicks) {
-        IOPStorage storage = stack.getCapability(CapabilityOP.ITEM);
+        IOPStorage storage = stack.getCapability(CapabilityOP.ITEM, net.neoforged.neoforge.transfer.access.ItemAccess.forStack(stack)); // port-26.1.2
         boolean creative = entity instanceof Player player && player.getAbilities().instabuild;
         if (storage != null) {
             int energy = EquipCfg.elytraFlightEnergy;

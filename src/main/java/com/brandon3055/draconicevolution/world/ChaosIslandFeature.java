@@ -67,7 +67,7 @@ public class ChaosIslandFeature extends Feature<NoneFeatureConfiguration> {
             return false;
         }
 
-        if (closestSpawn.x == 0 && closestSpawn.z == 0) {
+        if (closestSpawn.x() == 0 && closestSpawn.z() == 0) {
             return false;
         }
 

@@ -115,7 +115,7 @@ public class ConfigurableItemMenu extends ModularGuiContainerMenu implements Mod
     }
 
     public static Stream<ItemStack> getPlayerInventory(Inventory player) {
-        return Streams.concat(player.items.stream(), player.armor.stream(), player.offhand.stream(), EquipmentManager.getAllItems(player.player).stream()).filter(e -> !e.isEmpty());
+        return Streams.concat(player.getNonEquipmentItems().stream(), java.util.Arrays.stream(net.minecraft.world.entity.EquipmentSlot.values()).map(player.player::getItemBySlot), EquipmentManager.getAllItems(player.player).stream()).filter(e -> !e.isEmpty()); // port-26.1.2: Inventory.armor/offhand списки удалены -> EquipmentSlot
     }
 
     public static Stream<Pair<ItemStack, ModuleHost>> getStackProviders(Stream<ItemStack> stacks) {

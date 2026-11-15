@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.entity.guardian.control;
 
+import net.minecraft.world.entity.EntitySpawnReason;
 import codechicken.lib.vec.Vector3;
 
 import com.brandon3055.brandonscore.network.BCoreNetwork;
@@ -140,7 +141,7 @@ public class GroundEffectPhase extends ChargeUpPhase {
     }
 
     private void summonWither(boolean canLoot) {
-        GuardianWither wither = DEContent.ENTITY_GUARDIAN_WITHER.get().create(guardian.level());
+        GuardianWither wither = DEContent.ENTITY_GUARDIAN_WITHER.get().create(guardian.level(), EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
         Vector3 spawnPos = null;
         for (int i = 0; i < 10; i++) {
             spawnPos = Vector3.fromEntity(guardian).add(random.nextInt(80) - 40, random.nextInt(20) - 10, random.nextInt(80) - 40);

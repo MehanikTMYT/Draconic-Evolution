@@ -75,7 +75,7 @@ public class ReactorBeamFX extends Particle {
     );
 
     public ReactorBeamFX(ClientLevel worldIn, Vec3D pos, Direction facing, TileReactorCore tile, boolean isInjectorEffect) {
-        super(worldIn, pos.x, pos.y, pos.z);
+        super(worldIn, pos.x(), pos.y, pos.z());
         this.tile = tile;
         this.facing = facing;
         this.isInjectorEffect = isInjectorEffect;
