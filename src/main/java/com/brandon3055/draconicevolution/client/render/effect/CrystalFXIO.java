@@ -57,6 +57,12 @@ public class CrystalFXIO extends CrystalFXBase<TileCrystalBase> {
     }
 
     @Override
+    public net.minecraft.resources.Identifier texture() {
+        String tier = tile.getTier() == 0 ? "basic" : tile.getTier() == 1 ? "wyvern" : "draconic";
+        return net.minecraft.resources.Identifier.fromNamespaceAndPath("draconicevolution", "textures/particle/energy_beam_" + tier + ".png");
+    }
+
+    @Override
     public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
         if (!renderEnabled) {
             return;
@@ -73,31 +79,4 @@ public class CrystalFXIO extends CrystalFXBase<TileCrystalBase> {
         buffer.addVertex(renderVector[3].x(), renderVector[3].y(), renderVector[3].z()).setColor(1F, 1F, 1F, 1F).setUv(0.0F, 0.5F).setUv2(240, 240);
     }
 
-    @Override
-    public ParticleRenderType getRenderType() {
-        return tile.getTier() == 0 ? BASIC_HANDLER : tile.getTier() == 1 ? WYVERN_HANDLER : DRACONIC_HANDLER;
-    }
-
-    private static final ParticleRenderType BASIC_HANDLER = new FXHandler(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_basic.png"));
-    private static final ParticleRenderType WYVERN_HANDLER = new FXHandler(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_wyvern.png"));
-    private static final ParticleRenderType DRACONIC_HANDLER = new FXHandler(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_draconic.png"));
-
-    public static class FXHandler implements ParticleRenderType {
-
-        private final Identifier texture;
-
-        public FXHandler(Identifier texture) {
-            this.texture = texture;
-        }
-
-        @Override
-        public @Nullable BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {
-            RenderSystem.depthMask(false);
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-            RenderSystem.setShader(GameRenderer::getPositionColorTexLightmapShader);
-            RenderSystem.setShaderTexture(0, texture);
-            return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP);
-        }
-    }
 }

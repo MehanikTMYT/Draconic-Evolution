@@ -21,8 +21,8 @@ import org.joml.Matrix4f;
 
 import java.util.Random;
 
-@OnlyIn(Dist.CLIENT)
-public class DraconicArrowRenderer extends EntityRenderer<DraconicArrowEntity> {
+
+public class DraconicArrowRenderer extends net.minecraft.client.renderer.entity.ArrowRenderer<DraconicArrowEntity, DraconicArrowRenderer.State> {
     public static final Identifier RES_ARROW = Identifier.withDefaultNamespace("textures/entity/projectiles/arrow.png");
     public static final Identifier RES_TIPPED_ARROW = Identifier.withDefaultNamespace("textures/entity/projectiles/tipped_arrow.png");
 
@@ -30,67 +30,26 @@ public class DraconicArrowRenderer extends EntityRenderer<DraconicArrowEntity> {
         super(context);
     }
 
-    public void render(DraconicArrowEntity arrowEntity, float entityYaw, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packedLightIn) {
-        mStack.pushPose();
-        mStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, arrowEntity.yRotO, arrowEntity.getYRot()) - 90.0F));
-        mStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, arrowEntity.xRotO, arrowEntity.getXRot())));
-        float f9 = (float) arrowEntity.shakeTime - partialTicks;
-        if (f9 > 0.0F) {
-            float f10 = -Mth.sin(f9 * 3.0F) * f9;
-            mStack.mulPose(Axis.ZP.rotationDegrees(f10));
-        }
-
-        mStack.mulPose(Axis.XP.rotationDegrees(45.0F));
-        mStack.scale(0.05625F, 0.05625F, 0.05625F);
-        mStack.translate(-4.0D, 0.0D, 0.0D);
-        VertexConsumer ivertexbuilder = getter.getBuffer(RenderType.entityCutout(this.getTextureLocation(arrowEntity)));
-        PoseStack.Pose matrixstack$entry = mStack.last();
-        Matrix4f matrix4f = matrixstack$entry.pose();
-        this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, -7, -2, -2, 0.0F, 0.15625F, -1, 0, 0, packedLightIn);
-        this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, -7, -2, 2, 0.15625F, 0.15625F, -1, 0, 0, packedLightIn);
-        this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, -7, 2, 2, 0.15625F, 0.3125F, -1, 0, 0, packedLightIn);
-        this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, -7, 2, -2, 0.0F, 0.3125F, -1, 0, 0, packedLightIn);
-        this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, -7, 2, -2, 0.0F, 0.15625F, 1, 0, 0, packedLightIn);
-        this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, -7, 2, 2, 0.15625F, 0.15625F, 1, 0, 0, packedLightIn);
-        this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, -7, -2, 2, 0.15625F, 0.3125F, 1, 0, 0, packedLightIn);
-        this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, -7, -2, -2, 0.0F, 0.3125F, 1, 0, 0, packedLightIn);
-
-        for (int j = 0; j < 4; ++j) {
-            mStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-            this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, -8, -2, 0, 0.0F, 0.0F, 0, 1, 0, packedLightIn);
-            this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, 8, -2, 0, 0.5F, 0.0F, 0, 1, 0, packedLightIn);
-            this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, 8, 2, 0, 0.5F, 0.15625F, 0, 1, 0, packedLightIn);
-            this.drawVertex(matrix4f, matrixstack$entry, ivertexbuilder, -8, 2, 0, 0.0F, 0.15625F, 0, 1, 0, packedLightIn);
-        }
-
-        mStack.popPose();
-
-//        mStack.rotate(new Quaternion(new Vector3f(0, 0, 1), (TimeKeeper.getClientTick() + partialTicks) * 100F, true));
-        super.render(arrowEntity, entityYaw, partialTicks, mStack, getter, packedLightIn);
-//
-//        Vector3 startPos = new Vector3(0, 0, 0); //Bottom
-//        Vector3 endPos = new Vector3(0, 1, 0); //Top
-//        int segCount = 8;
-//        long randSeed = (TimeKeeper.getClientTick() / 2);
-//        float scaleMod = 2;
-//        float deflectMod = 1;
-//        boolean autoScale = true;
-//        float segTaper = 0.125F;
-//        int colour = 0x6300BD;
-
-//        rendeArcP2P(mStack, getter, startPos ,endPos ,segCount ,randSeed ,scaleMod ,deflectMod ,autoScale ,segTaper ,colour);
+    public static class State extends net.minecraft.client.renderer.entity.state.ArrowRenderState {
+        public boolean tipped;
     }
 
-    public void drawVertex(Matrix4f matrix, PoseStack.Pose normals, VertexConsumer vertexBuilder, int offsetX, int offsetY, int offsetZ, float textureX, float textureY, int p_229039_9_, int p_229039_10_, int p_229039_11_, int packedLightIn) {
-        vertexBuilder.addVertex(matrix, (float) offsetX, (float) offsetY, (float) offsetZ).setColor(255, 255, 255, 255).setUv(textureX, textureY).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLightIn).setNormal(normals, (float) p_229039_9_, (float) p_229039_11_, (float) p_229039_10_);
+    @Override
+    public State createRenderState() { return new State(); }
+
+    @Override
+    public void extractRenderState(DraconicArrowEntity entity, State state, float partialTick) {
+        super.extractRenderState(entity, state, partialTick);
+        state.tipped = entity.getColor() > 0;
     }
 
-    public Identifier getTextureLocation(DraconicArrowEntity entity) {
-        return entity.getColor() > 0 ? RES_TIPPED_ARROW : RES_ARROW;
+    @Override
+    public Identifier getTextureLocation(State state) {
+        return state.tipped ? RES_TIPPED_ARROW : RES_ARROW;
     }
 
     public static void renderEnergyBolt(Vector3 startPos, Vector3 endPos, Matrix4 mat, MultiBufferSource getter, float partialTicks) {
-        VertexConsumer builder = new TransformingVertexConsumer(getter.getBuffer(RenderType.lightning()), mat);
+        VertexConsumer builder = new TransformingVertexConsumer(getter.getBuffer(net.minecraft.client.renderer.rendertype.RenderTypes.lightning()), mat);
     }
 
 
@@ -146,7 +105,7 @@ public class DraconicArrowRenderer extends EntityRenderer<DraconicArrowEntity> {
         xOffSum -= (float) (endPos.x - startPos.x);
         zOffSum -= (float) (endPos.z - startPos.z);
 
-        VertexConsumer builder = getter.getBuffer(RenderType.lightning());
+        VertexConsumer builder = getter.getBuffer(net.minecraft.client.renderer.rendertype.RenderTypes.lightning());
         Matrix4f matrix4f = mStack.last().pose();
 
         for (int layer = 0; layer < 4; ++layer) {

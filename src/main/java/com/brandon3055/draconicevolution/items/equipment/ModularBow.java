@@ -251,7 +251,7 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
                     arrowEntity.setCritArrow(true);
                 }
 
-                double arrowBase = 2.0D; // port-26.1.2: AbstractArrow.getBaseDamage удалён (baseDamage private) — дефолт ванильной стрелы
+                double arrowBase = arrowEntity.baseDamage; // 26.1.2: AT preserves damage supplied by the selected arrow before the module multiplier
                 arrowEntity.setBaseDamage(arrowBase * (projData.damage() + 1));
 
                 long energyRequired = (long) (EquipCfg.bowBaseEnergy * arrowBase * powerForTime * 3); // port-26.1.2: см. выше

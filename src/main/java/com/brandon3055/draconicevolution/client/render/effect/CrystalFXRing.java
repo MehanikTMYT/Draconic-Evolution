@@ -66,6 +66,11 @@ public class CrystalFXRing extends CrystalFXBase<TileCrystalBase> {
     }
 
     @Override
+    public net.minecraft.resources.Identifier texture() {
+        return net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_PARTICLES;
+    }
+
+    @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
         if (!renderEnabled || AtlasTextureHelper.ENERGY_PARTICLE == null || AtlasTextureHelper.ENERGY_PARTICLE[0] == null) {
             return;
@@ -82,7 +87,7 @@ public class CrystalFXRing extends CrystalFXBase<TileCrystalBase> {
         float viewX = (float) (this.x - view.x());
         float viewY = (float) (this.y - view.y());
         float viewZ = (float) (this.z - view.z());
-        double mipLevel = Math.max(0, Math.min(1, (camera.getBlockPosition().distToCenterSqr(x, y, z) - 20) / 600D));
+        double mipLevel = Math.max(0, Math.min(1, (camera.blockPosition().distToCenterSqr(x, y, z) - 20) / 600D));
 
         //endregion
 
@@ -166,17 +171,4 @@ public class CrystalFXRing extends CrystalFXBase<TileCrystalBase> {
 //        endregion
     }
 
-    @Override
-    public ParticleRenderType getRenderType() {
-        return RENDER_TYPE;
-    }
-
-    public static final ParticleRenderType RENDER_TYPE = (tesselator, textureManager) -> {
-        RenderSystem.depthMask(false);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-        RenderSystem.setShader(GameRenderer::getParticleShader);
-        RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-        return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-    };
 }

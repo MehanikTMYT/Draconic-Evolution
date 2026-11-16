@@ -6,14 +6,14 @@ import net.minecraft.client.particle.*;
 
 import java.util.List;
 
-public class SparkParticle extends TextureSheetParticle {
+public class SparkParticle extends SingleQuadParticle {
     private final SpriteSet spriteSet;
     public float sparkSize = 0.5F;
     public float baseSize = 1;
 
 
     public SparkParticle(ClientLevel level, double xPos, double yPos, double zPos, double xVel, double yVel, double zVel, SpriteSet spriteSet) {
-        super(level, xPos, yPos, zPos);
+        super(level, xPos, yPos, zPos, spriteSet.first());
         this.spriteSet = spriteSet;
         setSprite(spriteSet.get(random));
 
@@ -25,8 +25,13 @@ public class SparkParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleEnergyCoreFX.PARTICLE_NO_DEPTH_NO_LIGHT;
+    public SingleQuadParticle.Layer getLayer() {
+        return DEParticleLayers.TRANSLUCENT_NO_WRITE;
+    }
+
+    @Override
+    protected int getLightCoords(float partialTick) {
+        return net.minecraft.util.LightCoordsUtil.FULL_BRIGHT;
     }
 
     @Override
@@ -52,53 +57,53 @@ public class SparkParticle extends TextureSheetParticle {
         }
 
         @Override
-        public Particle createParticle(IntParticleData data, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle createParticle(IntParticleData data, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, net.minecraft.util.RandomSource random) {
             SparkParticle particle = new SparkParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, spriteSet);
 
-            List<Integer> list = data.get();
-            int params = list.size();
+            int[] list = data.get();
+            int params = list.length;
 
             //Colour
             if (params >= 3) {
-                particle.setColor(list.get(0) / 255F, list.get(1) / 255F, list.get(2) / 255F);
+                particle.setColor(list[0] / 255F, list[1] / 255F, list[2] / 255F);
                 params -= 3;
             }
 
             //Scale
             if (params >= 1) {
-                particle.baseSize = list.get(3) / 1000F;
+                particle.baseSize = list[3] / 1000F;
                 particle.quadSize = particle.baseSize;
                 params--;
             }
 
             //Spark Scale
             if (params >= 1) {
-                particle.sparkSize = list.get(4) / 1000F;
+                particle.sparkSize = list[4] / 1000F;
                 params--;
             }
 
             //Max Age
             if (params >= 1) {
-                particle.lifetime = list.get(5);
+                particle.lifetime = list[5];
                 params--;
             }
 
             //Random age augment
             if (params >= 1) {
-                int max = list.get(6);
+                int max = list[6];
                 particle.lifetime += max > 0 ? level.getRandom().nextInt(max) : 0;
                 params--;
             }
 
             //Gravity
             if (params >= 1) {
-                particle.gravity = list.get(7) / 1000F;
+                particle.gravity = list[7] / 1000F;
                 params--;
             }
 
             //Friction
             if (params >= 1) {
-                particle.friction = list.get(8) / 1000F;
+                particle.friction = list[8] / 1000F;
                 params--;
             }
 

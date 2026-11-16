@@ -13,7 +13,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Random;
 
-@OnlyIn(Dist.CLIENT)
 public class GuardianProjectileParticle extends SimpleAnimatedParticle {
 
     private GuardianProjectileParticle(ClientLevel world, double x, double y, double z, double motionX, double motionY, double motionZ, SpriteSet spriteWithAge) {
@@ -22,13 +21,13 @@ public class GuardianProjectileParticle extends SimpleAnimatedParticle {
         this.yd = motionY;
         this.zd = motionZ;
         this.quadSize *= 0.75F;
-        this.lifetime = 48 + this.getRandom().nextInt(12);
+        this.lifetime = 48 + this.random.nextInt(12);
         this.setSpriteFromAge(spriteWithAge);
     }
 
-    public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
+    public void extract(net.minecraft.client.renderer.state.level.QuadParticleRenderState state, Camera camera, float partialTicks) {
         if (this.age < this.lifetime / 3 || (this.age + this.lifetime) / 3 % 2 == 0) {
-            super.render(buffer, camera, partialTicks);
+            super.extract(state, camera, partialTicks);
         }
     }
 
@@ -36,7 +35,6 @@ public class GuardianProjectileParticle extends SimpleAnimatedParticle {
         super.tick();
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class Factory implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet spriteSet;
         private static Random rand = new Random();
@@ -45,7 +43,7 @@ public class GuardianProjectileParticle extends SimpleAnimatedParticle {
             this.spriteSet = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle createParticle(SimpleParticleType typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, net.minecraft.util.RandomSource random) {
             GuardianProjectileParticle particle = new GuardianProjectileParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, this.spriteSet);
             particle.hasPhysics = false;
             particle.setLifetime(15 + rand.nextInt(5));

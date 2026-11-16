@@ -1,12 +1,10 @@
-#version 150
+#version 330
+
+#moj_import <draconicevolution:de_effect_params.glsl>
 
 #moj_import <brandonscore:math.glsl>
 
-uniform float Time;
-uniform float Power;
-uniform float Fade;
-uniform float Startup;
-uniform int Type; //0 input, 1 output, 2 injector
+// Type: 0 input, 1 output, 2 injector (de_effect_params.glsl)
 
 in vec4 Color;
 in vec2 texCoord0;

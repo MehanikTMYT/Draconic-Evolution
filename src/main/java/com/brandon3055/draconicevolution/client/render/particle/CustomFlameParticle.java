@@ -9,23 +9,22 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.List;
 
-@OnlyIn(Dist.CLIENT)
-public class CustomFlameParticle extends TextureSheetParticle {
+public class CustomFlameParticle extends SingleQuadParticle {
 //    private float drag =
 
-    private CustomFlameParticle(ClientLevel worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
-        super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+    private CustomFlameParticle(ClientLevel worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, net.minecraft.client.renderer.texture.TextureAtlasSprite sprite) {
+        super(worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn, sprite);
         this.xd = this.xd * (double)0.01F + xSpeedIn;
         this.yd = this.yd * (double)0.01F + ySpeedIn;
         this.zd = this.zd * (double)0.01F + zSpeedIn;
-        this.x += (double)((this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.05F);
-        this.y += (double)((this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.05F);
-        this.z += (double)((this.getRandom().nextFloat() - this.getRandom().nextFloat()) * 0.05F);
+        this.x += (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
+        this.y += (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
+        this.z += (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
         this.lifetime = (int)(8.0D / (Math.random() * 0.8D + 0.2D)) + 4;
     }
 
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+    public SingleQuadParticle.Layer getLayer() {
+        return SingleQuadParticle.Layer.OPAQUE;
     }
 
     public void move(double x, double y, double z) {
@@ -38,10 +37,10 @@ public class CustomFlameParticle extends TextureSheetParticle {
         return this.quadSize * (1.0F - f * f * 0.5F);
     }
 
-    public int getLightColor(float partialTick) {
+    public int getLightCoords(float partialTick) {
         float f = ((float)this.age + partialTick) / (float)this.lifetime;
         f = Mth.clamp(f, 0.0F, 1.0F);
-        int i = super.getLightColor(partialTick);
+        int i = super.getLightCoords(partialTick);
         int j = i & 255;
         int k = i >> 16 & 255;
         j = j + (int)(f * 15.0F * 16.0F);
@@ -72,7 +71,6 @@ public class CustomFlameParticle extends TextureSheetParticle {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class Factory implements ParticleProvider<IntParticleData> {
         private final SpriteSet spriteSet;
 
@@ -81,15 +79,15 @@ public class CustomFlameParticle extends TextureSheetParticle {
         }
 
         @Override
-        public Particle createParticle(IntParticleData data, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            CustomFlameParticle flameparticle = new CustomFlameParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed);
-            flameparticle.pickSprite(this.spriteSet);
-            List<Integer> list = data.get();
-            if (list.size() >= 1) {
-                flameparticle.quadSize *= (list.get(0) / 255F);
+        public Particle createParticle(IntParticleData data, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, net.minecraft.util.RandomSource random) {
+            CustomFlameParticle flameparticle = new CustomFlameParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, this.spriteSet.get(random));
+
+            int[] list = data.get();
+            if (list.length >= 1) {
+                flameparticle.quadSize *= (list[0] / 255F);
             }
-            if (list.size() >= 2) {
-                flameparticle.gravity = -list.get(1) / 255F;
+            if (list.length >= 2) {
+                flameparticle.gravity = -list[1] / 255F;
             }
             return flameparticle;
         }

@@ -1,23 +1,19 @@
-#version 150
+#version 330
 
-#moj_import <fog.glsl>
+#moj_import <draconicevolution:de_effect_params.glsl>
+#moj_import <minecraft:dynamictransforms.glsl>
+
+#moj_import <minecraft:fog.glsl>
 #moj_import <brandonscore:math.glsl>
 #moj_import <brandonscore:chaos.glsl>
 
 uniform sampler2D Sampler0;
 
-uniform vec4 ColorModulator;
-uniform float FogStart;
-uniform float FogEnd;
-uniform vec4 FogColor;
 
-uniform float Time;
-uniform float Yaw;
-uniform float Pitch;
-uniform float Alpha;
 
 in vec3 fPos;
 in float vertexDistance;
+in float vertexCylindricalDistance;
 in vec4 vertexColor;
 in vec2 texCoord0;
 in vec4 normal;
@@ -30,5 +26,5 @@ void main() {
 
     col *= vertexColor * ColorModulator;
 
-    fragColor = linear_fog(col, vertexDistance, FogStart, FogEnd, FogColor);
+    fragColor = apply_fog(col, vertexDistance, vertexCylindricalDistance, FogEnvironmentalStart, FogEnvironmentalEnd, FogRenderDistanceStart, FogRenderDistanceEnd, FogColor);
 }

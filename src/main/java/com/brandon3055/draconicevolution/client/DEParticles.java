@@ -68,6 +68,10 @@ public class DEParticles {
 
     @OnlyIn (Dist.CLIENT)
     public static Particle addParticleDirect(Level world, Particle particle) {
+        if (world instanceof ClientLevel && particle instanceof com.brandon3055.draconicevolution.client.render.effect.CrystalFXBase<?> crystal) {
+            com.brandon3055.draconicevolution.client.render.effect.CrystalFXRenderer.add(crystal);
+            return crystal;
+        }
         if (world instanceof ClientLevel) {
             Minecraft mc = Minecraft.getInstance();
             Camera activerenderinfo = mc.gameRenderer.getMainCamera();

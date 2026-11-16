@@ -1,14 +1,11 @@
-#version 150
+#version 330
+
+#moj_import <draconicevolution:de_effect_params.glsl>
 
 #moj_import <brandonscore:math.glsl>
 //#moj_import <brandonscore:chaos.glsl>
 
 //uniform sampler2D Sampler0;
-uniform float Time;
-uniform float Activation;
-uniform vec3 EffectColour;
-uniform vec3 FrameColour;
-uniform vec3 InnerTriColour;
 
 in vec4 Color;
 in vec3 fPos;

@@ -1,13 +1,12 @@
-#version 150
+#version 330
+
+#moj_import <draconicevolution:de_effect_params.glsl>
 
 #moj_import <brandonscore:math.glsl>
 
 in vec4 vertexColor;
 
 //uniform vec4 ColorModulator;
-uniform vec2 ScreenPos;
-uniform vec2 ScreenSize;
-uniform float Intensity;
 
 out vec4 fragColor;
 

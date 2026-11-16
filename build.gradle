@@ -80,6 +80,9 @@ dependencies {
     // port-26.1.2: Quack (mavenLocal 0.4.10.130) - использовался DE напрямую (SneakyUtils/CrashLock/FastStream)
     implementation 'net.covers1624:Quack:0.4.10.130'
 
+    // port-26.1.2: owner-authorized fleet EnderStorage; optional integration remains lazy.
+    implementation files('../../ender-stack/EnderStorage/build/libs/EnderStorage-2.13.0+26.1.2-port.1.jar')
+
     compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
 
@@ -88,7 +91,7 @@ dependencies {
 
     compileOnly "cc.tweaked:cc-tweaked-${mc_version}-forge-api:${cct_version}"
 
-    // port-26.1.2: JEI removed (EMI-only policy), src/**/jei/** deleted
+    // port-26.1.2: legacy recipe-viewer integration removed; fleet uses EMI
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'

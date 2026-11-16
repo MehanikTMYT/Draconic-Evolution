@@ -41,26 +41,7 @@ import net.minecraft.core.Direction;
  * Created by brandon3055 on 2/5/2016.
  * The particle used to render the beams on the Energy Core
  */
-public class ParticleEnergyCoreFX extends TextureSheetParticle {
-
-    public static final ParticleRenderType PARTICLE_NO_DEPTH_NO_LIGHT = new ParticleRenderType() {
-        public BufferBuilder begin(Tesselator builder, TextureManager manager) {
-            RenderSystem.depthMask(false);
-//            RenderSystem.setShader(GameRenderer::getParticleShader);
-            RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            return builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-        }
-
-//        public void end(Tesselator tesselator) {
-//            tesselator.end();
-//        }
-
-        public String toString() {
-            return "PARTICLE_NO_DEPTH_NO_LIGHT";
-        }
-    };
+public class ParticleEnergyCoreFX extends SingleQuadParticle {
 
     public Vec3D targetPos;
     public boolean toCore = false;
@@ -70,24 +51,24 @@ public class ParticleEnergyCoreFX extends TextureSheetParticle {
     private final SpriteSet spriteSet;
 
     public ParticleEnergyCoreFX(ClientLevel world, double xPos, double yPos, double zPos, Vec3D targetPos, SpriteSet spriteSet) {
-        super(world, xPos, yPos, zPos);
+        super(world, xPos, yPos, zPos, spriteSet.first());
         this.targetPos = targetPos;
         this.spriteSet = spriteSet;
         setSprite(spriteSet.get(world.getRandom()));
         hasPhysics = false;
         Vec3D dir = Vec3D.getDirectionVec(new Vec3D(xPos, yPos, zPos), targetPos);
-        this.direction = Direction.getNearest((float) dir.x, (float) dir.y, (float) dir.z).getAxis();
+        this.direction = Direction.getApproximateNearest((float) dir.x, (float) dir.y, (float) dir.z).getAxis();
         lifetime = 40;
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return PARTICLE_NO_DEPTH_NO_LIGHT;
+    public SingleQuadParticle.Layer getLayer() {
+        return DEParticleLayers.TRANSLUCENT_NO_WRITE;
     }
 
     @Override
-    protected int getLightColor(float p_107249_) {
-        return 255;
+    protected int getLightCoords(float p_107249_) {
+        return net.minecraft.util.LightCoordsUtil.FULL_BRIGHT;
     }
 
     @Override
@@ -138,12 +119,12 @@ public class ParticleEnergyCoreFX extends TextureSheetParticle {
         }
 
         @Override
-        public Particle createParticle(IntParticleData data, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle createParticle(IntParticleData data, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, net.minecraft.util.RandomSource random) {
             ParticleEnergyCoreFX particle = new ParticleEnergyCoreFX(world, x, y, z, new Vec3D(xSpeed, ySpeed, zSpeed), spriteSet);
-            List<Integer> list = data.get();
-            particle.toCore = list.size() >= 1 && list.get(0) == 1;
-            particle.startRotation = list.size() >= 2 ? list.get(1) : 0;
-            particle.isLargeStabilizer = list.size() >= 3 && list.get(2) == 1;
+            int[] list = data.get();
+            particle.toCore = list.length >= 1 && list[0] == 1;
+            particle.startRotation = list.length >= 2 ? list[1] : 0;
+            particle.isLargeStabilizer = list.length >= 3 && list[2] == 1;
             particle.scale(particle.isLargeStabilizer ? 2 : 1);
             return particle;
         }

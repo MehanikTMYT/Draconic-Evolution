@@ -20,40 +20,22 @@ import java.util.List;
  * Created by brandon3055 on 2/5/2016.
  * The particle used to render the beams on the Energy Core
  */
-public class ParticleLineIndicator extends TextureSheetParticle {
-    public static final ParticleRenderType PARTICLE_NO_DEPTH_NO_LIGHT = new ParticleRenderType() {
-
-        @Override
-        public BufferBuilder begin(Tesselator builder, TextureManager manager) {
-            RenderSystem.depthMask(false);
-//            RenderSystem.setShader(GameRenderer::getParticleShader);
-            RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-            RenderSystem.enableBlend();
-//            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-            return builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-        }
-
-        public String toString() {
-            return "PARTICLE_NO_DEPTH_NO_LIGHT";
-        }
-    };
-
-    public ParticleLineIndicator(Level worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn) {
-        super((ClientLevel)worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn);
+public class ParticleLineIndicator extends SingleQuadParticle {
+    public ParticleLineIndicator(Level worldIn, double xCoordIn, double yCoordIn, double zCoordIn, double xSpeedIn, double ySpeedIn, double zSpeedIn, SpriteSet sprites) {
+        super((ClientLevel)worldIn, xCoordIn, yCoordIn, zCoordIn, xSpeedIn, ySpeedIn, zSpeedIn, sprites.first());
         this.xd = xSpeedIn;
         this.yd = ySpeedIn;
         this.zd = zSpeedIn;
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return PARTICLE_NO_DEPTH_NO_LIGHT;
+    public SingleQuadParticle.Layer getLayer() {
+        return DEParticleLayers.ADDITIVE;
     }
 
     @Override
-    protected int getLightColor(float p_107249_) {
-        return 255;
+    protected int getLightCoords(float p_107249_) {
+        return net.minecraft.util.LightCoordsUtil.FULL_BRIGHT;
     }
 
 
@@ -65,16 +47,16 @@ public class ParticleLineIndicator extends TextureSheetParticle {
         }
 
         @Override
-        public Particle createParticle(IntParticleData data, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            ParticleLineIndicator particle = new ParticleLineIndicator(world, x, y, z, xSpeed, ySpeed, zSpeed);
-            particle.pickSprite(spriteSet);
+        public Particle createParticle(IntParticleData data, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, net.minecraft.util.RandomSource random) {
+            ParticleLineIndicator particle = new ParticleLineIndicator(world, x, y, z, xSpeed, ySpeed, zSpeed, spriteSet);
+            particle.setSprite(spriteSet.get(random));
 
-            List<Integer> list = data.get();
-            if (list.size() >= 3) {
-                particle.setColor(list.get(0) / 255F, list.get(1) / 255F, list.get(2) / 255F);
+            int[] list = data.get();
+            if (list.length >= 3) {
+                particle.setColor(list[0] / 255F, list[1] / 255F, list[2] / 255F);
             }
-            if (list.size() >= 4) {
-                particle.setLifetime(list.get(3));
+            if (list.length >= 4) {
+                particle.setLifetime(list[3]);
             }
 
             return particle;

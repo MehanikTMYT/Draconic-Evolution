@@ -92,6 +92,13 @@ public class CrystalFXBeam<T extends BlockEntity & IENetEffectTile> extends Crys
     }
 
     @Override
+    public net.minecraft.resources.Identifier texture() {
+        if (ClientEventHandler.playerHoldingWrench) return CrystalFXRenderer.HIGHLIGHT;
+        String tier = tile.getTier() == 0 ? "basic" : tile.getTier() == 1 ? "wyvern" : "draconic";
+        return net.minecraft.resources.Identifier.fromNamespaceAndPath("draconicevolution", "textures/particle/energy_beam_" + tier + ".png");
+    }
+
+    @Override
     public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
         if (powerLevel <= 0 && !ClientEventHandler.playerHoldingWrench) {
             return;
@@ -188,39 +195,4 @@ public class CrystalFXBeam<T extends BlockEntity & IENetEffectTile> extends Crys
         BCProfiler.RENDER.stop();
     }
 
-    @Override
-    public ParticleRenderType getRenderType() {
-        return tile.getTier() == 0 ? BASIC_HANDLER : tile.getTier() == 1 ? WYVERN_HANDLER : DRACONIC_HANDLER;
-    }
-
-    private static final ParticleRenderType BASIC_HANDLER = new FXHandler(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_basic.png"));
-    private static final ParticleRenderType WYVERN_HANDLER = new FXHandler(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_wyvern.png"));
-    private static final ParticleRenderType DRACONIC_HANDLER = new FXHandler(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_draconic.png"));
-
-    public static class FXHandler implements ParticleRenderType {
-        private static final Identifier highlightTexture = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_highlight.png");
-        private Identifier texture;
-        private float green;
-
-        public FXHandler(Identifier texture) {
-            this.texture = texture;
-            this.green = texture.getPath().contains("energy_beam_wyvern") ? 0.3F : 1F;
-        }
-
-        @Override
-        public BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {
-            RenderSystem.setShader(GameRenderer::getPositionColorTexLightmapShader);
-            RenderSystem.disableCull();
-            RenderSystem.depthMask(false);
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-            if (ClientEventHandler.playerHoldingWrench) {
-                RenderSystem.setShaderTexture(0, highlightTexture);
-            } else {
-                RenderSystem.setShaderTexture(0, texture);
-            }
-            return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP);
-        }
-
-    }
 }

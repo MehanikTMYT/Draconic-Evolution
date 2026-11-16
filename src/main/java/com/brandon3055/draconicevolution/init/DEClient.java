@@ -76,6 +76,7 @@ public class DEClient {
         modBus.addListener(DEClient::registerClientExtensions);
         modBus.addListener(DEClient::registerMenuScreens);
         modBus.addListener(DEParticles::registerFactories);
+        modBus.addListener(com.brandon3055.draconicevolution.client.render.particle.DEParticleLayers::register);
 
 //        modBus.addListener((RegisterColorHandlersEvent.Block event) -> moduleSpriteUploader = new ModuleSpriteUploader());
 
@@ -86,6 +87,7 @@ public class DEClient {
         DEShaders.init(modBus);
         ClientEventHandler.init(modBus);
         AtlasTextureHelper.init(modBus);
+        com.brandon3055.draconicevolution.client.render.effect.CrystalFXRenderer.init(modBus);
         KeyBindings.init(modBus);
         DEGuiTextures.init(modBus);
     }

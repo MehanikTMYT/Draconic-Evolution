@@ -79,6 +79,11 @@ public class CrystalFXLink extends CrystalFXBase<TileCrystalBase> {
     }
 
     @Override
+    public net.minecraft.resources.Identifier texture() {
+        return CrystalFXRenderer.HIGHLIGHT;
+    }
+
+    @Override
     public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
         float scale = 0.1F + (timeout * 0.005F);
         Vec3 viewVec = renderInfo.position();
@@ -158,29 +163,4 @@ public class CrystalFXLink extends CrystalFXBase<TileCrystalBase> {
         buffer.addVertex((float) p3.x, (float) p3.y, (float) p3.z).setColor(1F, 0F, 0F, 1F).setUv(1.0F, anim).setUv2(240, 240);
     }
 
-    @Override
-    public ParticleRenderType getRenderType() {
-        return HANDLER;
-    }
-
-    private static final ParticleRenderType HANDLER = new FXHandler();
-
-    public static class FXHandler implements ParticleRenderType {
-        private static final Identifier highlightTexture = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_highlight.png");
-
-        public FXHandler() {
-        }
-
-        @Override
-        public BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {
-            RenderSystem.disableCull();
-            RenderSystem.depthMask(false);
-            RenderSystem.enableBlend();
-            //TODO, Is this blend func going to cause issues?
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-            RenderSystem.setShader(GameRenderer::getPositionColorTexLightmapShader);
-            RenderSystem.setShaderTexture(0, highlightTexture);
-            return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP);
-        }
-    }
 }

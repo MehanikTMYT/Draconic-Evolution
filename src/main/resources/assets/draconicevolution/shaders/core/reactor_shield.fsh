@@ -1,9 +1,9 @@
-#version 150
+#version 330
+
+#moj_import <draconicevolution:de_effect_params.glsl>
 
 #moj_import <brandonscore:math.glsl>
 
-uniform float time;
-uniform float intensity;
 
 in vec2 texCoord0;
 

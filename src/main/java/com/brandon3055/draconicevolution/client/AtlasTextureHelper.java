@@ -37,21 +37,6 @@ public class AtlasTextureHelper {
     public static TextureAtlasSprite PORTAL_PARTICLE;
     public static TextureAtlasSprite ENERGY_CORE_OVERLAY;
 
-    public static ParticleRenderType PARTICLE_SHEET_TRANSLUCENT = new ParticleRenderType() {
-        public BufferBuilder begin(Tesselator tesselator, TextureManager manager) {
-            RenderSystem.depthMask(false);
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_PARTICLES);
-            return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE);
-        }
-
-//        public void end(Tesselator tessellator) {
-//            tessellator.end();
-//        }
-
-    };
-
     public static void init(IEventBus modBus) {
         modBus.addListener(AtlasTextureHelper::textureStitch);
     }

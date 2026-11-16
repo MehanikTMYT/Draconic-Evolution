@@ -1,11 +1,9 @@
-#version 150
+#version 330
+
+#moj_import <draconicevolution:de_effect_params.glsl>
 
 #moj_import <brandonscore:math.glsl>
 
-uniform float Time;
-uniform float Activation;
-uniform vec4 BaseColour;
-uniform int BarMode;
 
 in vec2 texCoord0;
 

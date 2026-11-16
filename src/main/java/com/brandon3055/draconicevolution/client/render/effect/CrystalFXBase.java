@@ -14,6 +14,20 @@ import org.joml.Vector3f;
  */
 public abstract class CrystalFXBase<T extends BlockEntity & IENetEffectTile> extends Particle {
 
+    // Particle no longer carries colour in MC26; these are DE effect parameters.
+    protected float rCol = 1, gCol = 1, bCol = 1, alpha = 1;
+
+    public abstract net.minecraft.resources.Identifier texture();
+    public abstract void render(com.mojang.blaze3d.vertex.VertexConsumer buffer, Camera camera, float partialTick);
+
+    // CrystalFXRenderer owns rendering and ticking; never enqueue this group into ParticleEngine.
+    @Override
+    public final net.minecraft.client.particle.ParticleRenderType getGroup() {
+        return net.minecraft.client.particle.ParticleRenderType.NO_RENDER;
+    }
+
+    public final boolean belongsTo(ClientLevel level) { return this.level == level && !tile.isRemoved(); }
+
     protected final T tile;
     protected int ticksTillDeath = 0;
     protected float fxState;
@@ -48,7 +62,7 @@ public abstract class CrystalFXBase<T extends BlockEntity & IENetEffectTile> ext
     }
 
     protected void setPosition(Vec3D pos) {
-        setPos(pos.x(), pos.y, pos.z());
+        setPos(pos.x, pos.y, pos.z);
     }
 
     protected Vector3f[] getRenderVectors(Camera renderInfo, float viewX, float viewY, float viewZ, float scale) {

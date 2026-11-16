@@ -126,7 +126,7 @@ public class ReactorBeamFX extends Particle {
 
 
         if (isInjectorEffect) {
-            DEShaders.reactorBeamType.glUniformI(2);
+            DEShaders.reactorBeamType.glUniform1i(2);
             DEShaders.reactorBeamFade.glUniform1f(1F);
             DEShaders.reactorBeamPower.glUniform1f(fxState);
             DEShaders.reactorBeamStartup.glUniform1f(fxState);
@@ -144,7 +144,7 @@ public class ReactorBeamFX extends Particle {
             Vec3D pos2 = pos1.copy().offset(facing, 0.8D);
 
             //Inner Inner
-            DEShaders.reactorBeamType.glUniformI(1);
+            DEShaders.reactorBeamType.glUniform1i(1);
             DEShaders.reactorBeamFade.glUniform1f(1F);
             DEShaders.reactorBeamPower.glUniform1f((float) tile.animExtractState.get());
             DEShaders.reactorBeamStartup.glUniform1f((float) tile.animExtractState.get());
@@ -160,7 +160,7 @@ public class ReactorBeamFX extends Particle {
 
 
             //Draw Outer
-            DEShaders.reactorBeamType.glUniformI(0);
+            DEShaders.reactorBeamType.glUniform1i(0);
             DEShaders.reactorBeamFade.glUniform1f(1F);
             DEShaders.reactorBeamPower.glUniform1f(fxState);
             DEShaders.reactorBeamStartup.glUniform1f(fxState);

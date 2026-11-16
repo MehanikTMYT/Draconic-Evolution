@@ -6,19 +6,19 @@ import com.brandon3055.draconicevolution.client.AtlasTextureHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.particle.SingleQuadParticle;
 
 /**
  * Created by brandon3055 on 17/07/2016.
  */
-public class ParticlePortal extends TextureSheetParticle {
+public class ParticlePortal extends SingleQuadParticle {
 
     public Vector3 target;
     public Vector3 start;
     public float baseScale;
 
     public ParticlePortal(ClientLevel worldIn, Vector3 pos, Vector3 target) {
-        super(worldIn, pos.x(), pos.y, pos.z());
+        super(worldIn, pos.x, pos.y, pos.z, AtlasTextureHelper.PORTAL_PARTICLE);
         this.start = pos;
         this.target = target;
         float speed = 0.12F + (random.nextFloat() * 0.2F);
@@ -28,15 +28,15 @@ public class ParticlePortal extends TextureSheetParticle {
         sprite = AtlasTextureHelper.PORTAL_PARTICLE;
         this.lifetime = 120;
         this.rCol = this.gCol = this.bCol = 1.0f;
-        float baseSize = 0.05F + ((float) Math.sqrt(Minecraft.getInstance().player.distanceToSqr(pos.x(), pos.y, pos.z()))) * 0.007F;
+        float baseSize = 0.05F + ((float) Math.sqrt(Minecraft.getInstance().player.distanceToSqr(pos.x, pos.y, pos.z))) * 0.007F;
         this.baseScale = (baseSize + (random.nextFloat() * (baseSize * 2F))) * 0.1F;
         this.quadSize = 0;
         this.hasPhysics = false;
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return AtlasTextureHelper.PARTICLE_SHEET_TRANSLUCENT;
+    public SingleQuadParticle.Layer getLayer() {
+        return SingleQuadParticle.Layer.TRANSLUCENT;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ParticlePortal extends TextureSheetParticle {
     }
 
     @Override
-    protected int getLightColor(float p_189214_1_) {
+    protected int getLightCoords(float p_189214_1_) {
         return 0xF000F0;
     }
 }

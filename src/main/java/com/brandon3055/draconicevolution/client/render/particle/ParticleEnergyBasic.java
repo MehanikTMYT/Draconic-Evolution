@@ -11,20 +11,20 @@ import net.minecraft.client.particle.*;
 
 
 
-public class ParticleEnergyBasic extends TextureSheetParticle {
+public class ParticleEnergyBasic extends SingleQuadParticle {
 
     private final SpriteSet spriteSet;
 
     public ParticleEnergyBasic(ClientLevel world, double xPos, double yPos, double zPos, SpriteSet spriteSet) {
-        super(world, xPos, yPos, zPos);
+        super(world, xPos, yPos, zPos, spriteSet.first());
         this.spriteSet = spriteSet;
         setSprite(spriteSet.get(world.getRandom()));
         hasPhysics = false;
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    public SingleQuadParticle.Layer getLayer() {
+        return SingleQuadParticle.Layer.TRANSLUCENT;
     }
 
     @Override
@@ -40,19 +40,19 @@ public class ParticleEnergyBasic extends TextureSheetParticle {
         }
 
         @Override
-        public Particle createParticle(IntParticleData data, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle createParticle(IntParticleData data, ClientLevel world, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, net.minecraft.util.RandomSource random) {
             ParticleEnergyBasic particleEnergy = new ParticleEnergyBasic(world, x, y, z, spriteSet);
             particleEnergy.xd = xSpeed;
             particleEnergy.yd = ySpeed;
             particleEnergy.zd = zSpeed;
 
-            List<Integer> list = data.get();
-            if (list.size() >= 3) {
-                particleEnergy.setColor(list.get(0) / 255F, list.get(1) / 255F, list.get(2) / 255F);
+            int[] list = data.get();
+            if (list.length >= 3) {
+                particleEnergy.setColor(list[0] / 255F, list[1] / 255F, list[2] / 255F);
             }
 
-            if (list.size() >= 4) {
-                particleEnergy.scale(list.get(3) / 100F);
+            if (list.length >= 4) {
+                particleEnergy.scale(list[3] / 100F);
             }
 
             return particleEnergy;

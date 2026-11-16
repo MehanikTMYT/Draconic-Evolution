@@ -181,8 +181,9 @@ public class LootEventHandler {
             ItemEntity item = EntityType.ITEM.create(entity.level(), EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
             if (item != null) {
                 item.setItem(new ItemStack(DEContent.DRAGON_HEART.get()));
-                BlockPos podiumPos = entity.level().getHeightmapPos(Heightmap.Types.WORLD_SURFACE, EndPodiumFeature.getLocation(manager.origin)).offset(0, 3, 0);
-                item.moveTo(podiumPos.getX() + 0.5, podiumPos.getY(), podiumPos.getZ() + 0.5, 0, 0);
+                // port-26.1.2: EnderDragonFight.origin стал приватным -> EnderDragon.getFightOrigin()
+                BlockPos podiumPos = entity.level().getHeightmapPos(Heightmap.Types.WORLD_SURFACE, EndPodiumFeature.getLocation(dragon.getFightOrigin() != null ? dragon.getFightOrigin() : entity.blockPosition())).offset(0, 3, 0);
+                item.moveTo(podiumPos.getX() + 0.5, podiumPos.getY(), podiumPos.getZ() + 0.5, 0.0F, 0.0F);
                 item.setDeltaMovement(0, 0, 0);
                 item.setUnlimitedLifetime();
                 item.setNoGravity(true);
@@ -190,7 +191,7 @@ public class LootEventHandler {
             }
 
             if (DEConfig.dragonEggSpawnOverride && manager.hasPreviouslyKilledDragon()) {
-                entity.level().setBlockAndUpdate(entity.level().getHeightmapPos(Heightmap.Types.WORLD_SURFACE, EndPodiumFeature.getLocation(manager.origin)).offset(0, 0, -4), Blocks.DRAGON_EGG.defaultBlockState());
+                entity.level().setBlockAndUpdate(entity.level().getHeightmapPos(Heightmap.Types.WORLD_SURFACE, EndPodiumFeature.getLocation(dragon.getFightOrigin() != null ? dragon.getFightOrigin() : entity.blockPosition())).offset(0, 0, -4), Blocks.DRAGON_EGG.defaultBlockState());
             }
         }
 
@@ -251,7 +252,8 @@ public class LootEventHandler {
     }
 
     private static boolean canEntityDropSoul(LivingEntity entity) {
-        if (entity.getType().is(Tags.EntityTypes.BOSSES) && !DEConfig.allowBossSouls) {
+        // порт-26.1.2: EntityType.is(TagKey) удалён -> builtInRegistryHolder().is(TagKey)
+        if (entity.getType().builtInRegistryHolder().is(Tags.EntityTypes.BOSSES) && !DEConfig.allowBossSouls) {
             return false;
         }
         //noinspection DataFlowIssue
