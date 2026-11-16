@@ -1,5 +1,7 @@
 package com.brandon3055.draconicevolution.blocks.reactor.tileentity;
 
+import net.minecraft.server.level.ServerLevel;
+
 import codechicken.lib.data.MCDataInput;
 
 import com.brandon3055.brandonscore.blocks.TileBCore;
@@ -392,4 +394,14 @@ public abstract class TileReactorComponent extends TileBCore {
 //
 //        return EnumActionResult.FAIL;
 //    }
+
+    // port-26.1.2: BlockBehaviour.onRemove удалён в 26 — логика перенесена сюда;
+    // срабатывает при удалении BE из-за смены блока (guard отличает выгрузку чанка).
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+            onBroken();
+        }
+    }
 }

@@ -34,7 +34,7 @@ import net.minecraft.client.Minecraft;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 
-import net.minecraft.client.renderer.RenderStateShard;
+// import net.minecraft.client.renderer.RenderStateShard; // port-26.1.2: RenderStateShard/CompositeState API changed in 26
 
 import net.minecraft.client.renderer.rendertype.RenderType;
 
@@ -103,13 +103,15 @@ public class ClientEventHandler {
     public static int explosionTime = 0;
     public static boolean explosionRetreating = false;
 
-    public static final RenderType explosionFlashType = RenderType.create(MODID + ":explosion_flash", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256,
-            RenderType.CompositeState.builder()
-                    .setShaderState(new RenderStateShard.ShaderStateShard(() -> DEShaders.explosionFlashShader))
-                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-                    .setCullState(RenderStateShard.NO_CULL)
-                    .createCompositeState(false)
-    );
+    // port-26.1.2: RenderStateShard/CompositeState API changed in 26; TODO: port explosion shader rendering
+    // public static final RenderType explosionFlashType = RenderType.create(MODID + ":explosion_flash", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256,
+    //         RenderType.CompositeState.builder()
+    //                 .setShaderState(new RenderStateShard.ShaderStateShard(() -> DEShaders.explosionFlashShader))
+    //                 .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+    //                 .setCullState(RenderStateShard.NO_CULL)
+    //                 .createCompositeState(false)
+    // );
+    public static final RenderType explosionFlashType = null;  // temporary stub for compilation
 
     public static void init(IEventBus modBus) {
         mc = Minecraft.getInstance();
@@ -381,7 +383,8 @@ public class ClientEventHandler {
             DEShaders.explosionFlashScreenPos.glUniform2f(screenX, screenY);
             DEShaders.explosionFlashIntensity.glUniform1f((float) explosionAnimation);
             DEShaders.explosionFlashScreenSize.glUniform2f(window.getScreenWidth(), window.getScreenHeight());
-            render.rect(explosionFlashType, 0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), 0xFFFFFFFF);
+            // port-26.1.2: explosionFlashType stub; TODO: port explosion shader rendering
+            // render.rect(explosionFlashType, 0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), 0xFFFFFFFF);
             RenderUtils.endBatch(render.buffers());
         }
     }

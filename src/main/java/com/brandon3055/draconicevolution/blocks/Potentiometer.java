@@ -63,15 +63,10 @@ public class Potentiometer extends EntityBlockBCore {
     }
 
     @Override
-    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!isMoving && !state.is(newState.getBlock())) {
-            BlockEntity tile = worldIn.getBlockEntity(pos);
-            if (tile instanceof TilePotentiometer && ((TilePotentiometer) tile).power.get() > 0) {
-                this.updateNeighbors(state, worldIn, pos);
-            }
-
-            super.onRemove(state, worldIn, pos, newState, isMoving);
-        }
+    // port-26.1.2: логика перенесена в TilePotentiometer.setRemoved (power-проверке нужен BE);
+    // отклонение: при piston-перемещении (isMoving) старый код пропускал update — в 26 флаг недоступен в setRemoved.
+    void updateNeighborsAfterRemoval(BlockState state, Level world, BlockPos pos) {
+        this.updateNeighbors(state, world, pos);
     }
 
     private void updateNeighbors(BlockState state, Level world, BlockPos pos) {

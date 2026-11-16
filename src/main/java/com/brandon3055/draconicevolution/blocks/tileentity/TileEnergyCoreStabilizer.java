@@ -1,5 +1,7 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
+import net.minecraft.server.level.ServerLevel;
+
 import codechicken.lib.vec.Vector3;
 
 import com.brandon3055.brandonscore.api.TimeKeeper;
@@ -412,4 +414,20 @@ public class TileEnergyCoreStabilizer extends TileBCore implements IInteractTile
 //
 
 
+
+    // port-26.1.2: BlockBehaviour.onRemove удалён в 26 — логика перенесена сюда;
+    // срабатывает при удалении BE из-за смены блока (guard отличает выгрузку чанка).
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+            if (isValidMultiBlock.get()) {
+                revertStructure();
+            }
+            TileEnergyCore core = getCore();
+            if (core != null) {
+                validateStructure();
+            }
+        }
+    }
 }

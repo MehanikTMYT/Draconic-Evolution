@@ -437,7 +437,7 @@ public class PropertyData {
 //            case ENUM -> {
 //                data.enumValueIndex = nbt.getInt("value");
 //                if (nbt.contains("names")) {
-//                    data.enumValueOptions = nbt.getList("names", 3).stream().map(inbt -> ((IntTag) inbt).getAsInt()).collect(Collectors.toList());
+//                    data.enumValueOptions = nbt.getList("names", 3).stream().map(inbt -> ((IntTag) inbt).getInt()).collect(Collectors.toList());
 //                }
 //                if (nbt.contains("name_values")) {
 //                    CompoundTag nameValues = nbt.getCompound("name_values");

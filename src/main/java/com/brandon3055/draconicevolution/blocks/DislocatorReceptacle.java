@@ -30,16 +30,7 @@ public class DislocatorReceptacle extends EntityBlockBCore {
         builder.add(ACTIVE, CAMO);
     }
 
-    @Override
-    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        BlockEntity tile = worldIn.getBlockEntity(pos);
-
-        if (tile instanceof TileDislocatorReceptacle && newState.getBlock() != state.getBlock()) {
-            ((TileDislocatorReceptacle) tile).deactivate();
-        }
-
-        super.onRemove(state, worldIn, pos, newState, isMoving);
-    }
+    // port-26.1.2: BE-логика перенесена в TileDislocatorReceptacle.setRemoved (guard = смена блока)
 
     @Override
     public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {

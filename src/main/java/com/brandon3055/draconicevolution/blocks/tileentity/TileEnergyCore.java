@@ -1,5 +1,7 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
+import net.minecraft.server.level.ServerLevel;
+
 import codechicken.lib.colour.Colour;
 
 import codechicken.lib.data.MCDataInput;
@@ -514,6 +516,16 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
 //        shape2 = shape;
 //        return shape.move(offset.x, offset.y, offset.z);
         return Shapes.block();
+    }
+
+    // port-26.1.2: BlockBehaviour.onRemove удалён в 26 — логика перенесена сюда;
+    // срабатывает при удалении BE из-за смены блока (guard отличает выгрузку чанка).
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+            onRemoved();
+        }
     }
 }
 

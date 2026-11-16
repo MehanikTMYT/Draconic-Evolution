@@ -1,5 +1,7 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
+import net.minecraft.server.level.ServerLevel;
+
 import com.brandon3055.brandonscore.api.TechLevel;
 import com.brandon3055.brandonscore.api.power.OPStorage;
 import com.brandon3055.brandonscore.blocks.TileBCore;
@@ -195,4 +197,14 @@ public class TileFusionCraftingInjector extends TileBCore implements IFusionInje
 //
 //        updateBlock();
 //    }
+
+    // port-26.1.2: BlockBehaviour.onRemove удалён в 26 — логика перенесена сюда;
+    // срабатывает при удалении BE из-за смены блока (guard отличает выгрузку чанка).
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+            onDestroyed();
+        }
+    }
 }

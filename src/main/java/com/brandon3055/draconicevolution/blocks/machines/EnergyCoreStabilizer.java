@@ -103,22 +103,7 @@ public class EnergyCoreStabilizer extends EntityBlockBCore {
         }
     }
 
-    @Override
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
-        BlockEntity tile = world.getBlockEntity(pos);
-
-        if (tile instanceof TileEnergyCoreStabilizer) {
-            if (((TileEnergyCoreStabilizer) tile).isValidMultiBlock.get()) {
-                ((TileEnergyCoreStabilizer) tile).revertStructure();
-            }
-            TileEnergyCore core = ((TileEnergyCoreStabilizer) tile).getCore();
-            if (core != null) {
-                world.removeBlockEntity(pos);
-                ((TileEnergyCoreStabilizer) tile).validateStructure();
-            }
-        }
-        super.onRemove(state, world, pos, newState, isMoving);
-    }
+    // port-26.1.2: BE-логика перенесена в TileEnergyCoreStabilizer.setRemoved (см.)
 
 
     //endregion

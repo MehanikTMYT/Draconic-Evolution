@@ -99,7 +99,7 @@ public class DEConfig {
                 .syncTagToClient()
                 .setComment("This can be used to limit the maximum speed boost allowed by the modular armor.", "A value of for example 1 means a maximum boost of +100%% over default character speed.", "Set to -1 for no limit, Default: 16 (+1600%%)")
                 .setDefaultDouble(16)
-                .onSync((tag, type) -> armorSpeedLimit = tag.getAsDouble());
+                .onSync((tag, type) -> armorSpeedLimit = tag.getDouble());
 
         serverTag.getValue("enableElytraFlight")
                 .syncTagToClient()
@@ -117,24 +117,24 @@ public class DEConfig {
                 .syncTagToClient()
                 .setComment("Sets the maximum blink range for the Advanced Dislocator")
                 .setDefaultInt(32)
-                .onSync((tag, type) -> dislocatorBlinkRange = tag.getAsInt());
+                .onSync((tag, type) -> dislocatorBlinkRange = tag.getInt());
 
         serverTag.getValue("dislocatorBlinksPerPearl")
                 .syncTagToClient()
                 .setComment("Sets the blinks to regular fuel ratio. Default 1 regular fuel (1 pearl) allows 4 blinks.")
                 .setDefaultInt(4)
-                .onSync((tag, type) -> dislocatorBlinksPerPearl = tag.getAsInt());
+                .onSync((tag, type) -> dislocatorBlinksPerPearl = tag.getInt());
 
         serverTag.getValue("fusionInjectorRange")
                 .syncTagToClient()
                 .setComment("Sets how far fusion crafting injectors can be from the fusion crafting core")
                 .setDefaultInt(16)
-                .onSync((tag, type) -> fusionInjectorRange = tag.getAsInt());
+                .onSync((tag, type) -> fusionInjectorRange = tag.getInt());
         serverTag.getValue("fusionInjectorMinDist")
                 .syncTagToClient()
                 .setComment("Sets the minimum distance a fusion injector must be from the fusion crafting core.")
                 .setDefaultInt(2)
-                .onSync((tag, type) -> fusionInjectorMinDist = tag.getAsInt());
+                .onSync((tag, type) -> fusionInjectorMinDist = tag.getInt());
         serverTag.getValueList("fusionChargeTime")
                 .syncTagToClient()
                 .setComment("Time in ticks required for charging phase of fusion crafting with each injector tier. Draconium, Wyvern, Draconic, Chaotic")
@@ -159,22 +159,22 @@ public class DEConfig {
                     .syncTagToClient()
                     .setComment("Sets the base shield strength for chaos guardian crystals.\nDefault: 512")
                     .setDefaultInt(-99)
-                    .onSync((tag, type) -> guardianCrystalShield = tag.getAsInt() == -99 ? 512 : tag.getAsInt());
+                    .onSync((tag, type) -> guardianCrystalShield = tag.getInt() == -99 ? 512 : tag.getInt());
             guardianFight.getValue("guardianCrystalUnstableWindow")
                     .syncTagToClient()
                     .setComment("Sets how long the guarian crystal's shield will be unstable after receiving damage from the chaos guardian\nDefault: 200 (10 seconds)")
                     .setDefaultInt(-99)
-                    .onSync((tag, type) -> guardianCrystalUnstableWindow = tag.getAsInt() == -99 ? 200 : tag.getAsInt());
+                    .onSync((tag, type) -> guardianCrystalUnstableWindow = tag.getInt() == -99 ? 200 : tag.getInt());
             guardianFight.getValue("guardianHealth")
                     .syncTagToClient()
                     .setComment("Sets the guardians base health value (After you break through the guardians shield)\nDefault: 1000")
                     .setDefaultInt(-99)
-                    .onSync((tag, type) -> guardianHealth = tag.getAsInt() == -99 ? 1000 : tag.getAsInt());
+                    .onSync((tag, type) -> guardianHealth = tag.getInt() == -99 ? 1000 : tag.getInt());
             guardianFight.getValue("guardianShield")
                     .syncTagToClient()
                     .setComment("Sets the guardians shield capacity (You will need to break through this after disabling the guardian crystals)\nKeep in mind there is no limit to how fast you can hit the guardians shield so this will melt with a high damage rapid fire bow.\nDefault: 16000")
                     .setDefaultInt(-99)
-                    .onSync((tag, type) -> guardianShield = tag.getAsInt() == -99 ? 16000 : tag.getAsInt());
+                    .onSync((tag, type) -> guardianShield = tag.getInt() == -99 ? 16000 : tag.getInt());
             guardianFight.getValue("chaoticBypassCrystalShield")
                     .syncTagToClient()
                     .setComment("Allows chaotic weapons to destabilize the guardian crystal shields.\nThis makes it much easier to farm the guardian but only after you have chaos tier weapons.")
@@ -184,7 +184,7 @@ public class DEConfig {
                     .syncTagToClient()
                     .setComment("Number of chaos shards dropped by the chaos crystal when broken by a player")
                     .setDefaultInt(5)
-                    .onSync((tag, type) -> chaosDropCount = tag.getAsInt());
+                    .onSync((tag, type) -> chaosDropCount = tag.getInt());
 
             ConfigCategory category = config.getCategory("Chaos Island");
             chaosIslandEnabled = category.getValue("enableGeneration")
@@ -222,12 +222,12 @@ public class DEConfig {
                     .syncTagToClient()
                     .setComment("Mobs have a 1 in {this number} chance to drop a soul when killed with the Reaper enchantment.  Note: This is the base value; higher enchantment levels increase this chance.")
                     .setDefaultInt(1000)
-                    .onSync((tag, type) -> soulDropChance = tag.getAsInt());
+                    .onSync((tag, type) -> soulDropChance = tag.getInt());
             deSpawner.getValue("passiveSoulDropChance")
                     .syncTagToClient()
                     .setComment("Passive (Animals) Mobs have a 1 in {this number} chance to drop a soul when killed with the Reaper enchantment.  Note: This is the base value; higher enchantment levels increase this chance.")
                     .setDefaultInt(800)
-                    .onSync((tag, type) -> passiveSoulDropChance = tag.getAsInt());
+                    .onSync((tag, type) -> passiveSoulDropChance = tag.getInt());
             deSpawner.getValueList("spawnerList")
                     .syncTagToClient()
                     .setComment("By default, any entities added to this list will not drop their souls and will not be spawnable by the Stabilized Spawner. Use entity registry name. e.g. minecraft:cow")
@@ -254,25 +254,25 @@ public class DEConfig {
                 .syncTagToClient()
                 .setComment("Sets the maximum fuel that can be added to an Advanced Dislocator.")
                 .setDefaultInt(1024)
-                .onSync((tag, type) -> dislocatorMaxFuel = tag.getAsInt());
+                .onSync((tag, type) -> dislocatorMaxFuel = tag.getInt());
 
         serverTag.getValue("dislocatorBlinkCooldown")
                 .syncTagToClient()
                 .setComment("Sets blink cooldown in ticks")
                 .setDefaultInt(5)
-                .onSync((tag, type) -> dislocatorBlinkCooldown = tag.getAsInt());
+                .onSync((tag, type) -> dislocatorBlinkCooldown = tag.getInt());
 
         serverTag.getValue("portalMaxArea")
                 .syncTagToClient()
                 .setComment("Sets maximum area (in blocks) for a DE portal, The default value 65536 is equivalent to a 256x256 portal")
                 .setDefaultInt(65536)
-                .onSync((tag, type) -> portalMaxArea = tag.getAsInt());
+                .onSync((tag, type) -> portalMaxArea = tag.getInt());
 
         serverTag.getValue("portalMaxDistance")
                 .syncTagToClient()
                 .setComment("This is more for sanity than actually limiting portal size. Sets the max distance a portal block can be from the receptacle")
                 .setDefaultInt(256)
-                .onSync((tag, type) -> portalMaxDistanceSq = tag.getAsInt() * tag.getAsInt());
+                .onSync((tag, type) -> portalMaxDistanceSq = tag.getInt() * tag.getInt());
 
         {
             ConfigCategory reactor = serverTag.getCategory("Reactor");
@@ -282,17 +282,17 @@ public class DEConfig {
                     .syncTagToClient()
                     .setComment("Adjusts the energy output multiplier of the reactor.")
                     .setDefaultDouble(1)
-                    .onSync((tag, type) -> reactorOutputMultiplier = tag.getAsDouble());
+                    .onSync((tag, type) -> reactorOutputMultiplier = tag.getDouble());
             reactor.getValue("reactorFuelUsageMultiplier")
                     .syncTagToClient()
                     .setComment("Adjusts the fuel usage multiplier of the reactor.")
                     .setDefaultDouble(1)
-                    .onSync((tag, type) -> reactorFuelUsageMultiplier = tag.getAsDouble());
+                    .onSync((tag, type) -> reactorFuelUsageMultiplier = tag.getDouble());
             reactor.getValue("reactorExplosionScale")
                     .syncTagToClient()
                     .setComment("Allows you to adjust the overall scale of the reactor explosion. Use \\\"disableLargeReactorBoom\\\" to disable explosion completely.")
                     .setDefaultDouble(1)
-                    .onSync((tag, type) -> reactorExplosionScale = tag.getAsDouble());
+                    .onSync((tag, type) -> reactorExplosionScale = tag.getDouble());
             reactor.getValue("disableLargeReactorBoom")
                     .syncTagToClient()
                     .setComment("If true, this will disable the massive reactor explosion and replace it with a much smaller one.")
@@ -304,7 +304,7 @@ public class DEConfig {
                 .syncTagToClient()
                 .setComment("This can be used to adjust the amount of Draconium Dust the Ender Dragon drops when killed.\nThe amount dropped will be this number +/- 10%%")
                 .setDefaultInt(64)
-                .onSync((tag, type) -> dragonDustLootModifier = tag.getAsInt());
+                .onSync((tag, type) -> dragonDustLootModifier = tag.getInt());
         serverTag.getValue("dragonEggSpawnOverride")
                 .syncTagToClient()
                 .setComment("By default, the dragon egg only ever spawns once. This forces it to spawn every time the dragon is killed.")
@@ -349,7 +349,7 @@ public class DEConfig {
                 .syncTagToClient()
                 .setComment("Mob Grinder energy required per entity health point")
                 .setDefaultInt(80)
-                .onSync((tag, type) -> grinderEnergyPerHeart = tag.getAsInt());
+                .onSync((tag, type) -> grinderEnergyPerHeart = tag.getInt());
         serverTag.getValueList("grinderBlackList")
                 .syncTagToClient()
                 .setComment("Mob Grinder entity blacklist.")

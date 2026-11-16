@@ -55,6 +55,8 @@ sourceSets {
         java {
             // port-26.1.2: datagen-кластер исключён до этапа datagen (ExistingFileHelper/модельные генераторы 26) — см. stage1/2 отчёт
             exclude 'com/brandon3055/draconicevolution/datagen/**'
+            // port-26.1.2: TestRenderLayer — тестовый класс, не используется, RenderLayer API 26 несовместима
+            exclude 'com/brandon3055/draconicevolution/client/TestRenderLayer.java'
         }
     }
 }

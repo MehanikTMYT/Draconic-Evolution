@@ -103,15 +103,7 @@ public class ReactorComponent extends EntityBlockBCore {
         return InteractionResult.SUCCESS;
     }
 
-    @Override
-    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        BlockEntity te = worldIn.getBlockEntity(pos);
-
-        if (te instanceof TileReactorComponent) {
-            ((TileReactorComponent) te).onBroken();
-        }
-        super.onRemove(state, worldIn, pos, newState, isMoving);
-    }
+    // port-26.1.2: BE-логика перенесена в TileReactorComponent.setRemoved (см.)
 
     @Override
     public boolean hasAnalogOutputSignal(BlockState state) {

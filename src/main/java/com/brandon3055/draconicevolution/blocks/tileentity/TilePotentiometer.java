@@ -1,5 +1,7 @@
 package com.brandon3055.draconicevolution.blocks.tileentity;
 
+import net.minecraft.server.level.ServerLevel;
+
 import com.brandon3055.brandonscore.blocks.TileBCore;
 
 import com.brandon3055.brandonscore.lib.ChatHelper;
@@ -102,5 +104,17 @@ public class TilePotentiometer extends TileBCore implements IRedstoneEmitter, II
         super.tick();
 
         return InteractionResult.SUCCESS;
+    }
+
+    // port-26.1.2: BlockBehaviour.onRemove удалён в 26 — логика перенесена сюда (guard = смена блока, не выгрузка чанка)
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+            if (power.get() > 0) {
+                ((com.brandon3055.draconicevolution.blocks.Potentiometer) getBlockState().getBlock())
+                        .updateNeighborsAfterRemoval(getBlockState(), level(), worldPosition);
+            }
+        }
     }
 }

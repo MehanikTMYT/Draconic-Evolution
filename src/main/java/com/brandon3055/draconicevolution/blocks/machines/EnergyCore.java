@@ -43,11 +43,5 @@ public class EnergyCore extends EntityBlockBCore {
         return state.getValue(ACTIVE) ? RenderShape.INVISIBLE : RenderShape.MODEL;
     }
 
-    @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (level.getBlockEntity(pos) instanceof TileEnergyCore tile && (!state.is(newState.getBlock()) || !newState.hasBlockEntity())) {
-            tile.onRemoved();
-        }
-        super.onRemove(state, level, pos, newState, isMoving);
-    }
+    // port-26.1.2: BE-логика перенесена в TileEnergyCore.setRemoved (guard = блок реально сменился)
 }

@@ -153,125 +153,125 @@ public class EquipCfg {
         equipTag.getValue("draconiumHarvestSpeed")
                 .setComment("Internal Default Value: " + DRACONIUM_HARVEST_SPEED)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> draconiumHarvestSpeed = tag.getAsDouble() != -99 ? tag.getAsDouble() : DRACONIUM_HARVEST_SPEED);
+                .onSync((tag, type) -> draconiumHarvestSpeed = tag.getDouble() != -99 ? tag.getDouble() : DRACONIUM_HARVEST_SPEED);
         equipTag.getValue("wyvernHarvestSpeed")
                 .setComment("Internal Default Value: " + WYVERN_HARVEST_SPEED)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> wyvernHarvestSpeed = tag.getAsDouble() != -99 ? tag.getAsDouble() : WYVERN_HARVEST_SPEED);
+                .onSync((tag, type) -> wyvernHarvestSpeed = tag.getDouble() != -99 ? tag.getDouble() : WYVERN_HARVEST_SPEED);
         equipTag.getValue("draconicHarvestSpeed")
                 .setComment("Internal Default Value: " + DRACONIC_HARVEST_SPEED)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> draconicHarvestSpeed = tag.getAsDouble() != -99 ? tag.getAsDouble() : DRACONIC_HARVEST_SPEED);
+                .onSync((tag, type) -> draconicHarvestSpeed = tag.getDouble() != -99 ? tag.getDouble() : DRACONIC_HARVEST_SPEED);
         equipTag.getValue("chaoticHarvestSpeed")
                 .setComment("Internal Default Value: " + CHAOTIC_HARVEST_SPEED)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> chaoticHarvestSpeed = tag.getAsDouble() != -99 ? tag.getAsDouble() : CHAOTIC_HARVEST_SPEED);
+                .onSync((tag, type) -> chaoticHarvestSpeed = tag.getDouble() != -99 ? tag.getDouble() : CHAOTIC_HARVEST_SPEED);
 
         equipTag.getValue("draconiumDamage")
                 .setComment("Base Attack Damage\nInternal Default Value: " + DRACONIUM_DAMAGE)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> draconiumDamage = tag.getAsDouble() != -99 ? tag.getAsDouble() : DRACONIUM_DAMAGE);
+                .onSync((tag, type) -> draconiumDamage = tag.getDouble() != -99 ? tag.getDouble() : DRACONIUM_DAMAGE);
         equipTag.getValue("wyvernDamage")
                 .setComment("Base Attack Damage\nInternal Default Value: " + WYVERN_DAMAGE)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> wyvernDamage = tag.getAsDouble() != -99 ? tag.getAsDouble() : WYVERN_DAMAGE);
+                .onSync((tag, type) -> wyvernDamage = tag.getDouble() != -99 ? tag.getDouble() : WYVERN_DAMAGE);
         equipTag.getValue("draconicDamage")
                 .setComment("Base Attack Damage\nInternal Default Value: " + DRACONIC_DAMAGE)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> draconicDamage = tag.getAsDouble() != -99 ? tag.getAsDouble() : DRACONIC_DAMAGE);
+                .onSync((tag, type) -> draconicDamage = tag.getDouble() != -99 ? tag.getDouble() : DRACONIC_DAMAGE);
         equipTag.getValue("chaoticDamage")
                 .setComment("Base Attack Damage\nInternal Default Value: " + CHAOTIC_DAMAGE)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> chaoticDamage = tag.getAsDouble() != -99 ? tag.getAsDouble() : CHAOTIC_DAMAGE);
+                .onSync((tag, type) -> chaoticDamage = tag.getDouble() != -99 ? tag.getDouble() : CHAOTIC_DAMAGE);
 
         equipTag.getValue("draconiumSwingSpeed")
                 .setComment("Base Attack Speed (How many times you can attack at full power per second)\nInternal Default Value: " + DRACONIUM_SWING_SPEED)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> draconiumSwingSpeed = tag.getAsDouble() != -99 ? tag.getAsDouble() : DRACONIUM_SWING_SPEED);
+                .onSync((tag, type) -> draconiumSwingSpeed = tag.getDouble() != -99 ? tag.getDouble() : DRACONIUM_SWING_SPEED);
         equipTag.getValue("wyvernSwingSpeed")
                 .setComment("Base Attack Speed (How many times you can attack at full power per second)\nInternal Default Value: " + WYVERN_SWING_SPEED)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> wyvernSwingSpeed = tag.getAsDouble() != -99 ? tag.getAsDouble() : WYVERN_SWING_SPEED);
+                .onSync((tag, type) -> wyvernSwingSpeed = tag.getDouble() != -99 ? tag.getDouble() : WYVERN_SWING_SPEED);
         equipTag.getValue("draconicSwingSpeed")
                 .setComment("Base Attack Speed (How many times you can attack at full power per second)\nInternal Default Value: " + DRACONIC_SWING_SPEED)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> draconicSwingSpeed = tag.getAsDouble() != -99 ? tag.getAsDouble() : DRACONIC_SWING_SPEED);
+                .onSync((tag, type) -> draconicSwingSpeed = tag.getDouble() != -99 ? tag.getDouble() : DRACONIC_SWING_SPEED);
         equipTag.getValue("chaoticSwingSpeed")
                 .setComment("Base Attack Speed (How many times you can attack at full power per second)\nInternal Default Value: " + CHAOTIC_SWING_SPEED)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> chaoticSwingSpeed = tag.getAsDouble() != -99 ? tag.getAsDouble() : CHAOTIC_SWING_SPEED);
+                .onSync((tag, type) -> chaoticSwingSpeed = tag.getDouble() != -99 ? tag.getDouble() : CHAOTIC_SWING_SPEED);
 
         equipTag.getValue("draconiumEnchantability")
                 .setComment("Internal Default Value: " + DRACONIUM_ENCHANT)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> draconiumEnchantability = tag.getAsInt() != -99 ? tag.getAsInt() : DRACONIUM_ENCHANT);
+                .onSync((tag, type) -> draconiumEnchantability = tag.getInt() != -99 ? tag.getInt() : DRACONIUM_ENCHANT);
         equipTag.getValue("wyvernEnchantability")
                 .setComment("Internal Default Value: " + WYVERN_ENCHANT)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> wyvernEnchantability = tag.getAsInt() != -99 ? tag.getAsInt() : WYVERN_ENCHANT);
+                .onSync((tag, type) -> wyvernEnchantability = tag.getInt() != -99 ? tag.getInt() : WYVERN_ENCHANT);
         equipTag.getValue("draconicEnchantability")
                 .setComment("Internal Default Value: " + DRACONIC_ENCHANT)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> draconicEnchantability = tag.getAsInt() != -99 ? tag.getAsInt() : DRACONIC_ENCHANT);
+                .onSync((tag, type) -> draconicEnchantability = tag.getInt() != -99 ? tag.getInt() : DRACONIC_ENCHANT);
         equipTag.getValue("chaoticEnchantability")
                 .setComment("Internal Default Value: " + CHAOTIC_ENCHANT)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> chaoticEnchantability = tag.getAsInt() != -99 ? tag.getAsInt() : CHAOTIC_ENCHANT);
+                .onSync((tag, type) -> chaoticEnchantability = tag.getInt() != -99 ? tag.getInt() : CHAOTIC_ENCHANT);
 
         equipTag.getValue("staffDamageMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack damage\nInternal Default Value: " + STAFF_DMG_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> staffDamageMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : STAFF_DMG_MULT);
+                .onSync((tag, type) -> staffDamageMultiplier = tag.getDouble() != -99 ? tag.getDouble() : STAFF_DMG_MULT);
         equipTag.getValue("swordDamageMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack damage\nInternal Default Value: " + SWORD_DMG_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> swordDamageMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : SWORD_DMG_MULT);
+                .onSync((tag, type) -> swordDamageMultiplier = tag.getDouble() != -99 ? tag.getDouble() : SWORD_DMG_MULT);
         equipTag.getValue("axeDamageMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack damage\nInternal Default Value: " + AXE_DMG_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> axeDamageMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : AXE_DMG_MULT);
+                .onSync((tag, type) -> axeDamageMultiplier = tag.getDouble() != -99 ? tag.getDouble() : AXE_DMG_MULT);
         equipTag.getValue("pickaxeDamageMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack damage\nInternal Default Value: " + PICKAXE_DMG_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> pickaxeDamageMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : PICKAXE_DMG_MULT);
+                .onSync((tag, type) -> pickaxeDamageMultiplier = tag.getDouble() != -99 ? tag.getDouble() : PICKAXE_DMG_MULT);
         equipTag.getValue("shovelDamageMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack damage\nInternal Default Value: " + SHOVEL_DMG_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> shovelDamageMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : SHOVEL_DMG_MULT);
+                .onSync((tag, type) -> shovelDamageMultiplier = tag.getDouble() != -99 ? tag.getDouble() : SHOVEL_DMG_MULT);
         equipTag.getValue("hoeDamageMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack damage\nInternal Default Value: " + HOE_DMG_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> hoeDamageMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : HOE_DMG_MULT);
+                .onSync((tag, type) -> hoeDamageMultiplier = tag.getDouble() != -99 ? tag.getDouble() : HOE_DMG_MULT);
 
         equipTag.getValue("staffSwingSpeedMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack speed\nInternal Default Value: " + STAFF_SWING_SPEED_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> staffSwingSpeedMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : STAFF_SWING_SPEED_MULT);
+                .onSync((tag, type) -> staffSwingSpeedMultiplier = tag.getDouble() != -99 ? tag.getDouble() : STAFF_SWING_SPEED_MULT);
         equipTag.getValue("swordSwingSpeedMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack speed\nInternal Default Value: " + SWORD_SWING_SPEED_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> swordSwingSpeedMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : SWORD_SWING_SPEED_MULT);
+                .onSync((tag, type) -> swordSwingSpeedMultiplier = tag.getDouble() != -99 ? tag.getDouble() : SWORD_SWING_SPEED_MULT);
         equipTag.getValue("axeSwingSpeedMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack speed\nInternal Default Value: " + AXE_SWING_SPEED_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> axeSwingSpeedMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : AXE_SWING_SPEED_MULT);
+                .onSync((tag, type) -> axeSwingSpeedMultiplier = tag.getDouble() != -99 ? tag.getDouble() : AXE_SWING_SPEED_MULT);
         equipTag.getValue("pickaxeSwingSpeedMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack speed\nInternal Default Value: " + PICKAXE_SWING_SPEED_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> pickaxeSwingSpeedMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : PICKAXE_SWING_SPEED_MULT);
+                .onSync((tag, type) -> pickaxeSwingSpeedMultiplier = tag.getDouble() != -99 ? tag.getDouble() : PICKAXE_SWING_SPEED_MULT);
         equipTag.getValue("shovelSwingSpeedMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack speed\nInternal Default Value: " + SHOVEL_SWING_SPEED_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> shovelSwingSpeedMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : SHOVEL_SWING_SPEED_MULT);
+                .onSync((tag, type) -> shovelSwingSpeedMultiplier = tag.getDouble() != -99 ? tag.getDouble() : SHOVEL_SWING_SPEED_MULT);
         equipTag.getValue("hoeSwingSpeedMultiplier")
                 .setComment("This is a multiplier that is applied to the base attack speed\nInternal Default Value: " + HOE_SWING_SPEED_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> hoeSwingSpeedMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : HOE_SWING_SPEED_MULT);
+                .onSync((tag, type) -> hoeSwingSpeedMultiplier = tag.getDouble() != -99 ? tag.getDouble() : HOE_SWING_SPEED_MULT);
 
         equipTag.getValue("staffEfficiencyMultiplier")
                 .setComment("This is an efficiency multiplier specifically for the staff of power.\nThe staff gets its own multiplier because its a \"special tool\"\nInternal Default Value: " + STAFF_EFF_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> staffEffMultiplier = tag.getAsDouble() != -99 ? tag.getAsDouble() : STAFF_EFF_MULT);
+                .onSync((tag, type) -> staffEffMultiplier = tag.getDouble() != -99 ? tag.getDouble() : STAFF_EFF_MULT);
 
         equipTag.getValue("draconiumBaseEnergy")
                 .setComment("This is the base energy value for each tier before the type multiplier is applied.\nInternal Default Value: " + DRACONIUM_BASE_ENERGY)
@@ -293,89 +293,89 @@ public class EquipCfg {
         equipTag.getValue("staffEnergyMult")
                 .setComment("This is a multiplier that is applied to the base energy value.\nInternal Default Value: " + STAFF_ENERGY_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> staffEnergyMult = tag.getAsDouble() != -99 ? tag.getAsDouble() : STAFF_ENERGY_MULT);
+                .onSync((tag, type) -> staffEnergyMult = tag.getDouble() != -99 ? tag.getDouble() : STAFF_ENERGY_MULT);
         equipTag.getValue("toolEnergyMult")
                 .setComment("This is a multiplier that is applied to the base energy value.\nInternal Default Value: " + TOOL_ENERGY_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> toolEnergyMult = tag.getAsDouble() != -99 ? tag.getAsDouble() : TOOL_ENERGY_MULT);
+                .onSync((tag, type) -> toolEnergyMult = tag.getDouble() != -99 ? tag.getDouble() : TOOL_ENERGY_MULT);
         equipTag.getValue("capacitorEnergyMult")
                 .setComment("This is a multiplier that is applied to the base energy value.\nInternal Default Value: " + CAPACITOR_ENERGY_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> capacitorEnergyMult = tag.getAsDouble() != -99 ? tag.getAsDouble() : CAPACITOR_ENERGY_MULT);
+                .onSync((tag, type) -> capacitorEnergyMult = tag.getDouble() != -99 ? tag.getDouble() : CAPACITOR_ENERGY_MULT);
         equipTag.getValue("chestpieceEnergyMult")
                 .setComment("This is a multiplier that is applied to the base energy value.\nInternal Default Value: " + CHESTPIECE_ENERGY_MULT)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> chestpieceEnergyMult = tag.getAsDouble() != -99 ? tag.getAsDouble() : CHESTPIECE_ENERGY_MULT);
+                .onSync((tag, type) -> chestpieceEnergyMult = tag.getDouble() != -99 ? tag.getDouble() : CHESTPIECE_ENERGY_MULT);
 
         equipTag.getValue("energyHarvest")
                 .setComment("This is the per block energy requirement of all mining tools.\nInternal Default Value: " + ENERGY_HARVEST)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> energyHarvest = tag.getAsInt() != -99 ? tag.getAsInt() : ENERGY_HARVEST);
+                .onSync((tag, type) -> energyHarvest = tag.getInt() != -99 ? tag.getInt() : ENERGY_HARVEST);
         equipTag.getValue("energyAttack")
                 .setComment("This is the energy requirement for weapons. This is multiplied by the weapons attack damage.\nInternal Default Value: " + ENERGY_ATTACK)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> energyAttack = tag.getAsInt() != -99 ? tag.getAsInt() : ENERGY_ATTACK);
+                .onSync((tag, type) -> energyAttack = tag.getInt() != -99 ? tag.getInt() : ENERGY_ATTACK);
         equipTag.getValue("energyShieldChg")
                 .setComment("Shield recharge base energy per shield point.\nInternal Default Value: " + ENERGY_SHIELD_CHG)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> energyShieldChg = tag.getAsInt() != -99 ? tag.getAsInt() : ENERGY_SHIELD_CHG);
+                .onSync((tag, type) -> energyShieldChg = tag.getInt() != -99 ? tag.getInt() : ENERGY_SHIELD_CHG);
 
         equipTag.getValue("shieldPassiveModifier")
                 .setComment("This controls the shield's passive power usage. The formula is: passiveDraw = (shieldPoints^2 * shieldPassiveModifier) OP/t\nInternal Default Value: " + SHIELD_PASSIVE_MODIFIER)
                 .setDefaultDouble(-99)
-                .onSync((tag, type) -> shieldPassiveModifier = tag.getAsDouble() != -99 ? tag.getAsDouble() : SHIELD_PASSIVE_MODIFIER);
+                .onSync((tag, type) -> shieldPassiveModifier = tag.getDouble() != -99 ? tag.getDouble() : SHIELD_PASSIVE_MODIFIER);
 
 //        equipTag.getValue("wyvernShieldCoolDown")
 //                .setComment("This is the delay in ticks before the Wyvern shield will start to regenerate after blocking damage.\nInternal Default Value: " + WYVERN_SHIELD_COOL_DOWN)
 //                .setDefaultInt(-99)
-//                .onSync((tag, type) -> wyvernShieldCoolDown = tag.getAsInt() != -99 ? tag.getAsInt() : WYVERN_SHIELD_COOL_DOWN);
+//                .onSync((tag, type) -> wyvernShieldCoolDown = tag.getInt() != -99 ? tag.getInt() : WYVERN_SHIELD_COOL_DOWN);
 //        equipTag.getValue("draconicShieldCoolDown")
 //                .setComment("This is the delay in ticks before the Draconic shield will start to regenerate after blocking damage.\nInternal Default Value: " + DRACONIC_SHIELD_COOL_DOWN)
 //                .setDefaultInt(-99)
-//                .onSync((tag, type) -> draconicShieldCoolDown = tag.getAsInt() != -99 ? tag.getAsInt() : DRACONIC_SHIELD_COOL_DOWN);
+//                .onSync((tag, type) -> draconicShieldCoolDown = tag.getInt() != -99 ? tag.getInt() : DRACONIC_SHIELD_COOL_DOWN);
 //        equipTag.getValue("chaoticShieldCoolDown")
 //                .setComment("This is the delay in ticks before the Chaotic shield will start to regenerate after blocking damage.\nInternal Default Value: " + CHAOTIC_SHIELD_COOL_DOWN)
 //                .setDefaultInt(-99)
-//                .onSync((tag, type) -> chaoticShieldCoolDown = tag.getAsInt() != -99 ? tag.getAsInt() : CHAOTIC_SHIELD_COOL_DOWN);
+//                .onSync((tag, type) -> chaoticShieldCoolDown = tag.getInt() != -99 ? tag.getInt() : CHAOTIC_SHIELD_COOL_DOWN);
 
         equipTag.getValue("elytraFlightEnergy")
                 .setComment("Elytra flight energy use per tick.\nInternal Default Value: " + ELYTRA_FLIGHT_ENERGY)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> elytraFlightEnergy = tag.getAsInt() != -99 ? tag.getAsInt() : ELYTRA_FLIGHT_ENERGY);
+                .onSync((tag, type) -> elytraFlightEnergy = tag.getInt() != -99 ? tag.getInt() : ELYTRA_FLIGHT_ENERGY);
 
         equipTag.getValue("creativeFlightEnergy")
                 .setComment("Creative flight energy use per tick.\nInternal Default Value: " + CREATIVE_FLIGHT_ENERGY)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> creativeFlightEnergy = tag.getAsInt() != -99 ? tag.getAsInt() : CREATIVE_FLIGHT_ENERGY);
+                .onSync((tag, type) -> creativeFlightEnergy = tag.getInt() != -99 ? tag.getInt() : CREATIVE_FLIGHT_ENERGY);
 
 
         equipTag.getValue("elytraWyvernEnergy")
                 .setComment("Elytra boost energy per tick, Internal Default Value: " + ELYTRA_WYVERN_ENERGY)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> elytraWyvernEnergy = tag.getAsInt() != -99 ? tag.getAsInt() : ELYTRA_WYVERN_ENERGY);
+                .onSync((tag, type) -> elytraWyvernEnergy = tag.getInt() != -99 ? tag.getInt() : ELYTRA_WYVERN_ENERGY);
         equipTag.getValue("elytraDraconicEnergy")
                 .setComment("Elytra boost energy per tick, Internal Default Value: " + ELYTRA_DRACONIC_ENERGY)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> elytraDraconicEnergy = tag.getAsInt() != -99 ? tag.getAsInt() : ELYTRA_DRACONIC_ENERGY);
+                .onSync((tag, type) -> elytraDraconicEnergy = tag.getInt() != -99 ? tag.getInt() : ELYTRA_DRACONIC_ENERGY);
         equipTag.getValue("elytraChaoticEnergy")
                 .setComment("Elytra boost energy per tick, Internal Default Value: " + ELYTRA_CHAOTIC_ENERGY)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> elytraChaoticEnergy = tag.getAsInt() != -99 ? tag.getAsInt() : ELYTRA_CHAOTIC_ENERGY);
+                .onSync((tag, type) -> elytraChaoticEnergy = tag.getInt() != -99 ? tag.getInt() : ELYTRA_CHAOTIC_ENERGY);
 
         equipTag.getValue("bowBaseEnergy")
                 .setComment("Bow base energy per calculated damage point, per shot, Internal Default Value: " + BOW_BASE_ENERGY)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> bowBaseEnergy = tag.getAsInt() != -99 ? tag.getAsInt() : BOW_BASE_ENERGY);
+                .onSync((tag, type) -> bowBaseEnergy = tag.getInt() != -99 ? tag.getInt() : BOW_BASE_ENERGY);
 
         equipTag.getValue("enderModulePerItemEnergy")
                 .setComment("Energy required for the ender storage module to transfer one (single) item into storage, Internal Default Value: " + ENDER_MODULE_PER_ITEM_ENERGY)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> enderModulePerItemEnergy = tag.getAsInt() != -99 ? tag.getAsInt() : ENDER_MODULE_PER_ITEM_ENERGY);
+                .onSync((tag, type) -> enderModulePerItemEnergy = tag.getInt() != -99 ? tag.getInt() : ENDER_MODULE_PER_ITEM_ENERGY);
 
         equipTag.getValue("nightVisionEnergy")
                 .setComment("Night vision module energy consumption while operation. (OP per tick), Internal Default Value: " + NIGHT_VISION_ENERGY)
                 .setDefaultInt(-99)
-                .onSync((tag, type) -> nightVisionEnergy = tag.getAsInt() != -99 ? tag.getAsInt() : NIGHT_VISION_ENERGY);
+                .onSync((tag, type) -> nightVisionEnergy = tag.getInt() != -99 ? tag.getInt() : NIGHT_VISION_ENERGY);
 
         equipTag.syncTagToClient();
     }

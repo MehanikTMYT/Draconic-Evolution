@@ -62,13 +62,13 @@ public class RainSensor extends EntityBlockBCore {
     }
 
     @Override
-    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!isMoving && !state.is(newState.getBlock())) {
-            if (state.getValue(ACTIVE)) {
-                this.updateNeighbors(state, worldIn, pos);
-            }
-            super.onRemove(state, worldIn, pos, newState, isMoving);
+    // port-26.1.2: onRemove удалён в 26 — соседская логика в affectNeighborsAfterRemoval (вызов из LevelChunk: блок уже сменился)
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level, net.minecraft.core.BlockPos pos, boolean movedByPiston) {
+        if (!movedByPiston && state.getValue(ACTIVE)) {
+            this.updateNeighbors(state, level, pos);
         }
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
     }
 
     private void updateNeighbors(BlockState state, Level world, BlockPos pos) {

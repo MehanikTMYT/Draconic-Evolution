@@ -686,4 +686,14 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
         return hashID;
     }
 
+
+    // port-26.1.2: BlockBehaviour.onRemove удалён в 26 — логика перенесена сюда;
+    // срабатывает при удалении BE из-за смены блока (guard отличает выгрузку чанка).
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+            deactivate();
+        }
+    }
 }

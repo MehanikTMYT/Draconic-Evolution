@@ -80,8 +80,6 @@ import net.minecraft.world.entity.Entity;
 
 import net.minecraft.world.entity.LivingEntity;
 
-import net.minecraft.world.entity.RelativeMovement;
-
 import net.minecraft.world.entity.item.ItemEntity;
 
 import net.minecraft.world.entity.player.Player;
@@ -301,7 +299,8 @@ public class DislocatorAdvanced extends Dislocator {
 
         if (result.getType() == HitResult.Type.MISS) {
             if (player.isFallFlying()) { //Maintain momentum if elytra flying
-                player.connection.teleport(endVec.x, endVec.y, endVec.z, player.getYRot(), player.getXRot(), Sets.newHashSet(RelativeMovement.X, RelativeMovement.Y, RelativeMovement.Z));
+                // port-26.1.2: RelativeMovement removed; use TeleportUtils
+                TeleportUtils.teleportEntity(player, player.level().dimension(), endVec.x, endVec.y, endVec.z, player.getYRot(), player.getXRot());
                 player.setYHeadRot(player.getYRot());
             } else {
                 TeleportUtils.teleportEntity(player, player.level().dimension(), endVec.x, endVec.y, endVec.z);
