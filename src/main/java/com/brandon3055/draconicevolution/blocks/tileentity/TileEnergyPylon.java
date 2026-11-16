@@ -166,12 +166,12 @@ public class TileEnergyPylon extends TileBCore implements MultiBlockController {
 
     public TileEnergyPylon(BlockPos pos, BlockState state) {
         super(DEContent.TILE_ENERGY_PYLON.get(), pos, state);
-        capManager.set(CapabilityOP.BLOCK, opAdapter);
+        capManager.set(CapabilityOP.OP, opAdapter);
         enableTileDebug();
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_ENERGY_PYLON);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_ENERGY_PYLON.get());
     }
 
     @Override

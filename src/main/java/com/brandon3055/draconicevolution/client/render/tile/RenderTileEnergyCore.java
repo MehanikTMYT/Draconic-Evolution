@@ -16,13 +16,19 @@ import com.brandon3055.draconicevolution.DraconicEvolution;
 import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyCore;
 import com.brandon3055.draconicevolution.client.DEShaders;
 import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
+import com.brandon3055.brandonscore.client.render.ExtractedModel;
+import com.brandon3055.draconicevolution.client.render.DEModelEmission;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -36,53 +42,17 @@ import java.util.Map;
 /**
  * Created by brandon3055 on 2/4/2016.
  */
-public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore> {
+public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore, RenderTileEnergyCore.State> {
     public static final double[] SCALES = {1.1, 1.7, 2.3, 3.6, 5.5, 7.1, 8.6, 10.2};
 
-    private static final RenderType innerCoreType = RenderType.entitySolid(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/energy_core_base.png"));
+    private static final RenderType innerCoreType = RenderTypes.entitySolid(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/energy_core_base.png"));
 
-    private static final RenderType outerCoreType = RenderType.create("outer_core", DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/energy_core_overlay.png"), false, false))
-            .setShaderState(new RenderStateShard.ShaderStateShard(() -> BCShaders.posColourTexAlpha0))
-            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .createCompositeState(false)
-    );
-
-    private static final RenderType innerStabType = RenderType.create("inner_stab", DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/stabilizer_sphere.png"), false, false))
-            .setShaderState(new RenderStateShard.ShaderStateShard(() -> BCShaders.posColourTexAlpha0))
-            .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
-            .createCompositeState(false)
-    );
-    private static final RenderType outerStabType = RenderType.create("outer_stab", DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/stabilizer_sphere.png"), false, false))
-            .setShaderState(new RenderStateShard.ShaderStateShard(() -> BCShaders.posColourTexAlpha0))
-            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .createCompositeState(false)
-    );
-
-    private static final RenderType beamType = RenderType.create("inner_beam", DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/stabilizer_beam.png"), false, false))
-            .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexShader))
-            .setTransparencyState(RenderStateShard.NO_TRANSPARENCY)
-            .createCompositeState(false)
-    );
-
-    private static final RenderType outerBeamType = RenderType.create("outer_beam", DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.TRIANGLE_STRIP, 256, false, false, RenderType.CompositeState.builder()
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/stabilizer_beam.png"), false, false))
-            .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader))
-            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .setWriteMaskState(RenderStateShard.COLOR_WRITE)
-            .createCompositeState(false)
-    );
-
-    private static RenderType coreShaderType = RenderType.create("test_shader", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/energy_core_overlay.png"), false, false))
-            .setShaderState(new RenderStateShard.ShaderStateShard(() -> DEShaders.energyCoreShader))
-            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .setCullState(RenderStateShard.NO_CULL)
-            .createCompositeState(false)
-    );
+    private static final RenderType outerCoreType = TileRenderPipelines.CORE_OUTER;
+    private static final RenderType innerStabType = TileRenderPipelines.CORE_STAB_INNER;
+    private static final RenderType outerStabType = TileRenderPipelines.CORE_STAB_OUTER;
+    private static final RenderType beamType = TileRenderPipelines.CORE_BEAM;
+    private static final RenderType coreShaderType = DEShaders.energyCoreShader.renderType("de_energy_core",
+            Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/energy_core_overlay.png"), VertexFormat.Mode.QUADS);
 
     private final CCModel modelStabilizerSphere;
     private final CCModel modelEnergyCore;
@@ -117,15 +87,33 @@ public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore>
     }
 
 
-    @Override
-    public void render(TileEnergyCore te, float partialTicks, PoseStack poseStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
-        if (te.buildGuide.get()) {
-            MultiBlockDefinition def = te.getMultiBlockDef();
-            if (def != null) {
-                MultiBlockRenderers.renderBuildGuide(te.getLevel(), te.getBlockPos(), poseStack, getter, def, 200, partialTicks);
-            }
-        }
+    public static class State extends BlockEntityRenderState {
+        ExtractedModel geometry;
+        ExtractedBuildGuide guide;
+    }
 
+    @Override
+    public State createRenderState() { return new State(); }
+
+    @Override
+    public void extractRenderState(TileEnergyCore tile, State state, float partialTicks, Vec3 cameraPosition,
+                                   ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        state.guide = tile.buildGuide.get() && tile.getMultiBlockDef() != null
+                ? ExtractedBuildGuide.extract(tile.getLevel(), tile.getBlockPos(), tile.getMultiBlockDef(), partialTicks) : null;
+        ExtractedModel.Capture capture = new ExtractedModel.Capture();
+        extractGeometry(tile, partialTicks, new PoseStack(), capture, state.lightCoords,
+                net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
+        state.geometry = capture.finish();
+    }
+
+    @Override
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (state.guide != null) state.guide.submit(poseStack, collector);
+        if (state.geometry != null) state.geometry.submit(poseStack, collector);
+    }
+
+    private void extractGeometry(TileEnergyCore te, float partialTicks, PoseStack poseStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
         if (!te.active.get()) {
             return;
         }
@@ -159,7 +147,7 @@ public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore>
         coreMat.translate(Vector3.CENTER);
         coreMat.scale(scale * -0.65, scale * -0.65, scale * -0.65);
         coreMat.rotate(rotation * MathHelper.torad, new Vector3(0F, 1F, 0.5F).normalize());
-        modelEnergyCore.render(ccrs, coreMat);
+        DEModelEmission.render(modelEnergyCore, ccrs, coreMat);
     }
 
     public void renderFancyOuterCore(TileEnergyCore te, CCRenderState ccrs, Matrix4 mat, MultiBufferSource getter, float partialTicks, float rotation, double scale) {
@@ -198,7 +186,7 @@ public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore>
         overlayMat.translate(Vector3.CENTER);
         overlayMat.scale(scale * -0.7, scale * -0.7, scale * -0.7);
         overlayMat.rotate(rotation * 0.5F * MathHelper.torad, new Vector3(0F, -1F, -0.5F).normalize());
-        modelEnergyCore.render(ccrs, overlayMat);
+        DEModelEmission.render(modelEnergyCore, ccrs, overlayMat);
     }
 
     public void renderLegacyOuterCore(TileEnergyCore te, CCRenderState ccrs, Matrix4 mat, MultiBufferSource getter, float partialTicks, float rotation, double scale) {
@@ -213,7 +201,7 @@ public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore>
         overlayMatRef.translate(0.5, 0.5, 0.5);
         overlayMatRef.scale(scale * -0.7, scale * -0.7, scale * -0.7);
         overlayMatRef.rotate(rotation * 0.5F * MathHelper.torad, new Vector3(0F, -1F, -0.5F).normalize());
-        modelEnergyCore.render(ccrs, overlayMatRef);
+        DEModelEmission.render(modelEnergyCore, ccrs, overlayMatRef);
     }
 
     private void renderStabilizers(TileEnergyCore te, CCRenderState ccrs, Matrix4 matrix4, MultiBufferSource getter, float partialTick) {
@@ -225,7 +213,7 @@ public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore>
             Matrix4 mat = matrix4.copy();
             mat.translate(-posOffset.get().getX() + 0.5, -posOffset.get().getY() + 0.5, -posOffset.get().getZ() + 0.5);
 
-            Direction facing = Direction.getNearest(posOffset.get().getX(), posOffset.get().getY(), posOffset.get().getZ());//Direction.getFacingFromAxis(Direction.AxisDirection.POSITIVE, te.multiBlockAxis);
+            Direction facing = Direction.getNearest(posOffset.get(), Direction.NORTH);//Direction.getFacingFromAxis(Direction.AxisDirection.POSITIVE, te.multiBlockAxis);
             if (facing.getAxis() == Direction.Axis.X || facing.getAxis() == Direction.Axis.Y) {
                 mat.rotate(-90F * MathHelper.torad, new Vector3(-facing.getStepY(), facing.getStepX(), 0).normalize());
             } else if (facing == Direction.SOUTH) {
@@ -248,14 +236,14 @@ public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore>
             ccrs.brightness = 240;
             innerMat.rotate((ClientEventHandler.elapsedTicks + partialTick) * MathHelper.torad, new Vector3(0, -1, 0));
             ccrs.bind(innerStabType, getter);
-            modelStabilizerSphere.render(ccrs, innerMat);
+            DEModelEmission.render(modelStabilizerSphere, ccrs, innerMat);
 
             mat.scale(1.1F, 1.1F, 1.1F);
             ccrs.baseColour = 0x00FFFF7F;
             ccrs.brightness = 240;
             mat.rotate((ClientEventHandler.elapsedTicks + partialTick) * 0.5F * MathHelper.torad, new Vector3(0, 1, 0));
             ccrs.bind(outerStabType, getter);
-            modelStabilizerSphere.render(ccrs, mat);
+            DEModelEmission.render(modelStabilizerSphere, ccrs, mat);
         }
     }
 
@@ -289,25 +277,25 @@ public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore>
         }
         innerMat.translate(-0.5, 0, -0.5);
 
-        builder.addVertex(d7, beamLength, d9).setUv(texXMax, texHeight);
-        builder.addVertex(d7, 0, d9).setUv(texXMax, d28);
-        builder.addVertex(d11, 0, d13).setUv(texXMin, d28);
-        builder.addVertex(d11, beamLength, d13).setUv(texXMin, texHeight);
+        builder.addVertex(d7, beamLength, d9).setColor(-1).setUv(texXMax, texHeight);
+        builder.addVertex(d7, 0, d9).setColor(-1).setUv(texXMax, d28);
+        builder.addVertex(d11, 0, d13).setColor(-1).setUv(texXMin, d28);
+        builder.addVertex(d11, beamLength, d13).setColor(-1).setUv(texXMin, texHeight);
 
-        builder.addVertex(d19, beamLength, d21).setUv(texXMax, texHeight);
-        builder.addVertex(d19, 0, d21).setUv(texXMax, d28);
-        builder.addVertex(d15, 0, d17).setUv(texXMin, d28);
-        builder.addVertex(d15, beamLength, d17).setUv(texXMin, texHeight);
+        builder.addVertex(d19, beamLength, d21).setColor(-1).setUv(texXMax, texHeight);
+        builder.addVertex(d19, 0, d21).setColor(-1).setUv(texXMax, d28);
+        builder.addVertex(d15, 0, d17).setColor(-1).setUv(texXMin, d28);
+        builder.addVertex(d15, beamLength, d17).setColor(-1).setUv(texXMin, texHeight);
 
-        builder.addVertex(d11, beamLength, d13).setUv(texXMax, texHeight);
-        builder.addVertex(d11, 0, d13).setUv(texXMax, d28);
-        builder.addVertex(d19, 0, d21).setUv(texXMin, d28);
-        builder.addVertex(d19, beamLength, d21).setUv(texXMin, texHeight);
+        builder.addVertex(d11, beamLength, d13).setColor(-1).setUv(texXMax, texHeight);
+        builder.addVertex(d11, 0, d13).setColor(-1).setUv(texXMax, d28);
+        builder.addVertex(d19, 0, d21).setColor(-1).setUv(texXMin, d28);
+        builder.addVertex(d19, beamLength, d21).setColor(-1).setUv(texXMin, texHeight);
 
-        builder.addVertex(d15, beamLength, d17).setUv(texXMax, texHeight);
-        builder.addVertex(d15, 0, d17).setUv(texXMax, d28);
-        builder.addVertex(d7, 0, d9).setUv(texXMin, d28);
-        builder.addVertex(d7, beamLength, d9).setUv(texXMin, texHeight);
+        builder.addVertex(d15, beamLength, d17).setColor(-1).setUv(texXMax, texHeight);
+        builder.addVertex(d15, 0, d17).setColor(-1).setUv(texXMax, d28);
+        builder.addVertex(d7, 0, d9).setColor(-1).setUv(texXMin, d28);
+        builder.addVertex(d7, beamLength, d9).setColor(-1).setUv(texXMin, texHeight);
 
         rotation += 0.77f;
         d7 = 0.5F + (float) Math.cos(rotation + 2.356194490192345F) * scale;
@@ -322,29 +310,29 @@ public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore>
         d28 = (-1F + (beamMotion * 1));
         texHeight = beamLength * (0.5F / scale) + d28;
 
-        builder.addVertex(d7, beamLength, d9).setUv(texXMax, texHeight);
-        builder.addVertex(d7, 0, d9).setUv(texXMax, d28);
-        builder.addVertex(d11, 0, d13).setUv(texXMin, d28);
-        builder.addVertex(d11, beamLength, d13).setUv(texXMin, texHeight);
+        builder.addVertex(d7, beamLength, d9).setColor(-1).setUv(texXMax, texHeight);
+        builder.addVertex(d7, 0, d9).setColor(-1).setUv(texXMax, d28);
+        builder.addVertex(d11, 0, d13).setColor(-1).setUv(texXMin, d28);
+        builder.addVertex(d11, beamLength, d13).setColor(-1).setUv(texXMin, texHeight);
 
-        builder.addVertex(d19, beamLength, d21).setUv(texXMax, texHeight);
-        builder.addVertex(d19, 0, d21).setUv(texXMax, d28);
-        builder.addVertex(d15, 0, d17).setUv(texXMin, d28);
-        builder.addVertex(d15, beamLength, d17).setUv(texXMin, texHeight);
+        builder.addVertex(d19, beamLength, d21).setColor(-1).setUv(texXMax, texHeight);
+        builder.addVertex(d19, 0, d21).setColor(-1).setUv(texXMax, d28);
+        builder.addVertex(d15, 0, d17).setColor(-1).setUv(texXMin, d28);
+        builder.addVertex(d15, beamLength, d17).setColor(-1).setUv(texXMin, texHeight);
 
-        builder.addVertex(d11, beamLength, d13).setUv(texXMax, texHeight);
-        builder.addVertex(d11, 0, d13).setUv(texXMax, d28);
-        builder.addVertex(d19, 0, d21).setUv(texXMin, d28);
-        builder.addVertex(d19, beamLength, d21).setUv(texXMin, texHeight);
+        builder.addVertex(d11, beamLength, d13).setColor(-1).setUv(texXMax, texHeight);
+        builder.addVertex(d11, 0, d13).setColor(-1).setUv(texXMax, d28);
+        builder.addVertex(d19, 0, d21).setColor(-1).setUv(texXMin, d28);
+        builder.addVertex(d19, beamLength, d21).setColor(-1).setUv(texXMin, texHeight);
 
-        builder.addVertex(d15, beamLength, d17).setUv(texXMax, texHeight);
-        builder.addVertex(d15, 0, d17).setUv(texXMax, d28);
-        builder.addVertex(d7, 0, d9).setUv(texXMin, d28);
-        builder.addVertex(d7, beamLength, d9).setUv(texXMin, texHeight);
+        builder.addVertex(d15, beamLength, d17).setColor(-1).setUv(texXMax, texHeight);
+        builder.addVertex(d15, 0, d17).setColor(-1).setUv(texXMax, d28);
+        builder.addVertex(d7, 0, d9).setColor(-1).setUv(texXMin, d28);
+        builder.addVertex(d7, beamLength, d9).setColor(-1).setUv(texXMin, texHeight);
         //endregion
 
         Matrix4 outerMat = matrix4.copy();
-        builder = new TransformingVertexConsumer(getter.getBuffer(outerBeamType), outerMat);
+        builder = new TransformingVertexConsumer(getter.getBuffer(TileRenderPipelines.newOuterBeam()), outerMat);
         outerMat.rotate(180 * MathHelper.torad, new Vector3(0, 0, 1));
 
         //region Render Outer Beam
@@ -364,8 +352,8 @@ public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore>
         for (int i = 0; i <= sides; i++) {
             float verX = (float) Math.sin((float) (i % sides) * (float) Math.PI * 2F / (float) sides) * 1F;
             float verY = (float) Math.cos((float) (i % sides) * (float) Math.PI * 2F / (float) sides) * 1F;
-            builder.addVertex(verX * 0.35F, verY * 0.35F, 0.0F).setColor(255, 255, 255, 32).setUv(i, (beamMotion * 2));
-            builder.addVertex(verX * enlarge, verY * enlarge, beamLength).setColor(255, 255, 255, 32).setUv(i, beamLength + (beamMotion * 2));
+            builder.addVertex(verX * 0.35F, verY * 0.35F, 0.0F).setColor(255, 255, 255, 32).setColor(-1).setUv(i, (beamMotion * 2));
+            builder.addVertex(verX * enlarge, verY * enlarge, beamLength).setColor(255, 255, 255, 32).setColor(-1).setUv(i, beamLength + (beamMotion * 2));
         }
     }
 
@@ -375,7 +363,7 @@ public class RenderTileEnergyCore implements BlockEntityRenderer<TileEnergyCore>
     }
 
     @Override
-    public boolean shouldRenderOffScreen(TileEnergyCore p_188185_1_) {
+    public boolean shouldRenderOffScreen() {
         return true;
     }
 

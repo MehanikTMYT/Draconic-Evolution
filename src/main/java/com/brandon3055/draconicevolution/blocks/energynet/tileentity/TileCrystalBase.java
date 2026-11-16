@@ -133,7 +133,7 @@ public abstract class TileCrystalBase extends TileBCore implements ITilePlaceLis
         this.techLevel = techLevel;
         fxHandler = DraconicEvolution.proxy.createENetFXHandler(this);
 
-        capManager.setInternalManaged("energy", CapabilityOP.BLOCK, opStorage).saveBoth().syncContainer();
+        capManager.setInternalManaged("energy", CapabilityOP.OP, opStorage).saveBoth().syncContainer();
     }
 
     //region Energy Balance

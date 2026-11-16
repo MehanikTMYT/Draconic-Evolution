@@ -14,6 +14,15 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
+import com.brandon3055.brandonscore.client.render.ExtractedModel;
+import com.brandon3055.draconicevolution.client.render.DEModelEmission;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -23,8 +32,8 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * Created by brandon3055 on 4/06/2017.
  */
-public class DraconiumChestTileRenderer implements BlockEntityRenderer<TileDraconiumChest> {
-    private static final RenderType renderType = RenderType.entityCutout(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/draconium_chest.png"));
+public class DraconiumChestTileRenderer implements BlockEntityRenderer<TileDraconiumChest, DraconiumChestTileRenderer.State> {
+    private static final RenderType renderType = RenderTypes.entityCutoutCull(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/draconium_chest.png"));
     private final ModelPart lid;
     private final ModelPart bottom;
     private final ModelPart lock;
@@ -55,8 +64,29 @@ public class DraconiumChestTileRenderer implements BlockEntityRenderer<TileDraco
         return LayerDefinition.create(mesh, 64, 64);
     }
 
+    public static class State extends BlockEntityRenderState {
+        ExtractedModel geometry;
+    }
+
     @Override
-    public void render(TileDraconiumChest tile, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
+    public State createRenderState() { return new State(); }
+
+    @Override
+    public void extractRenderState(TileDraconiumChest tile, State state, float partialTicks, Vec3 cameraPosition,
+                                   ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        ExtractedModel.Capture capture = new ExtractedModel.Capture();
+        extractGeometry(tile, partialTicks, new PoseStack(), capture, state.lightCoords,
+                net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
+        state.geometry = capture.finish();
+    }
+
+    @Override
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (state.geometry != null) state.geometry.submit(poseStack, collector);
+    }
+
+    private void extractGeometry(TileDraconiumChest tile, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
         BlockState blockstate = tile.getBlockState();
         float rotation = blockstate.getValue(DraconiumChest.FACING).toYRot();
         float lidAngle = MathHelper.interpolate(tile.prevLidAngle, tile.lidAngle, partialTicks);

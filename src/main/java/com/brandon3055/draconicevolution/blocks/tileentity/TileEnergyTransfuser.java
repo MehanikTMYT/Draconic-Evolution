@@ -92,7 +92,7 @@ public class TileEnergyTransfuser extends TileBCore implements IInteractTile, Me
         capManager.setInternalManaged("item_east", Capabilities.ItemHandler.BLOCK, itemEast).syncTile().saveBoth();
         capManager.setInternalManaged("item_south", Capabilities.ItemHandler.BLOCK, itemSouth).syncTile().saveBoth();
         capManager.setInternalManaged("item_west", Capabilities.ItemHandler.BLOCK, itemWest).syncTile().saveBoth();
-        capManager.set(CapabilityOP.BLOCK, opStorage, Direction.UP, Direction.DOWN, null);
+        capManager.set(CapabilityOP.OP, opStorage, Direction.UP, Direction.DOWN, null);
 
         capManager.set(Capabilities.ItemHandler.BLOCK, new ItemIOAdapter(0, itemNorth), Direction.NORTH);
         capManager.set(Capabilities.ItemHandler.BLOCK, new ItemIOAdapter(1, itemEast), Direction.EAST);
@@ -106,7 +106,7 @@ public class TileEnergyTransfuser extends TileBCore implements IInteractTile, Me
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_ENERGY_TRANSFUSER);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_ENERGY_TRANSFUSER.get());
         capability(event, DEContent.TILE_ENERGY_TRANSFUSER, Capabilities.ItemHandler.BLOCK);
     }
 

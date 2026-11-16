@@ -124,7 +124,7 @@ public class TileGenerator extends TileBCore implements IRSSwitchable, MenuProvi
 //        capManager.setManaged("module_host", DECapabilities.Host.ITEM, moduleHost).saveBoth().syncContainer();
 
         //Power Cap
-        capManager.setManaged("energy", CapabilityOP.BLOCK, opStorage).saveBoth().syncContainer();
+        capManager.setManaged("energy", CapabilityOP.OP, opStorage).saveBoth().syncContainer();
 
         //Inventory Cap
         capManager.setInternalManaged("inventory", ItemHandler.BLOCK, itemHandler).saveBoth();
@@ -135,7 +135,7 @@ public class TileGenerator extends TileBCore implements IRSSwitchable, MenuProvi
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_GENERATOR);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_GENERATOR.get());
         capability(event, DEContent.TILE_GENERATOR, ItemHandler.BLOCK);
         capability(event, DEContent.TILE_GENERATOR, DECapabilities.Host.BLOCK);
     }

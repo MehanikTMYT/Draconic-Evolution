@@ -81,7 +81,7 @@ public class TileCrystalDirectIO extends TileCrystalBase   {
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_IO_CRYSTAL);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_IO_CRYSTAL.get());
     }
 
     //region Update Energy IO
@@ -153,9 +153,9 @@ public class TileCrystalDirectIO extends TileCrystalBase   {
 
     public void updateRotation(Direction newDirection) {
         facing.set(newDirection);
-        capManager.remove(CapabilityOP.BLOCK);
+        capManager.remove(CapabilityOP.OP);
         opStorage.setIOMode(!outputMode.get()); //TODO, not sure why I had this commented out... Was there a reason?
-        capManager.setSide(CapabilityOP.BLOCK, opStorage, newDirection);
+        capManager.setSide(CapabilityOP.OP, opStorage, newDirection);
     }
 
     @Override

@@ -42,7 +42,7 @@ public class TileFusionCraftingInjector extends TileBCore implements IFusionInje
         capManager.setManaged("inventory", Capabilities.ItemHandler.BLOCK, itemHandler).saveBoth().syncTile();
         itemHandler.setPerSlotLimit(() -> singleItem.get() ? 1 : 64);
         itemHandler.setContentsChangeListener(i -> inventoryChange());
-        capManager.set(CapabilityOP.BLOCK, new OPStorage(this, 0) {
+        capManager.set(CapabilityOP.OP, new OPStorage(this, 0) {
             @Override
             public long receiveOP(long maxReceive, boolean simulate) {
                 long opStored = getOPStored();
@@ -71,7 +71,7 @@ public class TileFusionCraftingInjector extends TileBCore implements IFusionInje
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_CRAFTING_INJECTOR);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_CRAFTING_INJECTOR.get());
         capability(event, DEContent.TILE_CRAFTING_INJECTOR, Capabilities.ItemHandler.BLOCK);
     }
 

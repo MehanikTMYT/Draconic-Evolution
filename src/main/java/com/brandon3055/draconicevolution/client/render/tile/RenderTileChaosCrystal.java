@@ -10,13 +10,19 @@ import codechicken.lib.vec.Vector3;
 import com.brandon3055.draconicevolution.blocks.tileentity.TileChaosCrystal;
 import com.brandon3055.draconicevolution.client.DEShaders;
 import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
+import com.brandon3055.brandonscore.client.render.ExtractedModel;
+import com.brandon3055.draconicevolution.client.render.DEModelEmission;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -31,29 +37,12 @@ import static com.brandon3055.draconicevolution.DraconicEvolution.MODID;
 /**
  * Created by brandon3055 on 24/9/2015.
  */
-public class RenderTileChaosCrystal implements BlockEntityRenderer<TileChaosCrystal> {
+public class RenderTileChaosCrystal implements BlockEntityRenderer<TileChaosCrystal, RenderTileChaosCrystal.State> {
 
-    private static final RenderType CHAOS_CRYSTAL_INNER = RenderType.create(MODID + ":chaos_crystal_inner", DefaultVertexFormat.BLOCK, Mode.TRIANGLES, 256, RenderType.CompositeState.builder()
-            .setShaderState(new RenderStateShard.ShaderStateShard(() -> DEShaders.chaosBlockShader))
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(MODID, "textures/item/equipment/chaos_shader.png"), true, false))
-            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .setCullState(RenderStateShard.NO_CULL)
-            .setLightmapState(RenderStateShard.LIGHTMAP)
-            .createCompositeState(false));
-
-    private static final RenderType CHAOS_CRYSTAL = RenderType.create(MODID + ":chaos_crystal", DefaultVertexFormat.BLOCK, Mode.TRIANGLES, 256, RenderType.CompositeState.builder()
-            .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeCutoutShader)) //TODO Figure out shader
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(MODID, "textures/block/chaos_crystal.png"), false, false))
-            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .setLightmapState(RenderStateShard.LIGHTMAP)
-            .createCompositeState(false));
-
-    private static final RenderType CHAOS_CRYSTAL_SHIELD = RenderType.create(MODID + ":chaos_shield_type", DefaultVertexFormat.POSITION_TEX, Mode.TRIANGLES, 256, RenderType.CompositeState.builder()
-            .setShaderState(new RenderStateShard.ShaderStateShard(() -> DEShaders.shieldShader))
-            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .setLightmapState(RenderStateShard.LIGHTMAP)
-            .setCullState(RenderStateShard.NO_CULL)
-            .createCompositeState(false));
+    private static final RenderType CHAOS_CRYSTAL_INNER = DEShaders.chaosBlockShader.renderType("de_chaos_crystal_inner",
+            Identifier.fromNamespaceAndPath(MODID, "textures/item/equipment/chaos_shader.png"), Mode.TRIANGLES);
+    private static final RenderType CHAOS_CRYSTAL = com.brandon3055.draconicevolution.client.render.tile.TileRenderPipelines.CHAOS_SURFACE;
+    private static final RenderType CHAOS_CRYSTAL_SHIELD = DEShaders.shieldShader.renderType("de_chaos_crystal_shield", null, Mode.TRIANGLES);
 
     private final CCModel model;
 
@@ -71,8 +60,29 @@ public class RenderTileChaosCrystal implements BlockEntityRenderer<TileChaosCrys
         return 256;
     }
 
+    public static class State extends BlockEntityRenderState {
+        ExtractedModel geometry;
+    }
+
     @Override
-    public void render(TileChaosCrystal te, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
+    public State createRenderState() { return new State(); }
+
+    @Override
+    public void extractRenderState(TileChaosCrystal tile, State state, float partialTicks, Vec3 cameraPosition,
+                                   ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        ExtractedModel.Capture capture = new ExtractedModel.Capture();
+        extractGeometry(tile, partialTicks, new PoseStack(), capture, state.lightCoords,
+                net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
+        state.geometry = capture.finish();
+    }
+
+    @Override
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (state.geometry != null) state.geometry.submit(poseStack, collector);
+    }
+
+    private void extractGeometry(TileChaosCrystal te, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
         if (te.parentPos.notNull()) return;
         Matrix4 mat = new Matrix4(mStack);
         CCRenderState ccrs = CCRenderState.instance();
@@ -86,21 +96,21 @@ public class RenderTileChaosCrystal implements BlockEntityRenderer<TileChaosCrys
 
         Player player = Minecraft.getInstance().player;
         DEShaders.chaosBlockTime.glUniform1f((float) ClientUtils.getRenderTime());
-        DEShaders.chaosBlockYaw.glUniform1f((float) (player.getYRot() * MathHelper.torad));
-        DEShaders.chaosBlockPitch.glUniform1f((float) -(player.getXRot() * MathHelper.torad));
+        DEShaders.chaosBlockYaw.glUniform1f((float) ((player == null ? 0 : player.getYRot()) * MathHelper.torad));
+        DEShaders.chaosBlockPitch.glUniform1f((float) -((player == null ? 0 : player.getXRot()) * MathHelper.torad));
         ccrs.bind(CHAOS_CRYSTAL_INNER, getter);
-        model.render(ccrs, mat);
+        DEModelEmission.render(model, ccrs, mat);
 
         ccrs.baseColour = 0xFFFFFFF0;
         ccrs.bind(CHAOS_CRYSTAL, getter);
-        model.render(ccrs, mat);
+        DEModelEmission.render(model, ccrs, mat);
 
         if (!te.guardianDefeated.get()) {
             DEShaders.shieldBarMode.glUniform1i(0);
             DEShaders.shieldActivation.glUniform1f(1F);
             DEShaders.shieldColour.glUniform4f(1F, 0F, 0F, 1F);
             ccrs.bind(CHAOS_CRYSTAL_SHIELD, getter);
-            model.render(ccrs, mat);
+            DEModelEmission.render(model, ccrs, mat);
         }
     }
 

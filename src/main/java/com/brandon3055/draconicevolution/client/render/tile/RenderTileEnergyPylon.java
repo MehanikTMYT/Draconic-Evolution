@@ -12,11 +12,18 @@ import com.brandon3055.brandonscore.client.shader.BCShaders;
 import com.brandon3055.draconicevolution.DraconicEvolution;
 import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyPylon;
 import com.brandon3055.draconicevolution.client.handler.ClientEventHandler;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
+import com.brandon3055.brandonscore.client.render.ExtractedModel;
+import com.brandon3055.draconicevolution.client.render.DEModelEmission;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -28,17 +35,11 @@ import java.util.Map;
 /**
  * Created by brandon3055 on 20/05/2016.
  */
-public class RenderTileEnergyPylon implements BlockEntityRenderer<TileEnergyPylon> {
+public class RenderTileEnergyPylon implements BlockEntityRenderer<TileEnergyPylon, RenderTileEnergyPylon.State> {
 
-    private static RenderType modelType = RenderType.entitySolid(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/pylon_sphere_texture.png"));
+    private static RenderType modelType = RenderTypes.entitySolid(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/pylon_sphere_texture.png"));
 
-    private static RenderType shellType = RenderType.create("pylon_sphere", DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, RenderType.CompositeState.builder()
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/pylon_sphere_texture.png"), false, false))
-            .setShaderState(new RenderStateShard.ShaderStateShard(() -> BCShaders.posColourTexAlpha0))
-            .setTransparencyState(RenderStateShard.LIGHTNING_TRANSPARENCY)
-            .setWriteMaskState(RenderStateShard.COLOR_WRITE)
-            .createCompositeState(false)
-    );
+    private static final RenderType shellType = TileRenderPipelines.PYLON_SHELL;
     private final CCModel model;
 
     public RenderTileEnergyPylon(BlockEntityRendererProvider.Context context) {
@@ -48,8 +49,29 @@ public class RenderTileEnergyPylon implements BlockEntityRenderer<TileEnergyPylo
         model.computeNormals();
     }
 
+    public static class State extends BlockEntityRenderState {
+        ExtractedModel geometry;
+    }
+
     @Override
-    public void render(TileEnergyPylon te, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
+    public State createRenderState() { return new State(); }
+
+    @Override
+    public void extractRenderState(TileEnergyPylon tile, State state, float partialTicks, Vec3 cameraPosition,
+                                   ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        ExtractedModel.Capture capture = new ExtractedModel.Capture();
+        extractGeometry(tile, partialTicks, new PoseStack(), capture, state.lightCoords,
+                net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
+        state.geometry = capture.finish();
+    }
+
+    @Override
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (state.geometry != null) state.geometry.submit(poseStack, collector);
+    }
+
+    private void extractGeometry(TileEnergyPylon te, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
         if (!te.structureValid.get()) return;
 
         Matrix4 mat = new Matrix4(mStack);
@@ -63,19 +85,11 @@ public class RenderTileEnergyPylon implements BlockEntityRenderer<TileEnergyPylo
             ccrs.baseColour = te.colour.get().rgba();
         }
 
-        shellType = RenderType.create("pylon_sphere", DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, RenderType.CompositeState.builder()
-                .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/pylon_sphere_texture.png"), false, false))
-                .setShaderState(new RenderStateShard.ShaderStateShard(() -> BCShaders.posColourTexAlpha0))
-                .setTransparencyState(RenderStateShard.LIGHTNING_TRANSPARENCY)
-                .setWriteMaskState(RenderStateShard.COLOR_WRITE)
-                .createCompositeState(false)
-        );
-
         ccrs.bind(modelType, getter);
-        mat.translate(te.direction.get().getNormal());
+        mat.translate(te.direction.get().getStepX(), te.direction.get().getStepY(), te.direction.get().getStepZ());
         mat.translate(0.5, 0.5, 0.5);
         mat.rotate(((ClientEventHandler.elapsedTicks + partialTicks) * 2F) * MathHelper.torad, new Vector3(0, 1, 0.5).normalize());
-        model.render(ccrs, mat);
+        DEModelEmission.render(model, ccrs, mat);
 
         float f = MathHelper.clip(((ClientEventHandler.elapsedTicks + partialTicks) % 35F) / 30F, 0, 1);
         if (te.ioMode.get().canExtract()) {
@@ -89,7 +103,7 @@ public class RenderTileEnergyPylon implements BlockEntityRenderer<TileEnergyPylo
 
         ccrs.bind(shellType, getter);
         mat.scale(1 + f);
-        model.render(ccrs, mat);
+        DEModelEmission.render(model, ccrs, mat);
     }
 
     @Override

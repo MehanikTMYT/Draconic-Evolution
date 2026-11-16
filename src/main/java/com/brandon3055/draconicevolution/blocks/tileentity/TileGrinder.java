@@ -147,7 +147,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
         super(DEContent.TILE_GRINDER.get(), pos, state);
         enablePlayerAccessTracking(true);
 
-        capManager.setManaged("energy", CapabilityOP.BLOCK, opStorage).saveBoth().syncContainer();
+        capManager.setManaged("energy", CapabilityOP.OP, opStorage).saveBoth().syncContainer();
         installIOTracker(opStorage);
 
         capManager.setInternalManaged("inventory", Capabilities.ItemHandler.BLOCK, itemHandler).saveBoth();
@@ -170,7 +170,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_GRINDER);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_GRINDER.get());
         capability(event, DEContent.TILE_GRINDER, Capabilities.ItemHandler.BLOCK);
     }
 

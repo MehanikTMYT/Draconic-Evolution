@@ -5,7 +5,17 @@ import com.brandon3055.draconicevolution.blocks.tileentity.TileStabilizedSpawner
 import com.brandon3055.draconicevolution.init.DEContent;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.blockentity.state.SpawnerRenderState;
+import net.minecraft.client.renderer.blockentity.SpawnerRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -17,41 +27,52 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Created by brandon3055 on 20/05/2016.
  */
-public class RenderTileStabilizedSpawner implements BlockEntityRenderer<TileStabilizedSpawner> {
+public class RenderTileStabilizedSpawner implements BlockEntityRenderer<TileStabilizedSpawner, RenderTileStabilizedSpawner.State> {
 
     private static final ItemStack[] CORE_RENDER_ITEMS = new ItemStack[]{new ItemStack(DEContent.CORE_DRACONIUM.get()), new ItemStack(DEContent.CORE_WYVERN.get()), new ItemStack(DEContent.CORE_AWAKENED.get()), new ItemStack(DEContent.CORE_CHAOTIC.get())};
 
+    private final ItemModelResolver itemModels;
+    private final EntityRenderDispatcher entityRenderer;
+
     public RenderTileStabilizedSpawner(BlockEntityRendererProvider.Context context) {
+        itemModels = context.itemModelResolver();
+        entityRenderer = context.entityRenderer();
+    }
+
+    public static class State extends SpawnerRenderState {
+        final ItemStackRenderState core = new ItemStackRenderState();
     }
 
     @Override
-    public void render(TileStabilizedSpawner tile, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
-        StabilizedSpawnerLogic spawnerLogic = tile.spawnerLogic;
+    public State createRenderState() { return new State(); }
 
-        mStack.pushPose();
-        mStack.translate(0.5D, 0.0D, 0.5D);
-        Entity entity = spawnerLogic.getOrCreateDisplayEntity(tile.getLevel(), tile.getBlockPos());
+    @Override
+    public void extractRenderState(TileStabilizedSpawner tile, State state, float partialTicks, Vec3 cameraPosition,
+                                   ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        StabilizedSpawnerLogic logic = tile.spawnerLogic;
+        Entity entity = logic.getOrCreateDisplayEntity(tile.getLevel(), tile.getBlockPos());
+        state.displayEntity = null;
         if (entity != null) {
-            float f = 0.53125F;
-            float f1 = Math.max(entity.getBbWidth(), entity.getBbHeight());
-            if ((double) f1 > 1.0D) {
-                f /= f1;
-            }
-
-            mStack.translate(0.0D, 0.4F, 0.0D);
-            mStack.mulPose(Axis.YP.rotationDegrees((float) Mth.lerp(partialTicks, spawnerLogic.getoSpin(), spawnerLogic.getSpin()) * 10.0F));
-            mStack.translate(0.0D, -0.2F, 0.0D);
-            mStack.mulPose(Axis.XP.rotationDegrees(-30.0F));
-            mStack.scale(f, f, f);
-            Minecraft.getInstance().getEntityRenderDispatcher().render(entity, 0.0D, 0.0D, 0.0D, 0.0F, partialTicks, mStack, getter, packedLight);
+            state.displayEntity = entityRenderer.extractEntity(entity, partialTicks);
+            state.displayEntity.lightCoords = state.lightCoords;
+            state.spin = (float) Mth.lerp(partialTicks, logic.getoSpin(), logic.getSpin()) * 10F;
+            state.scale = 0.53125F / Math.max(1F, Math.max(entity.getBbWidth(), entity.getBbHeight()));
         }
-        mStack.popPose();
+        itemModels.updateForTopItem(state.core, CORE_RENDER_ITEMS[tile.spawnerTier.get().ordinal()], ItemDisplayContext.FIXED,
+                tile.getLevel(), null, tile.posSeed());
+    }
 
-        mStack.translate(0.5, 1F - (1F / 32F), 0.5);
-        mStack.scale(0.75F, 0.75F, 0.75F);
-        mStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-
-        ItemStack stack = CORE_RENDER_ITEMS[tile.spawnerTier.get().ordinal()];
-        Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, packedLight, packedOverlay, mStack, getter, tile.getLevel(), tile.posSeed());
+    @Override
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (state.displayEntity != null) {
+            SpawnerRenderer.submitEntityInSpawner(poseStack, collector, state.displayEntity, entityRenderer, state.spin, state.scale, camera);
+        }
+        poseStack.pushPose();
+        poseStack.translate(0.5, 1F - (1F / 32F), 0.5);
+        poseStack.scale(0.75F, 0.75F, 0.75F);
+        poseStack.mulPose(Axis.XP.rotationDegrees(90F));
+        state.core.submit(poseStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+        poseStack.popPose();
     }
 }

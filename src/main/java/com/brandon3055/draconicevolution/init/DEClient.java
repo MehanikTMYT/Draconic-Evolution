@@ -25,10 +25,10 @@ import com.brandon3055.draconicevolution.client.render.tile.*;
 import com.brandon3055.draconicevolution.items.equipment.IModularArmor;
 import net.covers1624.quack.util.CrashLock;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
+
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.client.renderer.entity.layers.ElytraLayer;
+
 import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -59,6 +59,7 @@ public class DEClient {
         modBus.addListener(DEClient::clientSetupEvent);
 //        modBus.addListener(ClientInit::onModelRegistryEvent);
         modBus.addListener(DEClient::registerRenderers);
+        modBus.addListener(com.brandon3055.draconicevolution.client.render.tile.TileRenderPipelines::register);
         modBus.addListener((net.neoforged.neoforge.client.event.RegisterItemModelsEvent event) ->
                 event.register(net.minecraft.resources.Identifier.fromNamespaceAndPath(MODID, "modular_tool"),
                         com.brandon3055.draconicevolution.client.render.item.ModularToolItemModel.Unbaked.MAP_CODEC));
@@ -72,6 +73,7 @@ public class DEClient {
                 event.register(net.minecraft.resources.Identifier.fromNamespaceAndPath(MODID, "energy_crystal"),
                         com.brandon3055.draconicevolution.client.render.item.DESpecialItemRenderers.EnergyCrystalUnbaked.MAP_CODEC));
         modBus.addListener(DEClient::onAddRenderLayers);
+        modBus.addListener(DEClient::extractWingState);
         modBus.addListener(DEClient::onResourceReload);
         modBus.addListener(DEClient::registerClientExtensions);
         modBus.addListener(DEClient::registerMenuScreens);
@@ -96,7 +98,8 @@ public class DEClient {
     private static void clientSetupEvent(FMLClientSetupEvent event) {
         LOCK2.lock();
         registerItemRenderers();
-        setupRenderLayers();
+        // MC26 derives solid/cutout materials per face from sprite alpha at bake time.
+        // Ores can mix opaque stone and cutout overlays without a global block layer override.
         CustomBossInfoHandler.init();
 
         NeoForge.EVENT_BUS.register(new KeyInputHandler());
@@ -227,17 +230,6 @@ public class DEClient {
 //        }
     }
 
-    private static void setupRenderLayers() {
-        ItemBlockRenderTypes.setRenderLayer(DEContent.GRINDER.get(), RenderType.cutoutMipped());
-        ItemBlockRenderTypes.setRenderLayer(DEContent.GENERATOR.get(), RenderType.cutoutMipped());
-        ItemBlockRenderTypes.setRenderLayer(DEContent.ENERGY_TRANSFUSER.get(), RenderType.cutoutMipped());
-        ItemBlockRenderTypes.setRenderLayer(DEContent.PORTAL.get(), RenderType.cutout());
-        ItemBlockRenderTypes.setRenderLayer(DEContent.OVERWORLD_DRACONIUM_ORE.get(), renderType -> renderType == RenderType.solid() || renderType == RenderType.cutoutMipped());
-        ItemBlockRenderTypes.setRenderLayer(DEContent.END_DRACONIUM_ORE.get(), renderType -> renderType == RenderType.solid() || renderType == RenderType.cutoutMipped());
-        ItemBlockRenderTypes.setRenderLayer(DEContent.NETHER_DRACONIUM_ORE.get(), renderType -> renderType == RenderType.solid() || renderType == RenderType.cutoutMipped());
-        ItemBlockRenderTypes.setRenderLayer(DEContent.DEEPSLATE_DRACONIUM_ORE.get(), renderType -> renderType == RenderType.solid() || renderType == RenderType.cutoutMipped());
-    }
-
     public static boolean deElytraVisible(ItemStack stack, LivingEntity entity) {
         if (ContributorHandler.shouldCancelElytra(entity)) return false;
         if (stack.getItem() instanceof IModularArmor item) {
@@ -250,17 +242,21 @@ public class DEClient {
         return false;
     }
 
-    @SuppressWarnings ({"rawtypes", "unchecked"})
+    public static final net.minecraft.util.context.ContextKey<Boolean> MODULAR_WINGS =
+            new net.minecraft.util.context.ContextKey<>(net.minecraft.resources.Identifier.fromNamespaceAndPath(MODID, "modular_wings"));
+
+    private static void extractWingState(net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent event) {
+        event.registerEntityModifier(new com.google.common.reflect.TypeToken<LivingEntityRenderer<LivingEntity,
+                net.minecraft.client.renderer.entity.state.LivingEntityRenderState, ?>>() {}, (entity, state) -> {
+            ItemStack chest = entity.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST);
+            state.setRenderData(MODULAR_WINGS, deElytraVisible(chest, entity));
+        });
+    }
+
     private static void onAddRenderLayers(EntityRenderersEvent.AddLayers event) {
-        for (PlayerSkin.Model skin : event.getSkins()) {
-            LivingEntityRenderer renderer = event.getSkin(skin);
-            assert renderer != null;
-            renderer.addLayer(new ElytraLayer(renderer, event.getEntityModels()) {
-                @Override
-                public boolean shouldRender(@NotNull ItemStack stack, @NotNull LivingEntity entity) {
-                    return deElytraVisible(stack, entity);
-                }
-            });
+        for (net.minecraft.world.entity.player.PlayerModelType skin : event.getSkins()) {
+            net.minecraft.client.renderer.entity.player.AvatarRenderer<net.minecraft.client.player.AbstractClientPlayer> renderer = event.getPlayerRenderer(skin);
+            if (renderer != null) renderer.addLayer(new com.brandon3055.draconicevolution.client.render.entity.ModularWingsLayer(renderer, event.getEntityModels()));
         }
     }
 }

@@ -115,7 +115,7 @@ public class RenderTilePotentiometer implements BlockEntityRenderer<TilePotentio
             mat.apply(Rotation.sideOrientation(facing.getOpposite().get3DDataValue(), 0).at(Vector3.CENTER));
             mat.apply(new Translation(6 * pxl, pxl, 6 * pxl));
             mat.apply(new Rotation(power * 22.5D * -MathHelper.torad, 0, 1, 0).at(new Vector3(pxl * 2, 0, pxl * 2)));
-            model.render(renderState, LightModel.standardLightModel, iconTransform, mat);
+            com.brandon3055.draconicevolution.client.render.DEModelEmission.render(model, renderState, LightModel.standardLightModel, iconTransform, mat);
         });
     }
 }

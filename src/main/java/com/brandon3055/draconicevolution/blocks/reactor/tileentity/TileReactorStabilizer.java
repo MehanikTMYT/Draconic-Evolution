@@ -26,12 +26,12 @@ public class TileReactorStabilizer extends TileReactorComponent {
     public TileReactorStabilizer(BlockPos pos, BlockState state) {
         super(DEContent.TILE_REACTOR_STABILIZER.get(), pos, state);
         OPExtractor opExtractor = new OPExtractor(this);
-        capManager.set(CapabilityOP.BLOCK, opExtractor);
+        capManager.set(CapabilityOP.OP, opExtractor);
         capManager.setCapSideValidator(opExtractor, face -> face == this.facing.get().getOpposite());
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_REACTOR_STABILIZER);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_REACTOR_STABILIZER.get());
     }
 
     @Override

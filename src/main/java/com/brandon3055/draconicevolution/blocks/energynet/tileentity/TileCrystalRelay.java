@@ -30,7 +30,7 @@ public class TileCrystalRelay extends TileCrystalBase {
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_RELAY_CRYSTAL);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_RELAY_CRYSTAL.get());
     }
 
     //region Rendering

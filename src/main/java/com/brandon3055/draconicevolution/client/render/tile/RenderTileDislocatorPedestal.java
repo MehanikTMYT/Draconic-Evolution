@@ -22,7 +22,18 @@ import com.mojang.math.Axis;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockModelResolver;
+import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 
 import net.minecraft.client.gui.Font;
 
@@ -58,81 +69,86 @@ import org.joml.Quaternionf;
 /**
  * Created by brandon3055 on 27/09/2016.
  */
-public class RenderTileDislocatorPedestal implements BlockEntityRenderer<TileDislocatorPedestal> {
+public class RenderTileDislocatorPedestal implements BlockEntityRenderer<TileDislocatorPedestal, RenderTileDislocatorPedestal.State> {
 
-    public static List<BakedQuad> modelQuads = null;
+    private static final BlockDisplayContext DISPLAY_CONTEXT = BlockDisplayContext.create();
+    private final BlockModelResolver blockModels;
+    private final ItemModelResolver itemModels;
 
     public RenderTileDislocatorPedestal(BlockEntityRendererProvider.Context context) {
+        blockModels = context.blockModelResolver();
+        itemModels = context.itemModelResolver();
+    }
+
+    public static class State extends BlockEntityRenderState {
+        final BlockModelRenderState pedestal = new BlockModelRenderState();
+        final ItemStackRenderState item = new ItemStackRenderState();
+        float rotation;
+        String name = "";
+        Vec3 playerOffset = Vec3.ZERO;
+        Vec3 playerBaseOffset = Vec3.ZERO;
     }
 
     @Override
-    public void render(TileDislocatorPedestal tile, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedoverlay) {
-        if (modelQuads == null) {
-            modelQuads = Minecraft.getInstance().getBlockRenderer().getBlockModel(DEContent.DISLOCATOR_PEDESTAL.get().defaultBlockState()).getQuads(DEContent.DISLOCATOR_PEDESTAL.get().defaultBlockState(), null, tile.getLevel().getRandom());
-        }
+    public State createRenderState() { return new State(); }
 
+    @Override
+    public void extractRenderState(TileDislocatorPedestal tile, State state, float partialTicks, Vec3 cameraPosition,
+                                   ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        // Resolve from the current model manager each extraction; never cache quads across resource reloads.
+        blockModels.update(state.pedestal, DEContent.DISLOCATOR_PEDESTAL.get().defaultBlockState(), DISPLAY_CONTEXT);
+        state.rotation = -tile.rotation.get() * 22.5F;
+        ItemStack stack = tile.itemHandler.getStackInSlot(0);
+        itemModels.updateForTopItem(state.item, stack, ItemDisplayContext.FIXED, tile.getLevel(), null, tile.posSeed());
+        state.name = "";
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null || stack.isEmpty()) return;
+        HitResult hit = player.pick(10, partialTicks, true);
+        boolean cursorOver = hit instanceof BlockHitResult block && block.getBlockPos().equals(tile.getBlockPos());
+        if (!cursorOver && player.isShiftKeyDown() != DEOldConfig.invertDPDSB) return;
+        String name = stack.getOrDefault(DataComponents.CUSTOM_NAME, Component.empty()).getString();
+        if (stack.getItem() instanceof DislocatorAdvanced advanced) {
+            DislocatorAdvanced.DislocatorTarget target = advanced.getSelected(stack);
+            if (target != null) name = target.getName();
+        }
+        state.name = name;
+        state.playerOffset = player.getEyePosition().subtract(Vec3.atCenterOf(tile.getBlockPos()));
+        state.playerBaseOffset = player.position().subtract(Vec3.atCenterOf(tile.getBlockPos()));
+    }
+
+    @Override
+    public void submit(State state, PoseStack mStack, SubmitNodeCollector collector, CameraRenderState camera) {
         mStack.pushPose();
         mStack.translate(0.5, 0.5, 0.5);
-        mStack.mulPose(Axis.YP.rotationDegrees(-tile.rotation.get() * 22.5F));
+        mStack.mulPose(Axis.YP.rotationDegrees(state.rotation));
         mStack.translate(-0.5, -0.5, -0.5);
-
-        VertexConsumer builder = getter.getBuffer(RenderType.solid());
-        int i = 0;
-        for (int j = modelQuads.size(); i < j; ++i) {
-            BakedQuad bakedquad = modelQuads.get(i);
-            builder.putBulkData(mStack.last(), bakedquad, 1F, 1F, 1F, 1F, packedLight, packedLight, true);
-        }
-
-        Minecraft mc = Minecraft.getInstance();
-        ItemStack stack = tile.itemHandler.getStackInSlot(0);
-        if (!stack.isEmpty()) {
+        state.pedestal.submitMultiLayer(mStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+        if (!state.item.isEmpty()) {
             mStack.pushPose();
             mStack.translate(0.5, 0.79, 0.52);
             mStack.scale(0.5F, 0.5F, 0.5F);
             mStack.mulPose(Axis.XP.rotationDegrees(-67.5F));
-            mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, packedLight, packedoverlay, mStack, getter, tile.getLevel(), tile.posSeed());
+            state.item.submit(mStack, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             mStack.popPose();
         }
-        RenderUtils.endBatch(getter);
         mStack.popPose();
-        if (!stack.isEmpty()) {
-            drawName(tile, stack, mStack, getter, partialTicks);
-        }
+        if (!state.name.isEmpty()) drawName(state, mStack, collector);
     }
 
-    private void drawName(TileDislocatorPedestal tile, ItemStack item, PoseStack mStack, MultiBufferSource getter, float partialTicks) {
+    private void drawName(State state, PoseStack mStack, SubmitNodeCollector collector) {
         Minecraft mc = Minecraft.getInstance();
-        LocalPlayer player = mc.player;
-
-        HitResult hitResult = player.pick(10, partialTicks, true);
-        boolean isCursorOver = hitResult.getType() == HitResult.Type.BLOCK && ((BlockHitResult) hitResult).getBlockPos().equals(tile.getBlockPos());
-        boolean isSneaking = player.isShiftKeyDown();
-
-        if (!isCursorOver && (isSneaking != DEOldConfig.invertDPDSB)) {
-            return;
-        }
-
-        String name = item.getOrDefault(DataComponents.CUSTOM_NAME, Component.empty()).getString();
-        if (item.getItem() instanceof DislocatorAdvanced) {
-            DislocatorAdvanced.DislocatorTarget location = ((DislocatorAdvanced) item.getItem()).getSelected(item);
-            if (location != null) {
-                name = location.getName();
-            }
-        }
-        if (name.isEmpty()) {
-            return;
-        }
-
+        String name = state.name;
         mStack.pushPose();
         mStack.translate(0.5, 1.125, 0.5);
         mStack.scale(0.02F, 0.02F, 0.02F);
         mStack.mulPose(new Quaternionf().rotationXYZ(0, -90 * (float) MathHelper.torad, 180 * (float) MathHelper.torad));
 
-        double xDiff = player.getX() - (tile.getBlockPos().getX() + 0.5);
-        double yDiff = (player.getY() + player.getEyeHeight()) - (tile.getBlockPos().getY() + 1.125);
-        double zDiff = player.getZ() - (tile.getBlockPos().getZ() + 0.5);
+        double xDiff = state.playerOffset.x;
+        double yDiff = state.playerOffset.y - 0.625;
+        double zDiff = state.playerOffset.z;
         double yawAngle = Math.toDegrees(Math.atan2(zDiff, xDiff));
-        double pitchAngle = Math.toDegrees(Math.atan2(yDiff, Utils.getDistance(player.getX(), player.getY(), player.getZ(), tile.getBlockPos().getX() + 0.5, tile.getBlockPos().getY() + 0.5, tile.getBlockPos().getZ() + 0.5)));
+        double pitchAngle = Math.toDegrees(Math.atan2(yDiff, state.playerBaseOffset.length()));
 
         mStack.mulPose(Axis.YP.rotationDegrees((float) yawAngle));
         mStack.mulPose(Axis.XP.rotationDegrees((float) -pitchAngle));
@@ -140,7 +156,7 @@ public class RenderTileDislocatorPedestal implements BlockEntityRenderer<TileDis
 
         int textWidth = mc.font.width(name);
         mStack.translate(0, 0, -0.0125);
-        mc.font.drawInBatch(name, -(textWidth / 2F), 0, 0xffffff, true, mStack.last().pose(), getter, Font.DisplayMode.NORMAL, 0, 15728880);
+        collector.submitText(mStack, -(textWidth / 2F), 0, Component.literal(name).getVisualOrderText(), true, Font.DisplayMode.NORMAL, 15728880, 0xffffff, 0, 0);
         mStack.popPose();
     }
 }

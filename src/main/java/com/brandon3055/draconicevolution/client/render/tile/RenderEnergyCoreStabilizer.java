@@ -6,13 +6,19 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.model.OBJParser;
 import com.brandon3055.draconicevolution.DraconicEvolution;
 import com.brandon3055.draconicevolution.blocks.tileentity.TileEnergyCoreStabilizer;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
+import com.brandon3055.brandonscore.client.render.ExtractedModel;
+import com.brandon3055.draconicevolution.client.render.DEModelEmission;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -26,16 +32,11 @@ import java.util.Map;
 /**
  * Created by brandon3055 on 19/4/2016.
  */
-public class RenderEnergyCoreStabilizer implements BlockEntityRenderer<TileEnergyCoreStabilizer> {
+public class RenderEnergyCoreStabilizer implements BlockEntityRenderer<TileEnergyCoreStabilizer, RenderEnergyCoreStabilizer.State> {
 
-    private static final RenderType MODEL_TYPE = RenderType.entitySolid(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/stabilizer_large.png"));
+    private static final RenderType MODEL_TYPE = RenderTypes.entitySolid(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/stabilizer_large.png"));
 
-    private static final RenderType MODEL_TYPE_ACTIVE = RenderType.create("stab_type_a", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/energy_core/stabilizer_large.png"), false, false))
-            .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorTexLightmapShader))
-            .setLightmapState(RenderStateShard.LIGHTMAP)
-            .createCompositeState(false)
-    );
+    private static final RenderType MODEL_TYPE_ACTIVE = TileRenderPipelines.STABILIZER_ACTIVE;
 
     private CCModel model;
 
@@ -46,8 +47,29 @@ public class RenderEnergyCoreStabilizer implements BlockEntityRenderer<TileEnerg
 
 //    Ask covers about this...
 
+    public static class State extends BlockEntityRenderState {
+        ExtractedModel geometry;
+    }
+
     @Override
-    public void render(TileEnergyCoreStabilizer tile, float partialTicks, PoseStack poseStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
+    public State createRenderState() { return new State(); }
+
+    @Override
+    public void extractRenderState(TileEnergyCoreStabilizer tile, State state, float partialTicks, Vec3 cameraPosition,
+                                   ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        ExtractedModel.Capture capture = new ExtractedModel.Capture();
+        extractGeometry(tile, partialTicks, new PoseStack(), capture, state.lightCoords,
+                net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
+        state.geometry = capture.finish();
+    }
+
+    @Override
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (state.geometry != null) state.geometry.submit(poseStack, collector);
+    }
+
+    private void extractGeometry(TileEnergyCoreStabilizer tile, float partialTicks, PoseStack poseStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
         if (!tile.isValidMultiBlock.get()) return;
 
         CCRenderState ccrs = CCRenderState.instance();
@@ -73,7 +95,7 @@ public class RenderEnergyCoreStabilizer implements BlockEntityRenderer<TileEnerg
         poseStack.mulPose(Axis.ZP.rotationDegrees(tile.rotation + (coreActive ? partialTicks : 0)));
         poseStack.translate(0, -1.5, 0);
         ccrs.bind(coreActive ? MODEL_TYPE_ACTIVE : MODEL_TYPE, getter, poseStack);
-        model.render(ccrs);
+        DEModelEmission.render(model, ccrs);
         poseStack.popPose();
     }
 

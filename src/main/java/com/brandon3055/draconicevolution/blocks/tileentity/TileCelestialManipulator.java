@@ -120,12 +120,12 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
 
     public TileCelestialManipulator(BlockPos pos, BlockState state) {
         super(DEContent.TILE_CELESTIAL_MANIPULATOR.get(), pos, state);
-        capManager.setManaged("energy", CapabilityOP.BLOCK, opStorage).saveBoth().syncContainer();
+        capManager.setManaged("energy", CapabilityOP.OP, opStorage).saveBoth().syncContainer();
         weatherMode.setCCSCS();
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_CELESTIAL_MANIPULATOR);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_CELESTIAL_MANIPULATOR.get());
     }
 
     @Override

@@ -137,7 +137,7 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
 
     public TileEnergyCore(BlockPos pos, BlockState state) {
         super(DEContent.TILE_STORAGE_CORE.get(), pos, state);
-        capManager.setInternalManaged("energy", CapabilityOP.BLOCK, energy).saveTile().syncContainer();
+        capManager.setInternalManaged("energy", CapabilityOP.OP, energy).saveTile().syncContainer();
         energy.setIOTracker(addTickable(new IOTracker()));
 
         for (int i = 0; i < stabilizerPositions.length; i++) {
@@ -152,7 +152,7 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_STORAGE_CORE);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_STORAGE_CORE.get());
     }
 
     @Override

@@ -122,7 +122,7 @@ public class TileEntityDetector extends TileBCore implements MenuProvider, IInte
 
     public TileEntityDetector(BlockPos pos, BlockState state) {
         super(DEContent.TILE_ENTITY_DETECTOR.get(), pos, state);
-        capManager.setManaged("energy", CapabilityOP.BLOCK, opStorage).saveBoth().syncContainer();
+        capManager.setManaged("energy", CapabilityOP.OP, opStorage).saveBoth().syncContainer();
         if (isAdvanced()) {
             entityFilter = new EntityFilter(false, FilterType.values());
         } else {
@@ -138,7 +138,7 @@ public class TileEntityDetector extends TileBCore implements MenuProvider, IInte
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_ENTITY_DETECTOR);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_ENTITY_DETECTOR.get());
     }
 
     @Override

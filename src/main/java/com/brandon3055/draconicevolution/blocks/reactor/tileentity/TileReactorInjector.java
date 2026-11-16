@@ -15,12 +15,12 @@ public class TileReactorInjector extends TileReactorComponent {
     public TileReactorInjector(BlockPos pos, BlockState state) {
         super(DEContent.TILE_REACTOR_INJECTOR.get(), pos, state);
         OPInjector opInjector = new OPInjector(this);
-        capManager.set(CapabilityOP.BLOCK, opInjector);
+        capManager.set(CapabilityOP.OP, opInjector);
         capManager.setCapSideValidator(opInjector, face -> face == this.facing.get().getOpposite());
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_REACTOR_INJECTOR);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_REACTOR_INJECTOR.get());
     }
 
     private static class OPInjector implements IOPStorage {

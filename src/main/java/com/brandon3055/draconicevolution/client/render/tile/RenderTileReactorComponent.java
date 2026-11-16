@@ -10,13 +10,19 @@ import com.brandon3055.draconicevolution.blocks.reactor.tileentity.TileReactorCo
 import com.brandon3055.draconicevolution.blocks.reactor.tileentity.TileReactorInjector;
 import com.brandon3055.draconicevolution.blocks.reactor.tileentity.TileReactorStabilizer;
 import com.brandon3055.draconicevolution.init.DEContent;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.covers1624.quack.collection.FastStream;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.world.phys.Vec3;
+import com.brandon3055.brandonscore.client.render.ExtractedModel;
+import com.brandon3055.draconicevolution.client.render.DEModelEmission;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -31,24 +37,13 @@ import static com.brandon3055.draconicevolution.DraconicEvolution.MODID;
 /**
  * Created by brandon3055 on 20/01/2017.
  */
-public class RenderTileReactorComponent implements BlockEntityRenderer<TileReactorComponent> {
+public class RenderTileReactorComponent implements BlockEntityRenderer<TileReactorComponent, RenderTileReactorComponent.State> {
 
-    private static final RenderType STAB_FRAME_TYPE = RenderType.entitySolid(Identifier.fromNamespaceAndPath(MODID, "textures/block/reactor/reactor_stabilizer.png"));
-    private static final RenderType INJECTOR_FRAME_TYPE = RenderType.entitySolid(Identifier.fromNamespaceAndPath(MODID, "textures/block/reactor/reactor_injector.png"));
+    private static final RenderType STAB_FRAME_TYPE = RenderTypes.entitySolid(Identifier.fromNamespaceAndPath(MODID, "textures/block/reactor/reactor_stabilizer.png"));
+    private static final RenderType INJECTOR_FRAME_TYPE = RenderTypes.entitySolid(Identifier.fromNamespaceAndPath(MODID, "textures/block/reactor/reactor_injector.png"));
 
-    private static final RenderType STAB_GLOW_TYPE = RenderType.create(MODID + ":stab_glow", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(MODID, "textures/block/reactor/reactor_stabilizer.png"), false, false))
-            .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEntitySolidShader)) //TODO Does this shader work?
-            .setTransparencyState(RenderStateShard.LIGHTNING_TRANSPARENCY)
-            .createCompositeState(false)
-    );
-
-    private static final RenderType INJECTOR_GLOW_TYPE = RenderType.create(MODID + ":injector_glow", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-            .setTextureState(new RenderStateShard.TextureStateShard(Identifier.fromNamespaceAndPath(MODID, "textures/block/reactor/reactor_injector.png"), false, false))
-            .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEntitySolidShader)) //TODO Does this shader work?
-            .setTransparencyState(RenderStateShard.LIGHTNING_TRANSPARENCY)
-            .createCompositeState(false)
-    );
+    private static final RenderType STAB_GLOW_TYPE = TileRenderPipelines.STAB_GLOW;
+    private static final RenderType INJECTOR_GLOW_TYPE = TileRenderPipelines.INJECTOR_GLOW;
 
     private static CCModel modelInjectorBase;
     private static CCModel modelInjectorEmitters;
@@ -64,7 +59,9 @@ public class RenderTileReactorComponent implements BlockEntityRenderer<TileReact
     private static CCModel modelInnerRotorPart;
     private static CCModel modelOuterRotorPart;
 
-    static {
+    static { reloadModels(); }
+
+    private static void reloadModels() {
         Map<String, CCModel> map = new OBJParser(Identifier.fromNamespaceAndPath(MODID, "models/block/reactor/reactor_injector.obj")).quads().ignoreMtl().parse();
         modelInjectorBase = CCModel.combine(FastStream.of(map.entrySet())
                 .filter(e -> !e.getKey().startsWith("emitter"))
@@ -123,10 +120,32 @@ public class RenderTileReactorComponent implements BlockEntityRenderer<TileReact
     }
 
     public RenderTileReactorComponent(BlockEntityRendererProvider.Context context) {
+        reloadModels();
+    }
+
+    public static class State extends BlockEntityRenderState {
+        ExtractedModel geometry;
     }
 
     @Override
-    public void render(TileReactorComponent te, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
+    public State createRenderState() { return new State(); }
+
+    @Override
+    public void extractRenderState(TileReactorComponent tile, State state, float partialTicks, Vec3 cameraPosition,
+                                   ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        ExtractedModel.Capture capture = new ExtractedModel.Capture();
+        extractGeometry(tile, partialTicks, new PoseStack(), capture, state.lightCoords,
+                net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
+        state.geometry = capture.finish();
+    }
+
+    @Override
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        if (state.geometry != null) state.geometry.submit(poseStack, collector);
+    }
+
+    private void extractGeometry(TileReactorComponent te, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
         Matrix4 mat = new Matrix4(mStack);
         mat.translate(0.5, 0, 0.5);
 
@@ -162,50 +181,50 @@ public class RenderTileReactorComponent implements BlockEntityRenderer<TileReact
         outerRotorMat.apply(new Rotation(coreRotation * torad * -2, Vector3.Z_POS).at(new Vector3(0, 0.5, 0)));
 
         ccrs.bind(STAB_FRAME_TYPE, getter);
-        modelStabFrame.render(ccrs, mat);
-        modelStabInnerRotorArm.render(ccrs, innerRotorMat);
-        modelStabOuterRotorArm.render(ccrs, outerRotorMat);
+        DEModelEmission.render(modelStabFrame, ccrs, mat);
+        DEModelEmission.render(modelStabInnerRotorArm, ccrs, innerRotorMat);
+        DEModelEmission.render(modelStabOuterRotorArm, ccrs, outerRotorMat);
 
         for (int i = 0; i < 4; i++) {
             ccrs.brightness = packedLight;
             Matrix4 ringMat = mat.copy();
             ringMat.apply(new Rotation(((90 * i) + ringRotation) * torad, Vector3.Z_POS).at(new Vector3(0, 0.5, 0)));
-            modelStabRing.render(ccrs, ringMat);
+            DEModelEmission.render(modelStabRing, ccrs, ringMat);
 
             ccrs.brightness = (int) (brightness * 240);
             Matrix4 emitterMat = ringMat.copy();
             emitterMat.apply(new Rotation(45 * torad, Vector3.X_NEG).at(new Vector3(0, 15 / 16F, -((8 + 1.5) / 16F))));
-            modelStabRingEmitter.render(ccrs, emitterMat);
+            DEModelEmission.render(modelStabRingEmitter, ccrs, emitterMat);
         }
 
         ccrs.brightness = (int) (brightness * 240);
-        modelStabInnerRotor.render(ccrs, innerRotorMat);
-        modelStabOuterRotor.render(ccrs, outerRotorMat);
+        DEModelEmission.render(modelStabInnerRotor, ccrs, innerRotorMat);
+        DEModelEmission.render(modelStabOuterRotor, ccrs, outerRotorMat);
 
         if (brightness >= 1) {
             ccrs.bind(STAB_GLOW_TYPE, getter);
-            modelStabInnerRotor.render(ccrs, innerRotorMat);
-            modelStabOuterRotor.render(ccrs, outerRotorMat);
+            DEModelEmission.render(modelStabInnerRotor, ccrs, innerRotorMat);
+            DEModelEmission.render(modelStabOuterRotor, ccrs, outerRotorMat);
 
             for (int i = 0; i < 4; i++) {
                 Matrix4 emitterMat = mat.copy();
                 emitterMat.apply(new Rotation(((90 * i) + ringRotation) * torad, Vector3.Z_POS).at(new Vector3(0, 0.5, 0)));
                 emitterMat.apply(new Rotation(45 * torad, Vector3.X_NEG).at(new Vector3(0, 15 / 16F, -((8 + 1.5) / 16F))));
-                modelStabRingEmitter.render(ccrs, emitterMat);
+                DEModelEmission.render(modelStabRingEmitter, ccrs, emitterMat);
             }
         }
     }
 
     public static void renderInjector(CCRenderState ccrs, Matrix4 mat, MultiBufferSource getter, float brightness, int packedLight, int packedOverlay) {
         ccrs.bind(INJECTOR_FRAME_TYPE, getter);
-        modelInjectorBase.render(ccrs, mat);
+        DEModelEmission.render(modelInjectorBase, ccrs, mat);
 
         ccrs.brightness = (int) (brightness * 240);
-        modelInjectorEmitters.render(ccrs, mat);
+        DEModelEmission.render(modelInjectorEmitters, ccrs, mat);
 
         if (brightness >= 1) {
             ccrs.bind(INJECTOR_GLOW_TYPE, getter);
-            modelInjectorEmitters.render(ccrs, mat);
+            DEModelEmission.render(modelInjectorEmitters, ccrs, mat);
         }
     }
 
@@ -213,30 +232,30 @@ public class RenderTileReactorComponent implements BlockEntityRenderer<TileReact
         if (item == DEContent.REACTOR_PRT_STAB_FRAME.get()) {
             ccrs.bind(STAB_FRAME_TYPE, getter);
             mat.translate(0.5, 0, 0.5);
-            modelStabFrame.render(ccrs, mat);
+            DEModelEmission.render(modelStabFrame, ccrs, mat);
 
         } else if (item == DEContent.REACTOR_PRT_IN_ROTOR.get()) {
             ccrs.bind(STAB_FRAME_TYPE, getter);
             mat.translate(0.3, 0, 0.5);
             mat.scale(1.5F, 1.5F, 1.5F);
-            modelInnerRotorPart.render(ccrs, mat);
+            DEModelEmission.render(modelInnerRotorPart, ccrs, mat);
 
         } else if (item == DEContent.REACTOR_PRT_OUT_ROTOR.get()) {
             ccrs.bind(STAB_FRAME_TYPE, getter);
             mat.translate(0.3, 0, 0.5);
             mat.scale(1.5F, 1.5F, 1.5F);
-            modelOuterRotorPart.render(ccrs, mat);
+            DEModelEmission.render(modelOuterRotorPart, ccrs, mat);
 
         } else if (item == DEContent.REACTOR_PRT_ROTOR_FULL.get()) {
             ccrs.bind(STAB_FRAME_TYPE, getter);
             mat.translate(0.5, -0.2, 0.5);
             mat.scale(1.5F, 1.5F, 1.5F);
 
-            modelStabInnerRotor.render(ccrs, mat);
-            modelStabInnerRotorArm.render(ccrs, mat);
+            DEModelEmission.render(modelStabInnerRotor, ccrs, mat);
+            DEModelEmission.render(modelStabInnerRotorArm, ccrs, mat);
             mat.apply(new Rotation(60 * torad, Vector3.Z_NEG).at(new Vector3(0, 0.5, 0)));
-            modelStabOuterRotor.render(ccrs, mat);
-            modelStabOuterRotorArm.render(ccrs, mat);
+            DEModelEmission.render(modelStabOuterRotor, ccrs, mat);
+            DEModelEmission.render(modelStabOuterRotorArm, ccrs, mat);
 
         } else if (item == DEContent.REACTOR_PRT_FOCUS_RING.get()) {
             ccrs.bind(STAB_FRAME_TYPE, getter);
@@ -246,11 +265,11 @@ public class RenderTileReactorComponent implements BlockEntityRenderer<TileReact
             for (int i = 0; i < 4; i++) {
                 Matrix4 ringMat = mat.copy();
                 ringMat.apply(new Rotation((90 * i) * torad, Vector3.Z_POS).at(new Vector3(0, 0.5, 0)));
-                modelStabRing.render(ccrs, ringMat);
+                DEModelEmission.render(modelStabRing, ccrs, ringMat);
 
                 Matrix4 emitterMat = ringMat.copy();
                 emitterMat.apply(new Rotation(45 * torad, Vector3.X_NEG).at(new Vector3(0, 15 / 16F, -((8 + 1.5) / 16F))));
-                modelStabRingEmitter.render(ccrs, emitterMat);
+                DEModelEmission.render(modelStabRingEmitter, ccrs, emitterMat);
             }
         }
     }

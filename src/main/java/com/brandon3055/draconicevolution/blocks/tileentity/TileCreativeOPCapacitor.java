@@ -54,7 +54,7 @@ public class TileCreativeOPCapacitor extends TileBCore implements IInteractTile 
     public TileCreativeOPCapacitor(BlockPos pos, BlockState state) {
         super(DEContent.TILE_CREATIVE_OP_CAPACITOR.get(), pos, state);
 
-        capManager.set(CapabilityOP.BLOCK, new IOPStorage() {
+        capManager.set(CapabilityOP.OP, new IOPStorage() {
             @Override
             public int receiveEnergy(int maxReceive, boolean simulate) {
                 return (int) Math.min(maxReceive, powerRate.get());
@@ -114,7 +114,7 @@ public class TileCreativeOPCapacitor extends TileBCore implements IInteractTile 
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        energyCapability(event, DEContent.TILE_CREATIVE_OP_CAPACITOR);
+        com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_CREATIVE_OP_CAPACITOR.get());
     }
 
     @Override
