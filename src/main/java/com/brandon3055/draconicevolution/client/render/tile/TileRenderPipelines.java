@@ -45,12 +45,25 @@ public final class TileRenderPipelines {
     private static RenderType textureType(String name, RenderPipeline pipeline, String texture) {
         return RenderType.create(name, RenderSetup.builder(pipeline).withTexture("Sampler0", id(texture)).createRenderSetup());
     }
+    private static final RenderPipeline CELESTIAL_PIPELINE = texturePipeline("celestial", VertexFormat.Mode.QUADS, true, true);
+    public static final RenderType CELESTIAL_WEATHER = textureType("de_celestial_weather", CELESTIAL_PIPELINE, "textures/block/crafting/fusion_particle.png");
+    public static final RenderType CELESTIAL_TIME = textureType("de_celestial_time", CELESTIAL_PIPELINE, "textures/particle/todo/celestial_manipulator.png");
     private static final RenderPipeline CHAOS = RenderPipelines.CUTOUT_BLOCK.toBuilder()
             .withLocation(id("pipeline/chaos_surface"))
             .withVertexFormat(DefaultVertexFormat.BLOCK, VertexFormat.Mode.TRIANGLES)
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT)).build();
     public static final RenderType CHAOS_SURFACE = RenderType.create("de_chaos_surface", RenderSetup.builder(CHAOS)
             .withTexture("Sampler0", id("textures/block/chaos_crystal.png")).useLightmap().createRenderSetup());
+
+    private static final RenderPipeline FUSION_PARTICLE_PIPELINE = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            .withLocation(id("pipeline/fusion_particles"))
+            .withVertexShader(id("core/tile_unlit_lightmap")).withFragmentShader(id("core/tile_unlit_lightmap"))
+            .withSampler("Sampler0").withSampler("Sampler2")
+            .withVertexFormat(DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS)
+            .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
+            .withCull(false).withDepthStencilState(DepthStencilState.DEFAULT).build();
+    public static final RenderType FUSION_PARTICLES = RenderType.create("de_fusion_particles", RenderSetup.builder(FUSION_PARTICLE_PIPELINE)
+            .withTexture("Sampler0", net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_PARTICLES).useLightmap().createRenderSetup());
 
     private static final RenderPipeline STAB_ACTIVE = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
             .withLocation(id("pipeline/stabilizer_active"))
@@ -96,6 +109,10 @@ public final class TileRenderPipelines {
         event.registerPipeline(CHAOS);
         event.registerPipeline(STAB_ACTIVE);
         event.registerPipeline(GLOW);
+        event.registerPipeline(CELESTIAL_PIPELINE);
+        com.brandon3055.draconicevolution.client.render.effect.RenderEnergyBolt.register(event);
+        com.brandon3055.draconicevolution.client.render.entity.DraconicGuardianRenderer.registerPipelines(event);
+        event.registerPipeline(FUSION_PARTICLE_PIPELINE);
         ExtractedBuildGuide.register(event);
     }
 }

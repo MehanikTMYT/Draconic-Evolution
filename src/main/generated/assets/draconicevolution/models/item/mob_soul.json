@@ -1,5 +1,6 @@
 {
-  "parent": "minecraft:item/generated",
-  "class": "com.brandon3055.draconicevolution.client.render.item.RenderItemMobSoul",
-  "loader": "codechickenlib:class"
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "draconicevolution:block/draconium_block"
+  }
 }

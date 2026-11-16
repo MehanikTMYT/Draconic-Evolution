@@ -66,50 +66,33 @@ public class EffectTrackerCelestialManipulator {
         rotation += rotationSpeed;
     }
 
-    public void renderEffect(Tesselator tessellator, float partialTicks) {
-//        BufferBuilder vertexbuffer = tessellator.getBuilder();
-//        CCRenderState ccrs = CCRenderState.instance();
-        //region Icosahedron
-
-//        float relativeX = (float) (this.prevPos.x + (this.pos.x() - this.prevPos.x) * (double) partialTicks - interpPosX);
-//        float relativeY = (float) (this.prevPos.y + (this.pos.y - this.prevPos.y) * (double) partialTicks - interpPosY);
-//        float relativeZ = (float) (this.prevPos.z + (this.pos.z() - this.prevPos.z) * (double) partialTicks - interpPosZ);
-//        float correctX = (float) (this.prevPos.x + (this.pos.x() - this.prevPos.x) * (double) partialTicks);
-//        float correctY = (float) (this.prevPos.y + (this.pos.y - this.prevPos.y) * (double) partialTicks);
-//        float correctZ = (float) (this.prevPos.z + (this.pos.z() - this.prevPos.z) * (double) partialTicks);
-//
-//        RenderSystem.pushMatrix();
-//        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-//        RenderSystem.color4f(red, green, blue, alpha);
-//        RenderSystem.translatef(relativeX, relativeY, relativeZ);
-//        RenderSystem.rotatef(rotation + (partialTicks * rotationSpeed), 0F, 1F, 0F);
-//        RenderSystem.translatef(-relativeX, -relativeY, -relativeZ);
-//        ccrs.reset();
-//        ccrs.startDrawing(GL11.GL_QUADS, DefaultVertexFormat.POSITION_TEX, vertexbuffer);
-//        Matrix4 pearlMat = RenderUtils.getMatrix(new Vector3(relativeX, relativeY, relativeZ), new Rotation(0F, new Vector3(0, 0, 0)), 0.15 * scale);
-//        ccrs.bind(vertexbuffer);
-//        CCModelLibrary.icosahedron7.render(ccrs, pearlMat);
-//        tessellator.end();
-//        RenderSystem.popMatrix();
-//        RenderSystem.color4f(1F, 1F, 1F, 1F);
-//
-//        //endregion
-//
-//        RenderSystem.pushMatrix();
-//        RenderSystem.translatef(relativeX, relativeY, relativeZ);
-//
-//        int segments = Math.max(4, (int) (8 * scale));
-//        if (renderBolt > 0 && scale > 0 && renderBolts) {
-//            RenderEnergyBolt.renderBoltBetween(new Vec3D(), effectFocus.copy().subtract(correctX, correctY, correctZ), 0.05 * scale, scale * 0.5, segments, boltSeed, false);
-//        }
-//
-//        if (linkPos != null && scale > 0) {
-//            RenderEnergyBolt.renderBoltBetween(new Vec3D(), linkPos.copy().subtract(correctX, correctY, correctZ), 0.05 * scale, scale * 0.5, segments, boltSeed, false);
-//        }
-//
-//        RenderSystem.enableBlend();
-//        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-//        RenderSystem.disableLighting();
-//        RenderSystem.popMatrix();
+    /** Called during block entity extraction; output contains no live tracker references. */
+    public void extractEffect(com.mojang.blaze3d.vertex.PoseStack pose, net.minecraft.client.renderer.MultiBufferSource buffers,
+                              float partialTicks, net.minecraft.core.BlockPos origin, boolean weather) {
+        double x = prevPos.x + (pos.x - prevPos.x) * partialTicks;
+        double y = prevPos.y + (pos.y - prevPos.y) * partialTicks;
+        double z = prevPos.z + (pos.z - prevPos.z) * partialTicks;
+        pose.pushPose();
+        pose.translate(x - origin.getX(), y - origin.getY(), z - origin.getZ());
+        pose.pushPose();
+        pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees(rotation + partialTicks * rotationSpeed));
+        pose.scale(0.15F * scale, 0.15F * scale, 0.15F * scale);
+        var consumer = buffers.getBuffer(weather ? com.brandon3055.draconicevolution.client.render.tile.TileRenderPipelines.CELESTIAL_WEATHER
+                : com.brandon3055.draconicevolution.client.render.tile.TileRenderPipelines.CELESTIAL_TIME);
+        for (var vertex : codechicken.lib.render.CCModelLibrary.icosahedron7.verts) {
+            consumer.addVertex(pose.last(), (float) vertex.vec.x, (float) vertex.vec.y, (float) vertex.vec.z)
+                    .setUv((float) vertex.uv.u, (float) vertex.uv.v).setColor(red, green, blue, alpha);
+        }
+        pose.popPose();
+        int segments = Math.max(4, (int) (8 * scale));
+        if (renderBolt > 0 && scale > 0 && renderBolts) {
+            RenderEnergyBolt.renderBoltBetween(pose, buffers, new Vec3D(), effectFocus.copy().subtract(x, y, z),
+                    0.05 * scale, scale * 0.5, segments, boltSeed, false);
+        }
+        if (linkPos != null && scale > 0) {
+            RenderEnergyBolt.renderBoltBetween(pose, buffers, new Vec3D(), linkPos.copy().subtract(x, y, z),
+                    0.05 * scale, scale * 0.5, segments, boltSeed, false);
+        }
+        pose.popPose();
     }
 }

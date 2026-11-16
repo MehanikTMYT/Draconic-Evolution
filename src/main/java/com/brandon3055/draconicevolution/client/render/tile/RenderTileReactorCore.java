@@ -70,11 +70,11 @@ public class RenderTileReactorCore implements BlockEntityRenderer<TileReactorCor
         state.geometry.submit(pose, collector);
     }
 
-    public RenderTileReactorCore(BlockEntityRendererProvider.Context context) {
-        if (model == null) {
-            Map<String, CCModel> map = new OBJParser(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "models/block/reactor/reactor_core.obj")).quads().ignoreMtl().parse();
-            model = CCModel.combine(map.values());
-        }
+    public RenderTileReactorCore(BlockEntityRendererProvider.Context context) { reloadModel(); }
+
+    public static void reloadModel() {
+        Map<String, CCModel> map = new OBJParser(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "models/block/reactor/reactor_core.obj")).quads().ignoreMtl().parse();
+        model = CCModel.combine(map.values());
     }
 
     public static void renderCore(Matrix4 mat, CCRenderState ccrs, float animation, double animState, float intensity, float shieldPower, float partialTicks, MultiBufferSource getter) {

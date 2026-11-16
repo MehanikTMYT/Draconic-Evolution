@@ -10,13 +10,9 @@ import codechicken.lib.render.RenderUtils;
 
 import codechicken.lib.render.model.OBJParser;
 
-import codechicken.lib.render.shader.ShaderObject;
 
-import codechicken.lib.render.shader.ShaderProgram;
 
-import codechicken.lib.render.shader.ShaderProgramBuilder;
 
-import codechicken.lib.render.shader.UniformType;
 
 import codechicken.lib.vec.Matrix4;
 
@@ -58,9 +54,9 @@ import net.minecraft.client.particle.ParticleRenderType;
 
 import net.minecraft.client.renderer.GameRenderer;
 
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.minecraft.client.renderer.MultiBufferSource;
+import com.brandon3055.draconicevolution.client.render.DEModelEmission;
 
-import net.minecraft.client.renderer.RenderStateShard;
 
 import net.minecraft.client.renderer.rendertype.RenderType;
 
@@ -74,7 +70,6 @@ import net.minecraft.world.phys.Vec3;
 
 import static com.brandon3055.draconicevolution.DraconicEvolution.MODID;
 
-import static net.minecraft.client.renderer.RenderStateShard.COLOR_WRITE;
 
 
 
@@ -83,50 +78,28 @@ import static net.minecraft.client.renderer.RenderStateShard.COLOR_WRITE;
 /**
  * Created by brandon3055 on 12/02/2017.
  */
-public class ExplosionFX extends Particle {
-    public static CCModel model;
-    public static CCModel model_inv;
+public class ExplosionFX extends GeometryEffectParticle {
+    public final CCModel model;
+    public final CCModel model_inv;
     public CoreEffect coreEffect;
     private LinkedList<EffectPart> effectParts = new LinkedList<>();
     private static final Random rand = new Random();
 
-    private static final RenderStateShard.DepthTestStateShard DISABLE_DEPTH = new RenderStateShard.DepthTestStateShard("none", 519) {
-        @Override
-        public void setupRenderState() {
-            RenderSystem.disableDepthTest();
-        }
-    };
-
-    public static RenderType EXPLOSION_TYPE = RenderType.create(MODID + ":explosion_shader", DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .setShaderState(new RenderStateShard.ShaderStateShard(() -> DEShaders.explosionShader))
-            .setCullState(RenderStateShard.NO_CULL)
-            .setWriteMaskState(COLOR_WRITE)
-            .setDepthTestState(DISABLE_DEPTH)
-            .createCompositeState(false)
-    );
-
-
-    public static RenderType FOG_TYPE = RenderType.create(MODID + ":explosion_fog", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-                    .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-                    .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorShader))
-                    .setCullState(RenderStateShard.NO_CULL)
-                    .setWriteMaskState(COLOR_WRITE)
-//          .setDepthTestState(DISABLE_DEPTH)
-                    .createCompositeState(false)
-    );
-
-    static {
-        Map<String, CCModel> map = new OBJParser(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "models/block/reactor/reactor_core.obj")).quads().ignoreMtl().parse();
-        model = CCModel.combine(map.values());
-        model_inv = model.backfacedCopy();
-    }
+    public static final RenderType EXPLOSION_TYPE = DEShaders.explosionShader.renderType("de_explosion", null, VertexFormat.Mode.QUADS);
+    private static final com.mojang.blaze3d.pipeline.RenderPipeline FOG_PIPELINE = net.minecraft.client.renderer.RenderPipelines.DEBUG_FILLED_BOX.toBuilder()
+            .withLocation(Identifier.fromNamespaceAndPath(MODID, "pipeline/explosion_fog"))
+            .withCull(false).withDepthStencilState(new com.mojang.blaze3d.pipeline.DepthStencilState(com.mojang.blaze3d.platform.CompareOp.LESS_THAN_OR_EQUAL, false)).build();
+    public static final RenderType FOG_TYPE = RenderType.create("de_explosion_fog", net.minecraft.client.renderer.rendertype.RenderSetup.builder(FOG_PIPELINE).createRenderSetup());
+    public static void registerPipelines(net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent event) { event.registerPipeline(FOG_PIPELINE); }
 
     private final Vector3 pos;
     public final int radius;
 
     public ExplosionFX(ClientLevel worldIn, Vector3 pos, int radius) {
-        super(worldIn, pos.x(), pos.y, pos.z());
+        super(worldIn, pos.x, pos.y, pos.z);
+        Map<String, CCModel> map = new OBJParser(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "models/block/reactor/reactor_core.obj")).quads().ignoreMtl().parse();
+        model = CCModel.combine(map.values());
+        model_inv = model.backfacedCopy();
         this.pos = pos;
         this.radius = radius;
         lifetime = 20 * 12;
@@ -175,7 +148,7 @@ public class ExplosionFX extends Particle {
     }
 
     @Override
-    public void render(VertexConsumer b, Camera renderInfo, float partialTicks) {
+    protected void extractGeometry(MultiBufferSource buffers, Camera renderInfo, float partialTicks) {
         Vec3 viewVec = renderInfo.position();
         Vector3 pos = new Vector3(x - viewVec.x, y - viewVec.y, z - viewVec.z);
 
@@ -183,7 +156,6 @@ public class ExplosionFX extends Particle {
         ccrs.reset();
         ccrs.brightness = 240;
 
-        BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer buffer = buffers.getBuffer(FOG_TYPE);
         ccrs.bind(buffer, DefaultVertexFormat.POSITION_COLOR);
 
@@ -195,11 +167,11 @@ public class ExplosionFX extends Particle {
 
         for (double i = 0; i < 16; i += 1) {
             Matrix4 mat = RenderUtils.getMatrix(pos, new Rotation(0, 0, 1, 0), 1).apply(new Scale(od, id * i, od));
-            model.render(ccrs, mat);
+            DEModelEmission.render(model, ccrs, mat);
             od += id * i;
         }
 
-        buffers.endBatch();
+
 
         ccrs.baseColour = 0xFFFFFFFF;
 
@@ -213,13 +185,6 @@ public class ExplosionFX extends Particle {
 
         ccrs.reset();
     }
-
-    @Override
-    public ParticleRenderType getRenderType() {
-        return FX_HANDLER;
-    }
-
-    private static final ParticleRenderType FX_HANDLER = ParticleRenderType.NO_RENDER;
 
     private static abstract class EffectPart {
         private boolean isDead = false;
@@ -235,7 +200,7 @@ public class ExplosionFX extends Particle {
 
         public abstract void update();
 
-        public abstract void render(Vector3 pos, CCRenderState ccrs, BufferSource buffers, float partialTicks);
+        public abstract void render(Vector3 pos, CCRenderState ccrs, MultiBufferSource buffers, float partialTicks);
 
         public void setDead() {
             isDead = true;
@@ -262,12 +227,11 @@ public class ExplosionFX extends Particle {
         }
 
         @Override
-        public void render(Vector3 pos, CCRenderState ccrs, BufferSource buffers, float partialTicks) {
+        public void render(Vector3 pos, CCRenderState ccrs, MultiBufferSource buffers, float partialTicks) {
             float ttl = (((float) age + partialTicks) / (float) maxAge);
             double scale = radius * ttl * 2;
 
-            VertexConsumer buffer = buffers.getBuffer(EXPLOSION_TYPE);
-            ccrs.bind(buffer, DefaultVertexFormat.POSITION_TEX);
+
 
             DEShaders.explosionTime.glUniform1f((ClientEventHandler.elapsedTicks + partialTicks + randOffset) / 10F);
             DEShaders.explosionScale.glUniform1f(ttl * 3);
@@ -282,14 +246,15 @@ public class ExplosionFX extends Particle {
 //            leadingWaveProgram.popCache(uniforms);
 //
 //            ccrs.startDrawing(GL11.GL_TRIANGLES, DefaultVertexFormat.POSITION_TEX);
+            ccrs.bind(EXPLOSION_TYPE, buffers);
             Matrix4 mat = RenderUtils.getMatrix(pos, new Rotation(0, 0, 1, 0), 1).apply(new Scale(scale, 1, scale));
-            model_inv.render(ccrs, mat);
-            model.render(ccrs, mat);
+            DEModelEmission.render(model_inv, ccrs, mat);
+            DEModelEmission.render(model, ccrs, mat);
 //            ccrs.draw();
 //
 //            leadingWaveProgram.release();
 
-            buffers.endBatch();
+
         }
     }
 
@@ -309,14 +274,13 @@ public class ExplosionFX extends Particle {
         }
 
         @Override
-        public void render(Vector3 pos, CCRenderState ccrs, BufferSource buffers, float partialTicks) {
+        public void render(Vector3 pos, CCRenderState ccrs, MultiBufferSource buffers, float partialTicks) {
             float ttl = (((float) age + partialTicks) / (float) maxAge);
             double scale = radius * ttl * 2;
             double vScale = (radius / 5D) * ttl * this.scale;
             float a = age + partialTicks;
 
-            VertexConsumer buffer = buffers.getBuffer(EXPLOSION_TYPE);
-            ccrs.bind(buffer, DefaultVertexFormat.POSITION_TEX);
+
 
 
 //            UniformCache uniforms = blastWaveProgram.pushCache();
@@ -328,14 +292,15 @@ public class ExplosionFX extends Particle {
 //            blastWaveProgram.popCache(uniforms);
 //
 //            ccrs.startDrawing(GL11.GL_TRIANGLES, DefaultVertexFormat.POSITION_TEX);
+            ccrs.bind(EXPLOSION_TYPE, buffers);
             Matrix4 mat = RenderUtils.getMatrix(pos, new Rotation(0, 0, 1, 0), 1).apply(new Scale(scale, vScale, scale));
-            model_inv.render(ccrs, mat);
-            model.render(ccrs, mat);
+            DEModelEmission.render(model_inv, ccrs, mat);
+            DEModelEmission.render(model, ccrs, mat);
 //            ccrs.draw();
 //
 //            blastWaveProgram.release();
 
-            buffers.endBatch();
+
         }
     }
 
@@ -355,13 +320,12 @@ public class ExplosionFX extends Particle {
         }
 
         @Override
-        public void render(Vector3 pos, CCRenderState ccrs, BufferSource buffers, float partialTicks) {
+        public void render(Vector3 pos, CCRenderState ccrs, MultiBufferSource buffers, float partialTicks) {
             float ttl = (((float) age + partialTicks) / (float) maxAge);
             double scale = (radius / 6D) * ttl * 2;
             float a = age + partialTicks;
 
-            VertexConsumer buffer = buffers.getBuffer(EXPLOSION_TYPE);
-            ccrs.bind(buffer, DefaultVertexFormat.POSITION_TEX);
+
 
 //            UniformCache uniforms = coreEffectProgram.pushCache();
             DEShaders.explosionTime.glUniform1f((ClientEventHandler.elapsedTicks + partialTicks + randOffset) / 10F);
@@ -372,14 +336,15 @@ public class ExplosionFX extends Particle {
 //            coreEffectProgram.popCache(uniforms);
 //
 //            ccrs.startDrawing(GL11.GL_TRIANGLES, DefaultVertexFormat.POSITION_TEX);
+            ccrs.bind(EXPLOSION_TYPE, buffers);
             Matrix4 mat = RenderUtils.getMatrix(pos, new Rotation(0, 0, 1, 0), 1).apply(new Scale(scale, scale / 2, scale));
-            model_inv.render(ccrs, mat);
-            model.render(ccrs, mat);
+            DEModelEmission.render(model_inv, ccrs, mat);
+            DEModelEmission.render(model, ccrs, mat);
 //            ccrs.draw();
 //
 //            coreEffectProgram.release();
 
-            buffers.endBatch();
+
         }
     }
 }

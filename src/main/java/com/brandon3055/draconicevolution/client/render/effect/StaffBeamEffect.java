@@ -45,7 +45,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by brandon3055 on 29/4/21
  */
-public class StaffBeamEffect extends Particle {
+public class StaffBeamEffect extends GeometryEffectParticle {
     private LivingEntity shooter;
     private Vector3 origin = null;
     private Vector3 targetPos;
@@ -58,11 +58,6 @@ public class StaffBeamEffect extends Particle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return renderType;
-    }
-
-    @Override
     public void tick() {
         if (this.age++ >= this.lifetime) {
             this.remove();
@@ -70,9 +65,10 @@ public class StaffBeamEffect extends Particle {
     }
 
     @Override
-    public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
+    protected void extractGeometry(net.minecraft.client.renderer.MultiBufferSource buffers, Camera renderInfo, float partialTicks) {
+        VertexConsumer buffer = buffers.getBuffer(BEAM);
 //        if (origin == null) {
-            boolean firstPerson = shooter == renderInfo.getEntity() && !renderInfo.isDetached();
+            boolean firstPerson = shooter == net.minecraft.client.Minecraft.getInstance().getCameraEntity() && !renderInfo.isDetached();
             Vector3 shooterPos = MathUtils.interpolateVec3(new Vector3(shooter.xOld, shooter.yOld, shooter.zOld), new Vector3(shooter.position()), partialTicks);
             if (firstPerson) {
                 origin = shooterPos.add(0, shooter.getEyeHeight() - 0.1125, 0);
@@ -140,24 +136,23 @@ public class StaffBeamEffect extends Particle {
 
     private void bufferQuad(VertexConsumer buffer, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, float anim, float dist) {
 //        BCProfiler.RENDER.start("buffer_quad");
-        buffer.addVertex((float) p1.x, (float) p1.y, (float) p1.z).setUv(0.5F, anim);
-        buffer.addVertex((float) p2.x, (float) p2.y, (float) p2.z).setUv(0.5F, dist + anim);
-        buffer.addVertex((float) p4.x, (float) p4.y, (float) p4.z).setUv(1.0F, dist + anim);
-        buffer.addVertex((float) p3.x, (float) p3.y, (float) p3.z).setUv(1.0F, anim);
+        buffer.addVertex((float) p1.x, (float) p1.y, (float) p1.z).setColor(-1).setUv(0.5F, anim);
+        buffer.addVertex((float) p2.x, (float) p2.y, (float) p2.z).setColor(-1).setUv(0.5F, dist + anim);
+        buffer.addVertex((float) p4.x, (float) p4.y, (float) p4.z).setColor(-1).setUv(1.0F, dist + anim);
+        buffer.addVertex((float) p3.x, (float) p3.y, (float) p3.z).setColor(-1).setUv(1.0F, anim);
 //        BCProfiler.RENDER.stop();
     }
 
-    private static ParticleRenderType renderType = new ParticleRenderType() {
-        private static Identifier texture = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_draconic.png");
-
-        @Override
-        public @Nullable BufferBuilder begin(Tesselator tesselator, TextureManager textureManager) {
-            textureManager.bindForSetup(texture);
-            RenderSystem.disableCull();
-            RenderSystem.depthMask(false);
-            RenderSystem.enableBlend();
-            RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-            return tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-        }
-    };
+    private static final com.mojang.blaze3d.pipeline.RenderPipeline PIPELINE = com.mojang.blaze3d.pipeline.RenderPipeline.builder(net.minecraft.client.renderer.RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            .withLocation(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "pipeline/staff_beam"))
+            .withVertexShader(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "core/tile_texture"))
+            .withFragmentShader(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "core/tile_texture"))
+            .withSampler("Sampler0").withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
+            .withColorTargetState(new com.mojang.blaze3d.pipeline.ColorTargetState(com.mojang.blaze3d.pipeline.BlendFunction.LIGHTNING))
+            .withDepthStencilState(new com.mojang.blaze3d.pipeline.DepthStencilState(com.mojang.blaze3d.platform.CompareOp.LESS_THAN_OR_EQUAL, false))
+            .withCull(false).build();
+    private static final net.minecraft.client.renderer.rendertype.RenderType BEAM = net.minecraft.client.renderer.rendertype.RenderType.create("de_staff_beam",
+            net.minecraft.client.renderer.rendertype.RenderSetup.builder(PIPELINE).withTexture("Sampler0",
+                    Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/particle/energy_beam_draconic.png")).createRenderSetup());
+    public static void registerPipelines(net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent event) { event.registerPipeline(PIPELINE); }
 }

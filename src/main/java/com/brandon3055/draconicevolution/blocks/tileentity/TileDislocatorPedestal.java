@@ -91,7 +91,7 @@ public class TileDislocatorPedestal extends TileBCore implements DislocatorEndPo
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }

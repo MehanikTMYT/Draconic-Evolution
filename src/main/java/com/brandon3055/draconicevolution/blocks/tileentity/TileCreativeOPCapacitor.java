@@ -128,7 +128,7 @@ public class TileCreativeOPCapacitor extends TileBCore implements IInteractTile 
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide()) {
             if (player.isShiftKeyDown()) {
                 powerRate.divide(10);

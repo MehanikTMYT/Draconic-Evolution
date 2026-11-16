@@ -26,7 +26,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ParticleStatus;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
+import com.brandon3055.brandonscore.client.render.ExtractedModel;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -46,40 +53,49 @@ import java.util.stream.Stream;
 
 import static com.brandon3055.draconicevolution.client.AtlasTextureHelper.*;
 
-public class RenderTileFusionCraftingCore implements BlockEntityRenderer<TileFusionCraftingCore> {
+public class RenderTileFusionCraftingCore implements BlockEntityRenderer<TileFusionCraftingCore, RenderTileFusionCraftingCore.State> {
 
     private static Random rand = new Random();
 
-    private RenderType particleType = RenderType.create("particle_type", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, RenderType.CompositeState.builder()
-            .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionColorTexLightmapShader))
-            .setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_PARTICLES, false, false))
-            .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
-            .createCompositeState(false)
-    );
+    private final ItemModelResolver itemModels;
+    private final RenderType particleType = TileRenderPipelines.FUSION_PARTICLES;
 
     public RenderTileFusionCraftingCore(BlockEntityRendererProvider.Context context) {
+        itemModels = context.itemModelResolver();
+    }
+
+    public static class State extends BlockEntityRenderState {
+        final ItemStackRenderState item = new ItemStackRenderState();
+        ExtractedModel effects;
+        float rotation;
+    }
+
+    @Override public State createRenderState() { return new State(); }
+
+    @Override
+    public void extractRenderState(TileFusionCraftingCore tile, State state, float partialTicks, Vec3 cameraPosition,
+                                   ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        ItemStack stack = !tile.getOutputStack().isEmpty() && !tile.isCrafting() ? tile.getOutputStack() : tile.getCatalystStack();
+        itemModels.updateForTopItem(state.item, stack, ItemDisplayContext.FIXED, tile.getLevel(), null, tile.posSeed());
+        state.rotation = (TimeKeeper.getClientTick() + partialTicks) * 0.8F;
+        ExtractedModel.Capture capture = new ExtractedModel.Capture();
+        if (tile.fxHandler instanceof FusionTileFXHandler handler && handler.renderActive()) {
+            renderEffects(tile, handler, partialTicks, new PoseStack(), capture, state.lightCoords,
+                    net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
+        }
+        state.effects = capture.finish();
     }
 
     @Override
-    public void render(TileFusionCraftingCore te, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packetLight, int packetOverlay) {
-        renderContent(te, partialTicks, mStack, getter, packetLight, packetOverlay);
-        FusionTileFXHandler handler = (FusionTileFXHandler) te.fxHandler;
-        if (handler.renderActive()) {
-            renderEffects(te, handler, partialTicks, mStack, getter, packetLight, packetOverlay);
-        }
-    }
-
-    private void renderContent(TileFusionCraftingCore te, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packetLight, int packetOverlay) {
-        ItemStack stack = !te.getOutputStack().isEmpty() && !te.isCrafting() ? te.getOutputStack() : te.getCatalystStack();
-        Minecraft mc = Minecraft.getInstance();
-        if (!stack.isEmpty()) {
-            mStack.pushPose();
-            mStack.translate(0.5, 0.5, 0.5);
-            mStack.scale(0.5F, 0.5F, 0.5F);
-            mStack.mulPose(Axis.YP.rotationDegrees((TimeKeeper.getClientTick() + partialTicks) * 0.8F));
-            mc.getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, packetLight, packetOverlay, mStack, getter, te.getLevel(), te.posSeed());
-            mStack.popPose();
-        }
+    public void submit(State state, PoseStack stack, SubmitNodeCollector collector, CameraRenderState camera) {
+        stack.pushPose();
+        stack.translate(0.5, 0.5, 0.5);
+        stack.scale(0.5F, 0.5F, 0.5F);
+        stack.mulPose(Axis.YP.rotationDegrees(state.rotation));
+        state.item.submit(stack, collector, state.lightCoords, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, 0);
+        stack.popPose();
+        state.effects.submit(stack, collector);
     }
 
     private void renderEffects(TileFusionCraftingCore core, FusionTileFXHandler handler, float partialTicks, PoseStack mStack, MultiBufferSource getter, int packetLight, int packetOverlay) {
@@ -166,9 +182,9 @@ public class RenderTileFusionCraftingCore implements BlockEntityRenderer<TileFus
             float rotX = (float) (rand.nextFloat() * Math.PI * 2 + anim / 10);
             float rotY = (float) (rand.nextFloat() * Math.PI * 2 + anim / 15);
             double radius = 0.25;
-            double x = ingred.pos.x() + radius * Mth.cos(rotX) * Mth.sin(rotY);
+            double x = ingred.pos.x + radius * Mth.cos(rotX) * Mth.sin(rotY);
             double y = ingred.pos.y + radius * Mth.sin(rotX) * Mth.sin(rotY);
-            double z = ingred.pos.z() + radius * Mth.cos(rotY);
+            double z = ingred.pos.z + radius * Mth.cos(rotY);
             EffectLib.drawParticle(cameraRotation, builder, ENERGY_PARTICLE[(TimeKeeper.getClientTick() + rand.nextInt(6423)) % ENERGY_PARTICLE.length], 0F, 0.8F + (rand.nextFloat() * 0.2F), 1F, x, y, z, scale, 240);
         }
 
@@ -191,7 +207,7 @@ public class RenderTileFusionCraftingCore implements BlockEntityRenderer<TileFus
             pos.normalize();
             pos.multiply(MathUtils.nextFloat() * 0.1875);
             pos.add(ingred.pos);
-            EffectLib.drawParticle(cameraRotation, builder, SPELL_PARTICLE[(rand.nextInt(SPELL_PARTICLE.length) + TimeKeeper.getClientTick()) % SPELL_PARTICLE.length], 0.7F, 0F, 0F, pos.x(), pos.y, pos.z(), scale * pScale, 240);
+            EffectLib.drawParticle(cameraRotation, builder, SPELL_PARTICLE[(rand.nextInt(SPELL_PARTICLE.length) + TimeKeeper.getClientTick()) % SPELL_PARTICLE.length], 0.7F, 0F, 0F, pos.x, pos.y, pos.z, scale * pScale, 240);
         }
 
 
@@ -209,7 +225,7 @@ public class RenderTileFusionCraftingCore implements BlockEntityRenderer<TileFus
                 Vector3 start = ingred.pos.copy().add((0.5 - rand.nextDouble()) * (randOffset * 2), (0.5 - rand.nextDouble()) * (randOffset * 2), (0.5 - rand.nextDouble()) * (randOffset * 2));
                 Vector3 end = new Vector3((0.5 - rand.nextDouble()) * (randOffset * 2), (0.5 - rand.nextDouble()) * (randOffset * 2), (0.5 - rand.nextDouble()) * (randOffset * 2));
                 pos = MathUtils.interpolateVec3(start, end, (anim / 10) % 1D);
-                EffectLib.drawParticle(cameraRotation, builder, SPARK_PARTICLE[(rand.nextInt(SPARK_PARTICLE.length) + TimeKeeper.getClientTick()) % SPARK_PARTICLE.length], 0.7F + ((((float) anim / 10F) % 1F) * 0.3F), 0F, 0F, pos.x(), pos.y, pos.z(), scale, 240);
+                EffectLib.drawParticle(cameraRotation, builder, SPARK_PARTICLE[(rand.nextInt(SPARK_PARTICLE.length) + TimeKeeper.getClientTick()) % SPARK_PARTICLE.length], 0.7F + ((((float) anim / 10F) % 1F) * 0.3F), 0F, 0F, pos.x, pos.y, pos.z, scale, 240);
             }
         }
     }

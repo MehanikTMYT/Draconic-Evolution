@@ -1,10 +1,7 @@
 package com.brandon3055.draconicevolution.client.render.item;
 
 import codechicken.lib.math.MathHelper;
-import codechicken.lib.model.PerspectiveModelState;
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.item.IItemRenderer;
-import codechicken.lib.util.TransformUtils;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
 import com.brandon3055.brandonscore.api.TimeKeeper;
@@ -24,22 +21,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by brandon3055 on 21/11/2016.
  */
-public class RenderItemReactorComponent implements IItemRenderer {
-    public RenderItemReactorComponent() {}
-
-    //region Unused
-
-    @Override
-    public boolean useAmbientOcclusion() {
-        return false;
-    }
-
-    @Override
-    public boolean isGui3d() {
-        return false;
-    }
-
-    //endregion
+public class RenderItemReactorComponent implements DEItemRenderer {
+    public RenderItemReactorComponent() { RenderTileReactorComponent.reloadModels(); RenderTileReactorCore.reloadModel(); }
 
     @Override
     public void renderItem(ItemStack stack, ItemDisplayContext transformType, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
@@ -50,7 +33,7 @@ public class RenderItemReactorComponent implements IItemRenderer {
         ccrs.overlay = packedOverlay;
         Item item = stack.getItem();
 
-        DeltaTracker delta = Minecraft.getInstance().getTimer();
+        DeltaTracker delta = Minecraft.getInstance().getDeltaTracker();
         if (item == DEContent.REACTOR_CORE.get().asItem()) {
             mat.translate(0.5, 0.5, 0.5);
             mat.scale(1.5);
@@ -68,13 +51,8 @@ public class RenderItemReactorComponent implements IItemRenderer {
         }
     }
 
-    @Override
-    public @Nullable PerspectiveModelState getModelState() {
-        return TransformUtils.DEFAULT_BLOCK;
-    }
-
-    @Override
-    public boolean usesBlockLight() {
-        return false;
+    @Override public void getExtents(java.util.function.Consumer<org.joml.Vector3fc> output) {
+        output.accept(new org.joml.Vector3f(-0.5F, -0.5F, -0.5F));
+        output.accept(new org.joml.Vector3f(1.5F, 1.5F, 1.5F));
     }
 }

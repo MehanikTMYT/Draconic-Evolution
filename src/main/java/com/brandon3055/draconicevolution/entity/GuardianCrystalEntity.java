@@ -272,7 +272,7 @@ public class GuardianCrystalEntity extends Entity {
 
     @Override
     public boolean hurtServer(ServerLevel level, DamageSource source, float amount) { // port-26.1.2: Entity.hurt -> hurtServer
-        if (isInvulnerableTo(source)) {
+        if (isInvulnerableTo(level, source)) {
             return false;
         } else {
             if (!isRemoved() && !level().isClientSide()) {
@@ -320,9 +320,9 @@ public class GuardianCrystalEntity extends Entity {
     }
 
     @Override
-    public void kill() {
+    public void kill(ServerLevel level) {
         onCrystalAttacked(level().damageSources().generic(), 0, true);
-        super.kill();
+        super.kill(level);
     }
 
     private void onCrystalAttacked(DamageSource source, float damage, boolean destroyed) {

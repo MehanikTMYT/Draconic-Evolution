@@ -133,7 +133,7 @@ public class TileStructureBlock extends TileBCore implements IInteractTile {
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         MultiBlockController controller = getController();
         if (controller != null) {
             return controller.handleRemoteClick(player, hit);

@@ -1,0 +1,7 @@
+{
+  "model": {
+    "type": "draconicevolution:machine_item",
+    "base": "draconicevolution:item/stabilized_spawner",
+    "family": "spawner"
+  }
+}

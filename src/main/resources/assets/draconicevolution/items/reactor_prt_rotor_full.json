@@ -1,0 +1,7 @@
+{
+  "model": {
+    "type": "draconicevolution:machine_item",
+    "base": "draconicevolution:item/reactor_prt_rotor_full",
+    "family": "reactor"
+  }
+}

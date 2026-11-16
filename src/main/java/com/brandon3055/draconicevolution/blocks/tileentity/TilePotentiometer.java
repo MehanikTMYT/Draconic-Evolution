@@ -76,7 +76,7 @@ public class TilePotentiometer extends TileBCore implements IRedstoneEmitter, II
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (player.isShiftKeyDown()) {
             power.dec();
             if (power.get() < 0) {

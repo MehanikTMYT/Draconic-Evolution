@@ -198,7 +198,7 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         return handleRemoteClick(player, hit);
     }
 

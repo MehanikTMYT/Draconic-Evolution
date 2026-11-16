@@ -68,7 +68,7 @@ public class EffectLib {
         xOffSum -= (float) (endPos.x - startPos.x);
         zOffSum -= (float) (endPos.z - startPos.z);
 
-        VertexConsumer builder = getter.getBuffer(RenderType.lightning());
+        VertexConsumer builder = getter.getBuffer(net.minecraft.client.renderer.rendertype.RenderTypes.lightning());
         Matrix4f matrix4f = mStack.last().pose();
 
         for (int layer = 0; layer < 4; ++layer) {

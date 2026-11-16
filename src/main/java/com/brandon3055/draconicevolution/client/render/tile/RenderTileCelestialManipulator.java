@@ -12,37 +12,31 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.EnchantingTableBlockEntity;
 import net.minecraft.world.phys.AABB;
 
-public class RenderTileCelestialManipulator implements BlockEntityRenderer<TileCelestialManipulator> {
+public class RenderTileCelestialManipulator implements BlockEntityRenderer<TileCelestialManipulator, RenderTileCelestialManipulator.State> {
+    public RenderTileCelestialManipulator(BlockEntityRendererProvider.Context context) {}
 
-    public RenderTileCelestialManipulator(BlockEntityRendererProvider.Context context) {
+    public static class State extends net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState {
+        com.brandon3055.brandonscore.client.render.ExtractedModel effects;
     }
-
-    //    @Override
-    public void render(TileCelestialManipulator te, double x, double y, double z, float partialTicks, int destroyStage) {
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player == null) {
-            return;
-        }
-        EffectTrackerCelestialManipulator.interpPosX = player.xOld + (player.getX() - player.xOld) * (double) partialTicks;
-        EffectTrackerCelestialManipulator.interpPosY = player.yOld + (player.getY() - player.yOld) * (double) partialTicks;
-        EffectTrackerCelestialManipulator.interpPosZ = player.zOld + (player.getZ() - player.zOld) * (double) partialTicks;
-
-        te.renderEffects(partialTicks);
-    }
+    @Override public State createRenderState() { return new State(); }
 
     @Override
-    public void render(TileCelestialManipulator te, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-
+    public void extractRenderState(TileCelestialManipulator tile, State state, float partialTicks, net.minecraft.world.phys.Vec3 cameraPosition,
+                                   net.minecraft.client.renderer.feature.ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        var capture = new com.brandon3055.brandonscore.client.render.ExtractedModel.Capture();
+        tile.extractEffects(partialTicks, new PoseStack(), capture);
+        state.effects = capture.finish();
     }
-
     @Override
-    public boolean shouldRenderOffScreen(TileCelestialManipulator te) {
-        return true;
+    public void submit(State state, PoseStack pose, net.minecraft.client.renderer.SubmitNodeCollector collector,
+                       net.minecraft.client.renderer.state.level.CameraRenderState camera) {
+        state.effects.submit(pose, collector);
     }
-
+    @Override public boolean shouldRenderOffScreen() { return true; }
     @Override
-    public AABB getRenderBoundingBox(TileCelestialManipulator blockEntity) {
-        BlockPos pos = blockEntity.getBlockPos();
+    public AABB getRenderBoundingBox(TileCelestialManipulator tile) {
+        BlockPos pos = tile.getBlockPos();
         return new AABB(pos.getX() - 4, pos.getY() - 4, pos.getZ() - 4, pos.getX() + 5, pos.getY() + 5, pos.getZ() + 5);
     }
 }

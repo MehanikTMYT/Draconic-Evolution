@@ -61,7 +61,7 @@ public class RenderTileReactorComponent implements BlockEntityRenderer<TileReact
 
     static { reloadModels(); }
 
-    private static void reloadModels() {
+    public static void reloadModels() {
         Map<String, CCModel> map = new OBJParser(Identifier.fromNamespaceAndPath(MODID, "models/block/reactor/reactor_injector.obj")).quads().ignoreMtl().parse();
         modelInjectorBase = CCModel.combine(FastStream.of(map.entrySet())
                 .filter(e -> !e.getKey().startsWith("emitter"))

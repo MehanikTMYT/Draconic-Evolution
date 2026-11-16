@@ -1,126 +1,37 @@
 package com.brandon3055.draconicevolution.client.render.item;
 
-import codechicken.lib.math.MathHelper;
-import codechicken.lib.model.PerspectiveModelState;
-import codechicken.lib.render.item.IItemRenderer;
-import codechicken.lib.util.TransformUtils;
-import com.brandon3055.brandonscore.api.TimeKeeper;
 import com.brandon3055.draconicevolution.init.DEContent;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
+import net.minecraft.world.item.ItemDisplayContext;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 
-import java.util.HashSet;
-import java.util.Set;
-
-/**
- * Created by brandon3055 on 18/04/2017.
- */
-public class RenderItemMobSoul implements IItemRenderer {
-
-    private static Set<Entity> brokenMobs = new HashSet<>();
-
-    public RenderItemMobSoul() {
-    }
-
-    //region Unused
-
-    @Override
-    public boolean useAmbientOcclusion() {
-        return false;
-    }
-
-    @Override
-    public boolean isGui3d() {
-        return true;
-    }
-
-    //endregion
-
-
-//    //    Remember GuiInventory.drawEntityOnScreen
-//    @Override
-//    public void renderItem(ItemStack item, ItemCameraTransforms.TransformType transformType) {
-
-//
-//        try {
-//            RenderSystem.pushMatrix();
-
-//
-//            if (transformType != ItemCameraTransforms.TransformType.GROUND && transformType != ItemCameraTransforms.TransformType.FIXED) {
-//                RenderSystem.rotatef((float) Math.sin((ClientEventHandler.elapsedTicks + Minecraft.getInstance().getRenderPartialTicks()) / 50F) * 15F, 1, 0, -0.5F);
-//                RenderSystem.rotated((ClientEventHandler.elapsedTicks + Minecraft.getInstance().getRenderPartialTicks()) * 3, 0, 1, 0);
-//            }
-//
-//            EntityRendererManager rendermanager = Minecraft.getInstance().getRenderManager();
-//            rendermanager.renderEntity(mob, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
-//
-//            if (transformType != ItemCameraTransforms.TransformType.GROUND && transformType != ItemCameraTransforms.TransformType.FIXED) {
-////                RenderSystem.enableRescaleNormal();
-////                RenderSystem.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-////                RenderSystem.disableTexture();
-////                RenderSystem.setActiveTexture(OpenGlHelper.defaultTexUnit);
-////                RenderSystem.disableLighting();
-//
-////                RenderHelper.disableStandardItemLighting();
-////                RenderSystem.disableRescaleNormal();
-////                RenderSystem.activeTexture(GLX.GL_TEXTURE1);
-////                RenderSystem.disableTexture();
-////                RenderSystem.activeTexture(GLX.GL_TEXTURE0);
-//            }
-//
-//            //Some entities like the ender dragon modify the blend state which if not corrected like this breaks inventory rendering.
-//            RenderSystem.enableBlend();
-//            RenderSystem.blendFuncSeparate(RenderSystem.SourceFactor.SRC_ALPHA, RenderSystem.DestFactor.ONE_MINUS_SRC_ALPHA, RenderSystem.SourceFactor.ONE, RenderSystem.DestFactor.ZERO);
-//            RenderSystem.popMatrix();
-//        }
-//        catch (Throwable e) {
-//            if (MobSoul.randomDisplayList != null) {
-//                MobSoul.randomDisplayList.remove(mob.getType().getRegistryName().toString());
-//            } else {
-//                brokenMobs.add(mob);
-//                LogHelper.error("Error rendering mob soul! " + mob);
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
-    @Override
-    public void renderItem(ItemStack stack, ItemDisplayContext transformType, PoseStack mStack, MultiBufferSource getter, int packedLight, int packedOverlay) {
-        Entity mob = DEContent.MOB_SOUL.get().getRenderEntity(stack);
-        if (brokenMobs.contains(mob)) return;
-
+/** Created by brandon3055 on 18/04/2017. MC26 state extraction. */
+public class RenderItemMobSoul {
+    public static MachineItemModel.Frozen extract(ItemStack stack, ItemDisplayContext context) {
+        var mc = Minecraft.getInstance();
+        var mob = DEContent.MOB_SOUL.get().getRenderEntity(stack);
+        if (mob == null) throw new IllegalStateException("Mob soul display entity could not be resolved");
+        float partial = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        var state = mc.getEntityRenderDispatcher().extractEntity(mob, partial);
+        state.nameTag = null;
         float scale = 1F / Math.max(mob.getBbWidth(), mob.getBbHeight());
-        mStack.translate(0.5, 0, 0.5);
-        mStack.scale(scale, scale, scale);
-
-        DeltaTracker delta = Minecraft.getInstance().getTimer();
-        if (transformType != ItemDisplayContext.GROUND && transformType != ItemDisplayContext.FIXED) {
-            float rotA = (float) Math.sin((TimeKeeper.getClientTick() + delta.getGameTimeDeltaPartialTick(false)) / 50F) * 15F;
-            float rotB = (TimeKeeper.getClientTick() + delta.getGameTimeDeltaPartialTick(false)) * 3;
-
-            mStack.mulPose(new Quaternionf().rotationXYZ(1 * rotA * (float) MathHelper.torad, 0, -0.5F * rotA * (float) MathHelper.torad));
-            mStack.mulPose(new Quaternionf().rotationXYZ(0, 1 * rotB * (float) MathHelper.torad, 0));
-        }
-
-        EntityRenderDispatcher manager = Minecraft.getInstance().getEntityRenderDispatcher();
-        manager.render(mob, 0, 0, 0, 0, 0, mStack, getter, packedLight);
-    }
-
-    @Override
-    public @Nullable PerspectiveModelState getModelState() {
-        return TransformUtils.DEFAULT_BLOCK;
-    }
-
-    @Override
-    public boolean usesBlockLight() {
-        return false;
+        float time = com.brandon3055.brandonscore.api.TimeKeeper.getClientTick() + partial;
+        var camera = MachineItemModel.camera();
+        return (pose, collector, light, overlay, foil, outline) -> {
+            pose.pushPose();
+            pose.translate(0.5, 0, 0.5);
+            pose.scale(scale, scale, scale);
+            if (context != ItemDisplayContext.GROUND && context != ItemDisplayContext.FIXED) {
+                float rotA = (float) Math.sin(time / 50F) * 15F * (float) Math.PI / 180F;
+                pose.mulPose(new org.joml.Quaternionf().rotationXYZ(rotA, 0, -0.5F * rotA));
+                pose.mulPose(Axis.YP.rotationDegrees(time * 3));
+            }
+            state.lightCoords = light;
+            state.outlineColor = outline;
+            mc.getEntityRenderDispatcher().submit(state, camera, 0, 0, 0, pose, collector);
+            pose.popPose();
+        };
     }
 }

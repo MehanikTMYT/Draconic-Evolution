@@ -15,14 +15,22 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.entity.state.EnderDragonRenderState;
+import net.minecraft.client.model.monster.dragon.EnderDragonModel;
+import net.minecraft.world.entity.boss.enderdragon.DragonFlightHistory;
+import com.brandon3055.brandonscore.client.render.ExtractedModel;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -32,44 +40,75 @@ import org.joml.Matrix4f;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-@OnlyIn (Dist.CLIENT)
-public class DraconicGuardianRenderer extends EntityRenderer<DraconicGuardianEntity> {
+public class DraconicGuardianRenderer extends EntityRenderer<DraconicGuardianEntity, DraconicGuardianRenderer.State> {
     public static final Identifier ENDERCRYSTAL_BEAM_TEXTURES = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/entity/guardian_crystal_beam.png");
     private static final Identifier DRAGON_EXPLODING_TEXTURES = Identifier.withDefaultNamespace("textures/entity/enderdragon/dragon_exploding.png");
     private static final Identifier DRAGON_TEXTURE = Identifier.withDefaultNamespace("textures/entity/enderdragon/dragon.png");
     private static final Identifier GUARDIAN_TEXTURE = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/entity/chaos_guardian.png");
     private static final Identifier EYES_TEXTURE = Identifier.withDefaultNamespace("textures/entity/enderdragon/dragon_eyes.png");
-    private static final RenderType dragonCutoutType = RenderType.entityCutoutNoCull(GUARDIAN_TEXTURE);
-    private static final RenderType dragonDeathType = RenderType.entityDecal(GUARDIAN_TEXTURE);
-    private static final RenderType eyesType = RenderType.eyes(EYES_TEXTURE);
-    private static final RenderType beamType = RenderType.entitySmoothCutout(ENDERCRYSTAL_BEAM_TEXTURES);
-    private static RenderType BEAM_TYPE2 = RenderType.create("beam_type_2", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-            .setShaderState(RenderType.RENDERTYPE_ENTITY_SMOOTH_CUTOUT_SHADER)
-            .setTextureState(new RenderStateShard.TextureStateShard(ENDERCRYSTAL_BEAM_TEXTURES, false, false))
-            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .setCullState(RenderStateShard.NO_CULL)
-            .createCompositeState(false));
-
-    public static RenderType SHIELD_TYPE = RenderType.create(DraconicEvolution.MODID + ":guardian_shield", DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS, 256, RenderType.CompositeState.builder()
-            .setShaderState(new RenderStateShard.ShaderStateShard(() -> DEShaders.shieldShader))
-            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-            .setLightmapState(RenderStateShard.LIGHTMAP)
-            .setCullState(RenderStateShard.NO_CULL)
-            .setDepthTestState(RenderStateShard.EQUAL_DEPTH_TEST)
-            .createCompositeState(false));
+    private static final RenderType dragonCutoutType = RenderTypes.entityCutout(GUARDIAN_TEXTURE);
+    private static final RenderType dragonDeathType = RenderTypes.entityCutoutDissolve(GUARDIAN_TEXTURE, DRAGON_EXPLODING_TEXTURES);
+    private static final RenderType eyesType = RenderTypes.eyes(EYES_TEXTURE);
+    private static final RenderType beamType = RenderTypes.endCrystalBeam(ENDERCRYSTAL_BEAM_TEXTURES);
+    private static final com.mojang.blaze3d.pipeline.RenderPipeline BEAM_PIPELINE = RenderPipelines.END_CRYSTAL_BEAM.toBuilder()
+            .withLocation(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "pipeline/guardian_beam"))
+            .withColorTargetState(new com.mojang.blaze3d.pipeline.ColorTargetState(com.mojang.blaze3d.pipeline.BlendFunction.TRANSLUCENT))
+            .withCull(false).build();
+    private static final RenderType BEAM_TYPE2 = RenderType.create("de_guardian_beam", RenderSetup.builder(BEAM_PIPELINE)
+            .withTexture("Sampler0", ENDERCRYSTAL_BEAM_TEXTURES).useLightmap().useOverlay().createRenderSetup());
+    public static final com.brandon3055.draconicevolution.client.shader.DEEffectShader GUARDIAN_SHIELD =
+            new com.brandon3055.draconicevolution.client.shader.DEEffectShader("shield", "shield", DefaultVertexFormat.POSITION_TEX,
+                    true, false, true, false, false, false, com.mojang.blaze3d.platform.CompareOp.EQUAL);
+    public static final RenderType SHIELD_TYPE = GUARDIAN_SHIELD.renderType("de_guardian_shield", null, VertexFormat.Mode.QUADS);
+    public static void registerPipelines(net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent event) {
+        event.registerPipeline(BEAM_PIPELINE);
+        event.registerPipeline(GUARDIAN_SHIELD.pipeline(VertexFormat.Mode.QUADS));
+    }
 
     private static final float sqrt3div2 = (float) (Math.sqrt(3.0D) / 2.0D);
-    private final DraconicGuardianRenderer.DragonModel model;
+    private final EnderDragonModel model;
 
 
     public DraconicGuardianRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.5F;
-        this.model = new DraconicGuardianRenderer.DragonModel(context.bakeLayer(ModelLayers.ENDER_DRAGON));
+        this.model = new EnderDragonModel(context.bakeLayer(ModelLayers.ENDER_DRAGON));
+    }
+
+    /** Copies guardian history/phase before baking all model and beam vertices. */
+    public static class State extends EnderDragonRenderState {
+        final DragonFlightHistory.Sample[] history = new DragonFlightHistory.Sample[24];
+        ExtractedModel geometry;
+        @Override public DragonFlightHistory.Sample getHistoricalPos(int delay) { return history[delay]; }
+    }
+
+    @Override protected boolean affectedByCulling(DraconicGuardianEntity entity) { return false; }
+
+    @Override public State createRenderState() { return new State(); }
+
+    @Override
+    public void extractRenderState(DraconicGuardianEntity guardian, State state, float partialTicks) {
+        super.extractRenderState(guardian, state, partialTicks);
+        state.flapTime = Mth.lerp(partialTicks, guardian.oFlapTime, guardian.flapTime);
+        state.isSitting = guardian.getPhaseManager().getCurrentPhase().getIsStationary();
+        state.isLandingOrTakingOff = false;
+        for (int i = 0; i < state.history.length; i++) {
+            double[] point = guardian.getLatencyPos(i, partialTicks);
+            state.history[i] = new DragonFlightHistory.Sample(point[1], (float) point[0]);
+        }
+        model.setupAnim(state);
+        ExtractedModel.Capture capture = new ExtractedModel.Capture();
+        extractGeometry(guardian, partialTicks, new PoseStack(), capture, state.lightCoords);
+        state.geometry = capture.finish();
     }
 
     @Override
-    public void render(DraconicGuardianEntity guardian, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource getter, int packedLight) {
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        com.brandon3055.draconicevolution.client.render.DEExtractedGeometry.submit(state.geometry, poseStack, collector, state.outlineColor);
+        super.submit(state, poseStack, collector, camera);
+    }
+
+    private void extractGeometry(DraconicGuardianEntity guardian, float partialTicks, PoseStack poseStack, MultiBufferSource getter, int packedLight) {
         poseStack.pushPose();
         float f = (float) guardian.getLatencyPos(7, partialTicks)[0];
         float f1 = (float) (guardian.getLatencyPos(5, partialTicks)[1] - guardian.getLatencyPos(10, partialTicks)[1]);
@@ -79,31 +118,30 @@ public class DraconicGuardianRenderer extends EntityRenderer<DraconicGuardianEnt
         poseStack.scale(-1.0F, -1.0F, 1.0F);
         poseStack.translate(0.0D, -1.501F, 0.0D);
         boolean flag = guardian.hurtTime > 0;
-        this.model.prepareMobModel(guardian, 0.0F, 0.0F, partialTicks);
+
 
         if (guardian.deathTicks > 0) {
             float progress = (float)guardian.deathTicks / 200.0F;
-            int fadeColour = FastColor.ARGB32.color(Mth.floor(progress * 255.0F), -1);
-            VertexConsumer builder = getter.getBuffer(RenderType.dragonExplosionAlpha(DRAGON_EXPLODING_TEXTURES));
+            int fadeColour = ARGB.white(1.0F - progress);
+            VertexConsumer builder = getter.getBuffer(dragonDeathType);
             this.model.renderToBuffer(poseStack, builder, packedLight, OverlayTexture.NO_OVERLAY, fadeColour);
-            builder = getter.getBuffer(dragonDeathType);
-            this.model.renderToBuffer(poseStack, builder, packedLight, OverlayTexture.pack(0.0F, flag));
         } else {
             VertexConsumer builder = getter.getBuffer(dragonCutoutType);
             this.model.renderToBuffer(poseStack, builder, packedLight, OverlayTexture.pack(0.0F, flag));
         }
         VertexConsumer builder;
 
+        GUARDIAN_SHIELD.getTimeUniform().glUniform1f((com.brandon3055.brandonscore.api.TimeKeeper.getClientTick() + partialTicks) / 20F);
         boolean isImmune = guardian.getPhaseManager().getCurrentPhase().isInvulnerable();
         float shieldState = guardian.getEntityData().get(DraconicGuardianEntity.SHIELD_POWER) / (float) DEConfig.guardianShield;
         if (shieldState > 0 || isImmune) {
             if (isImmune) {
-                DEShaders.shieldColour.glUniform4f(0F, 1F, 1F, 2);
+                GUARDIAN_SHIELD.uniform(64).glUniform4f(0F, 1F, 1F, 2);
             } else {
-                DEShaders.shieldColour.glUniform4f(1F, 0F, 0F, 1.5F * shieldState);
+                GUARDIAN_SHIELD.uniform(64).glUniform4f(1F, 0F, 0F, 1.5F * shieldState);
             }
-            DEShaders.shieldBarMode.glUniform1i(0);
-            DEShaders.shieldActivation.glUniform1f(1F);
+            GUARDIAN_SHIELD.uniform(128).glUniform1i(0);
+            GUARDIAN_SHIELD.uniform(100).glUniform1f(1F);
 
             builder = getter.getBuffer(SHIELD_TYPE);
             this.model.renderToBuffer(poseStack, builder, packedLight, OverlayTexture.pack(0.0F, flag));
@@ -115,7 +153,7 @@ public class DraconicGuardianRenderer extends EntityRenderer<DraconicGuardianEnt
             float f5 = ((float) guardian.deathTicks + partialTicks) / 200.0F;
             float f7 = Math.min(f5 > 0.8F ? (f5 - 0.8F) / 0.2F : 0.0F, 1.0F);
             Random random = new Random(432L);
-            builder = getter.getBuffer(RenderType.lightning());
+            builder = getter.getBuffer(RenderTypes.lightning());
             poseStack.pushPose();
             poseStack.translate(0.0D, -1.0D, -2.0D);
 
@@ -170,7 +208,7 @@ public class DraconicGuardianRenderer extends EntityRenderer<DraconicGuardianEnt
             }
         }
 
-        super.render(guardian, entityYaw, partialTicks, poseStack, getter, packedLight);
+
     }
 
     private static void deathAnimA(VertexConsumer builder, Matrix4f mat, int alpha) {
@@ -322,164 +360,4 @@ public class DraconicGuardianRenderer extends EntityRenderer<DraconicGuardianEnt
         mStack.popPose();
     }
 
-    @Override
-    public Identifier getTextureLocation(DraconicGuardianEntity entity) {
-        return DRAGON_TEXTURE;
-    }
-
-    @OnlyIn (Dist.CLIENT)
-    public static class DragonModel extends EntityModel<DraconicGuardianEntity> {
-        private final ModelPart head;
-        private final ModelPart neck;
-        private final ModelPart jaw;
-        private final ModelPart body;
-        private final ModelPart leftWing;
-        private final ModelPart leftWingTip;
-        private final ModelPart leftFrontLeg;
-        private final ModelPart leftFrontLegTip;
-        private final ModelPart leftFrontFoot;
-        private final ModelPart leftRearLeg;
-        private final ModelPart leftRearLegTip;
-        private final ModelPart leftRearFoot;
-        private final ModelPart rightWing;
-        private final ModelPart rightWingTip;
-        private final ModelPart rightFrontLeg;
-        private final ModelPart rightFrontLegTip;
-        private final ModelPart rightFrontFoot;
-        private final ModelPart rightRearLeg;
-        private final ModelPart rightRearLegTip;
-        private final ModelPart rightRearFoot;
-        @Nullable
-        private DraconicGuardianEntity entity;
-        private float a;
-
-        public DragonModel(ModelPart modelPart) {
-            this.head = modelPart.getChild("head");
-            this.jaw = this.head.getChild("jaw");
-            this.neck = modelPart.getChild("neck");
-            this.body = modelPart.getChild("body");
-            this.leftWing = modelPart.getChild("left_wing");
-            this.leftWingTip = this.leftWing.getChild("left_wing_tip");
-            this.leftFrontLeg = modelPart.getChild("left_front_leg");
-            this.leftFrontLegTip = this.leftFrontLeg.getChild("left_front_leg_tip");
-            this.leftFrontFoot = this.leftFrontLegTip.getChild("left_front_foot");
-            this.leftRearLeg = modelPart.getChild("left_hind_leg");
-            this.leftRearLegTip = this.leftRearLeg.getChild("left_hind_leg_tip");
-            this.leftRearFoot = this.leftRearLegTip.getChild("left_hind_foot");
-            this.rightWing = modelPart.getChild("right_wing");
-            this.rightWingTip = this.rightWing.getChild("right_wing_tip");
-            this.rightFrontLeg = modelPart.getChild("right_front_leg");
-            this.rightFrontLegTip = this.rightFrontLeg.getChild("right_front_leg_tip");
-            this.rightFrontFoot = this.rightFrontLegTip.getChild("right_front_foot");
-            this.rightRearLeg = modelPart.getChild("right_hind_leg");
-            this.rightRearLegTip = this.rightRearLeg.getChild("right_hind_leg_tip");
-            this.rightRearFoot = this.rightRearLegTip.getChild("right_hind_foot");
-        }
-
-        @Override
-        public void prepareMobModel(DraconicGuardianEntity p_114269_, float p_114270_, float p_114271_, float p_114272_) {
-            this.entity = p_114269_;
-            this.a = p_114272_;
-        }
-
-        @Override
-        public void setupAnim(DraconicGuardianEntity p_114274_, float p_114275_, float p_114276_, float p_114277_, float p_114278_, float p_114279_) {
-        }
-
-        @Override
-        public void renderToBuffer(PoseStack p_114281_, VertexConsumer p_114282_, int p_114283_, int p_114284_, int colour) {
-            p_114281_.pushPose();
-            float f = Mth.lerp(this.a, this.entity.oFlapTime, this.entity.flapTime);
-            this.jaw.xRot = (float) (Math.sin(f * ((float) Math.PI * 2F)) + 1.0D) * 0.2F;
-            float f1 = (float) (Math.sin(f * ((float) Math.PI * 2F) - 1.0F) + 1.0D);
-            f1 = (f1 * f1 + f1 * 2.0F) * 0.05F;
-            p_114281_.translate(0.0D, f1 - 2.0F, -3.0D);
-            p_114281_.mulPose(Axis.XP.rotationDegrees(f1 * 2.0F));
-            float f2 = 0.0F;
-            float f3 = 20.0F;
-            float f4 = -12.0F;
-            float f5 = 1.5F;
-            double[] adouble = this.entity.getLatencyPos(6, this.a);
-            float f6 = Mth.wrapDegrees((float) this.entity.getLatencyPos(5, this.a)[0] - (float) this.entity.getLatencyPos(10, this.a)[0]);
-            float f7 = Mth.wrapDegrees((float) this.entity.getLatencyPos(5, this.a)[0] + (f6 / 2.0F));
-            float f8 = f * ((float) Math.PI * 2F);
-
-            for (int i = 0; i < 5; ++i) {
-                double[] adouble1 = this.entity.getLatencyPos(5 - i, this.a);
-                float f9 = (float) Math.cos((float) i * 0.45F + f8) * 0.15F;
-                this.neck.yRot = Mth.wrapDegrees((float) (adouble1[0] - adouble[0])) * ((float) Math.PI / 180F) * 1.5F;
-                this.neck.xRot = f9 + this.entity.getHeadPartYOffset(i, adouble, adouble1) * ((float) Math.PI / 180F) * 1.5F * 5.0F;
-                this.neck.zRot = -Mth.wrapDegrees((float) (adouble1[0] - (double) f7)) * ((float) Math.PI / 180F) * 1.5F;
-                this.neck.y = f3;
-                this.neck.z = f4;
-                this.neck.x = f2;
-                f3 += Mth.sin(this.neck.xRot) * 10.0F;
-                f4 -= Mth.cos(this.neck.yRot) * Mth.cos(this.neck.xRot) * 10.0F;
-                f2 -= Mth.sin(this.neck.yRot) * Mth.cos(this.neck.xRot) * 10.0F;
-                this.neck.render(p_114281_, p_114282_, p_114283_, p_114284_, colour);
-            }
-
-            this.head.y = f3;
-            this.head.z = f4;
-            this.head.x = f2;
-            double[] adouble2 = this.entity.getLatencyPos(0, this.a);
-            this.head.yRot = Mth.wrapDegrees((float) (adouble2[0] - adouble[0])) * ((float) Math.PI / 180F);
-            this.head.xRot = Mth.wrapDegrees(this.entity.getHeadPartYOffset(6, adouble, adouble2)) * ((float) Math.PI / 180F) * 1.5F * 5.0F;
-            this.head.zRot = -Mth.wrapDegrees((float) (adouble2[0] - (double) f7)) * ((float) Math.PI / 180F);
-            this.head.render(p_114281_, p_114282_, p_114283_, p_114284_, colour);
-            p_114281_.pushPose();
-            p_114281_.translate(0.0D, 1.0D, 0.0D);
-            p_114281_.mulPose(Axis.ZP.rotationDegrees(-f6 * 1.5F));
-            p_114281_.translate(0.0D, -1.0D, 0.0D);
-            this.body.zRot = 0.0F;
-            this.body.render(p_114281_, p_114282_, p_114283_, p_114284_, colour);
-            float f10 = f * ((float) Math.PI * 2F);
-            this.leftWing.xRot = 0.125F - (float) Math.cos(f10) * 0.2F;
-            this.leftWing.yRot = -0.25F;
-            this.leftWing.zRot = -((float) (Math.sin(f10) + 0.125D)) * 0.8F;
-            this.leftWingTip.zRot = (float) (Math.sin(f10 + 2.0F) + 0.5D) * 0.75F;
-            this.rightWing.xRot = this.leftWing.xRot;
-            this.rightWing.yRot = -this.leftWing.yRot;
-            this.rightWing.zRot = -this.leftWing.zRot;
-            this.rightWingTip.zRot = -this.leftWingTip.zRot;
-            this.renderSide(p_114281_, p_114282_, p_114283_, p_114284_, f1, this.leftWing, this.leftFrontLeg, this.leftFrontLegTip, this.leftFrontFoot, this.leftRearLeg, this.leftRearLegTip, this.leftRearFoot, colour);
-            this.renderSide(p_114281_, p_114282_, p_114283_, p_114284_, f1, this.rightWing, this.rightFrontLeg, this.rightFrontLegTip, this.rightFrontFoot, this.rightRearLeg, this.rightRearLegTip, this.rightRearFoot, colour);
-            p_114281_.popPose();
-            float f11 = -Mth.sin(f * ((float) Math.PI * 2F)) * 0.0F;
-            f8 = f * ((float) Math.PI * 2F);
-            f3 = 10.0F;
-            f4 = 60.0F;
-            f2 = 0.0F;
-            adouble = this.entity.getLatencyPos(11, this.a);
-
-            for (int j = 0; j < 12; ++j) {
-                adouble2 = this.entity.getLatencyPos(12 + j, this.a);
-                f11 += Mth.sin((float) j * 0.45F + f8) * 0.05F;
-                this.neck.yRot = (Mth.wrapDegrees((float) (adouble2[0] - adouble[0])) * 1.5F + 180.0F) * ((float) Math.PI / 180F);
-                this.neck.xRot = f11 + (float) (adouble2[1] - adouble[1]) * ((float) Math.PI / 180F) * 1.5F * 5.0F;
-                this.neck.zRot = Mth.wrapDegrees((float) (adouble2[0] - (double) f7)) * ((float) Math.PI / 180F) * 1.5F;
-                this.neck.y = f3;
-                this.neck.z = f4;
-                this.neck.x = f2;
-                f3 += Mth.sin(this.neck.xRot) * 10.0F;
-                f4 -= Mth.cos(this.neck.yRot) * Mth.cos(this.neck.xRot) * 10.0F;
-                f2 -= Mth.sin(this.neck.yRot) * Mth.cos(this.neck.xRot) * 10.0F;
-                this.neck.render(p_114281_, p_114282_, p_114283_, p_114284_, colour);
-            }
-
-            p_114281_.popPose();
-        }
-
-        private void renderSide(PoseStack p_173978_, VertexConsumer p_173979_, int p_173980_, int p_173981_, float p_173982_, ModelPart p_173983_, ModelPart p_173984_, ModelPart p_173985_, ModelPart p_173986_, ModelPart p_173987_, ModelPart p_173988_, ModelPart p_173989_, int colour) {
-            p_173987_.xRot = 1.0F + p_173982_ * 0.1F;
-            p_173988_.xRot = 0.5F + p_173982_ * 0.1F;
-            p_173989_.xRot = 0.75F + p_173982_ * 0.1F;
-            p_173984_.xRot = 1.3F + p_173982_ * 0.1F;
-            p_173985_.xRot = -0.5F - p_173982_ * 0.1F;
-            p_173986_.xRot = 0.75F + p_173982_ * 0.1F;
-            p_173983_.render(p_173978_, p_173979_, p_173980_, p_173981_, colour);
-            p_173984_.render(p_173978_, p_173979_, p_173980_, p_173981_, colour);
-            p_173987_.render(p_173978_, p_173979_, p_173980_, p_173981_, colour);
-        }
-    }
 }

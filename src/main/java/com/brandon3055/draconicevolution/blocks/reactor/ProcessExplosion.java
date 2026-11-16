@@ -232,7 +232,7 @@ public class ProcessExplosion implements IProcess {
     }
 
     public double getRadialAngle(Vector3 pos) {
-        double theta = Math.atan2(pos.x() - origin.x, origin.z - pos.z());
+        double theta = Math.atan2(pos.x - origin.x, origin.z - pos.z);
 
         if (theta < 0.0) {
             theta += Math.PI * 2;

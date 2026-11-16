@@ -479,7 +479,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (player instanceof ServerPlayer) {
             player.openMenu(this, worldPosition);
             return InteractionResult.CONSUME;

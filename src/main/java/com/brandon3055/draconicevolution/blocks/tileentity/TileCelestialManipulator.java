@@ -140,11 +140,12 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 if (timer >= 230) {
                     timer = 0;
                     weatherToggleRunning.set(false);
-                    level.getLevelData().setRaining(rain);
-                    ((ServerLevelData) level.getLevelData()).setThundering(storm);
                     int time = (10 * 60 * 20) + level.getRandom().nextInt(20 * 60 * 20);
-                    ((ServerLevelData) level.getLevelData()).setRainTime(rain ? time : 0);
-                    ((ServerLevelData) level.getLevelData()).setClearWeatherTime(rain ? 0 : time);
+                    var weather = ((ServerLevel) level).getWeatherData();
+                    weather.setRaining(rain);
+                    weather.setThundering(storm);
+                    weather.setRainTime(rain ? time : 0);
+                    weather.setClearWeatherTime(rain ? 0 : time);
                 }
             }
         } else if (timeWarpRunning.get()) {
@@ -156,18 +157,17 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 if (opStorage.getEnergyStored() > 320) {
                     int extracted = opStorage.extractEnergy(16000, true);
                     int ticks = extracted / 320;
-                    if (level.isClientSide()) {
-                        ClientLevel cLevel = (ClientLevel) level;
-                        cLevel.setDayTime(cLevel.getDayTime() + ticks);
-                    } else {
-                        ServerLevel sLevel = (ServerLevel) level;
-                        sLevel.setDayTime(sLevel.getDayTime() + ticks);
+                    if (level instanceof ServerLevel serverLevel) {
+                        // MC26 clock changes sync authoritatively; preserve clock rate and pause state.
+                        var clock = serverLevel.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.WORLD_CLOCK)
+                                .getOrThrow(net.minecraft.world.clock.WorldClocks.OVERWORLD);
+                        serverLevel.clockManager().addTicks(clock, ticks);
                         opStorage.extractEnergy(ticks * 320, false);
                     }
                 } else {
                     stopTimeWarp();
                 }
-                if (!level.isClientSide() && level.getDayTime() >= targetTime) {
+                if (!level.isClientSide() && level.getOverworldClockTime() >= targetTime) {
                     stopTimeWarp();
                 }
             }
@@ -293,31 +293,31 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 LogHelper.info("Started storm! Cause: " + worldPosition);
                 return;
             case "SUN_RISE":
-                startTimeWarp(level.getDayTime() + calculateTimeTill(0));
+                startTimeWarp(level.getOverworldClockTime() + calculateTimeTill(0));
                 LogHelper.info("Set time to sunrise! Cause: " + worldPosition);
                 break;
             case "MID_DAY":
-                startTimeWarp(level.getDayTime() + calculateTimeTill(5900));
+                startTimeWarp(level.getOverworldClockTime() + calculateTimeTill(5900));
                 LogHelper.info("Set time to midday! Cause: " + worldPosition);
                 break;
             case "SUN_SET":
-                startTimeWarp(level.getDayTime() + calculateTimeTill(12000));
+                startTimeWarp(level.getOverworldClockTime() + calculateTimeTill(12000));
                 LogHelper.info("Set time to sunset! Cause: " + worldPosition);
                 break;
             case "MOON_RISE":
-                startTimeWarp(level.getDayTime() + calculateTimeTill(13000));
+                startTimeWarp(level.getOverworldClockTime() + calculateTimeTill(13000));
                 LogHelper.info("Set time to moonrise! Cause: " + worldPosition);
                 break;
             case "MIDNIGHT":
-                startTimeWarp(level.getDayTime() + calculateTimeTill(17900));
+                startTimeWarp(level.getOverworldClockTime() + calculateTimeTill(17900));
                 LogHelper.info("Set time to midnight! Cause: " + worldPosition);
                 break;
             case "MOON_SET":
-                startTimeWarp(level.getDayTime() + calculateTimeTill(22500));
+                startTimeWarp(level.getOverworldClockTime() + calculateTimeTill(22500));
                 LogHelper.info("Set time to moonset! Cause: " + worldPosition);
                 break;
             case "SKIP_24":
-                startTimeWarp(level.getDayTime() + 24000);
+                startTimeWarp(level.getOverworldClockTime() + 24000);
                 LogHelper.info("Skipped one day! Cause: " + worldPosition);
                 break;
         }
@@ -330,7 +330,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
     }
 
     private int calculateTimeTill(int time) {
-        int currentTime = (int) (level.getDayTime() % 24000);
+        int currentTime = (int) (level.getOverworldClockTime() % 24000);
         return currentTime > time ? (24000 - (currentTime - time)) : time - currentTime;
     }
 
@@ -341,10 +341,8 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
 
     //region Weather Effect
 
-    @OnlyIn(Dist.CLIENT)
     private List<EffectTrackerCelestialManipulator> effects;
 
-    @OnlyIn(Dist.CLIENT)
     public void startWeatherEffect() {
         timer = 0;
 
@@ -360,7 +358,6 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
         level.playLocalSound(vec.x, vec.y, vec.z, DESounds.FUSION_COMPLETE.get(), SoundSource.BLOCKS, getSoundVolume(), 0.5F, false);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public void updateWeatherEffects() {
         if (effects == null || effects.size() < 8 || sound == null) {
             startWeatherEffect();
@@ -409,7 +406,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 );
                 double speed = 0.3 / 10;
                 Vector3 pos = Vector3.fromTileCenter(this).add(dir.getStepX() * -0.3, 0, dir.getStepZ() * -0.3);
-                level.addParticle(data, pos.x(), pos.y, pos.z(), speed * dir.getStepX(), 0, speed * dir.getStepZ());
+                level.addParticle(data, pos.x, pos.y, pos.z, speed * dir.getStepX(), 0, speed * dir.getStepZ());
             }
         }
 
@@ -427,7 +424,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                         //Set velocity direct
                 );
                 Vector3 pos = Vector3.fromTileCenter(this);
-                level.addParticle(data, pos.x(), pos.y, pos.z(), 0.5 * level.getRandom().nextGaussian(), 0, 0.5 * level.getRandom().nextGaussian());
+                level.addParticle(data, pos.x, pos.y, pos.z, 0.5 * level.getRandom().nextGaussian(), 0, 0.5 * level.getRandom().nextGaussian());
             }
         }
 
@@ -487,7 +484,6 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
 
     //region Sun Effect
 
-    @OnlyIn(Dist.CLIENT)
     public void startSunEffect() {
         timeWarpRunning.set(true);
         timeWarpStopping.set(false);
@@ -513,7 +509,6 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
         Minecraft.getInstance().getSoundManager().play(sound);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public void stopSunEffect() {
         timeWarpRunning.set(false);
         timeWarpStopping.set(true);
@@ -522,7 +517,6 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     public void updateSunEffect() {
         if (effects == null || effects.size() < 2 || sound == null) {
             startSunEffect();
@@ -551,7 +545,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 (int) (0) //Gravity
         );
         Vector3 pos = Vector3.fromTileCenter(this);
-        level.addParticle(data, pos.x(), pos.y, pos.z(), 0.002D, 0.04, 0.002D);
+        level.addParticle(data, pos.x, pos.y, pos.z, 0.002D, 0.04, 0.002D);
 
         Direction dir = Direction.values()[2 + level.getRandom().nextInt(4)];
         data = new IntParticleData(DEParticles.SPARK.get(),
@@ -567,10 +561,10 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
         );
         double speed = 0.3 / 10;
         pos = Vector3.fromTileCenter(this).add(dir.getStepX() * -0.3, 0, dir.getStepZ() * -0.3);
-        level.addParticle(data, pos.x(), pos.y, pos.z(), speed * dir.getStepX(), 0, speed * dir.getStepZ());
+        level.addParticle(data, pos.x, pos.y, pos.z, speed * dir.getStepX(), 0, speed * dir.getStepZ());
 
 
-        double rotation = (level.getDayTime() % 24000) / 24000D;
+        double rotation = (level.getOverworldClockTime() % 24000) / 24000D;
         double offset;
         double offsetX;
         double offsetY;
@@ -619,8 +613,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
 
     //region Rendering
 
-    @OnlyIn(Dist.CLIENT)
-    private void standbyParticleEffect() {
+        private void standbyParticleEffect() {
         IntParticleData data = new IntParticleData(DEParticles.SPARK.get(),
                 76, //R
                 0,  //G
@@ -631,7 +624,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
                 (int) (0) //Gravity
         );
         Vector3 pos = Vector3.fromTileCenter(this);
-        level.addParticle(data, pos.x(), pos.y, pos.z(), 0.002D, 0.01, 0.002D);
+        level.addParticle(data, pos.x, pos.y, pos.z, 0.002D, 0.01, 0.002D);
 
 
         //        SubParticle particle = new SubParticle(world, Vec3D.getCenter(pos));
@@ -643,32 +636,11 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public void renderEffects(float partialTicks) {
-        if (effects != null) {
-            if (weatherToggleRunning.get()) {
-                //                ResourceHelperDE.bindTexture(DETextures.FUSION_PARTICLE);
-            } else {
-                //                ResourceHelperDE.bindTexture(DETextures.CELESTIAL_PARTICLE);
-            }
-
-            Tesselator tessellator = Tesselator.getInstance();
-
-            //            //Pre-Render
-            //            RenderSystem.enableBlend();
-            //            RenderSystem.disableLighting();
-            //            RenderSystem.depthMask(true);
-            //            RenderSystem.alphaFunc(GL11.GL_GREATER, 0F);
-            //
-            //            for (EffectTrackerCelestialManipulator effect : effects) {
-            //                effect.renderEffect(tessellator, partialTicks);
-            //            }
-            //
-            //            //Post-Render
-            //            RenderSystem.disableBlend();
-            //            RenderSystem.enableLighting();
-            //            RenderSystem.depthMask(true);
-            //            RenderSystem.alphaFunc(GL11.GL_GREATER, 0.1F);
+    public void extractEffects(float partialTicks, com.mojang.blaze3d.vertex.PoseStack pose,
+                               net.minecraft.client.renderer.MultiBufferSource buffers) {
+        if (effects == null) return;
+        for (EffectTrackerCelestialManipulator effect : effects) {
+            effect.extractEffect(pose, buffers, partialTicks, worldPosition, weatherToggleRunning.get());
         }
     }
 
@@ -704,7 +676,7 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (player instanceof ServerPlayer) {
             player.openMenu(this, worldPosition);
             return InteractionResult.CONSUME;

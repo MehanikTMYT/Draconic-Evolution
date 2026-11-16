@@ -241,7 +241,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
         this.dragonParts = new DraconicGuardianPartEntity[]{this.dragonPartHead, this.dragonPartNeck, this.dragonPartBody, this.dragonPartTail1, this.dragonPartTail2, this.dragonPartTail3, this.dragonPartRightWing, this.dragonPartLeftWing};
         this.setHealth(this.getMaxHealth());
         this.noPhysics = true;
-        this.noCulling = true;
+        // MC26 frustum policy is implemented by DraconicGuardianRenderer.
         this.phaseManager = new PhaseManager(this);
         this.setId(ENTITY_COUNTER.getAndAdd(this.dragonParts.length + 1) + 1);
     }
@@ -390,17 +390,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
                 this.ringBuffer[this.ringBufferIndex][0] = this.getYRot();
                 this.ringBuffer[this.ringBufferIndex][1] = this.getY();
                 if (this.level().isClientSide()) {
-                    if (this.lerpSteps > 0) {
-                        double d7 = this.getX() + (this.lerpX - this.getX()) / (double) this.lerpSteps;
-                        double d0 = this.getY() + (this.lerpY - this.getY()) / (double) this.lerpSteps;
-                        double d1 = this.getZ() + (this.lerpZ - this.getZ()) / (double) this.lerpSteps;
-                        double d2 = Mth.wrapDegrees(this.lerpYRot - (double) this.getYRot());
-                        this.setYRot((float) ((double) this.getYRot() + d2 / (double) this.lerpSteps));
-                        this.setXRot((float) ((double) this.getXRot() + (this.lerpXRot - (double) this.getXRot()) / (double) this.lerpSteps));
-                        --this.lerpSteps;
-                        this.setPos(d7, d0, d1);
-                        this.setRot(this.getYRot(), this.getXRot());
-                    }
+                    this.interpolation.interpolate();
 
                     this.phaseManager.getCurrentPhase().clientTick();
                 } else {
@@ -630,7 +620,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
                     BlockState blockstate = this.level().getBlockState(blockpos);
                     Block block = blockstate.getBlock();
                     if (!blockstate.isAir() && !blockstate.is(BlockTags.FIRE)) {
-                        if (CommonHooks.canEntityDestroy(this.level(), blockpos, this) && !blockstate.is(BlockTags.DRAGON_IMMUNE) && block != Blocks.NETHER_BRICKS && block != Blocks.NETHER_BRICK_SLAB) {
+                        if (this.level() instanceof ServerLevel serverLevel && CommonHooks.canEntityDestroy(serverLevel, blockpos, this) && !blockstate.is(BlockTags.DRAGON_IMMUNE) && block != Blocks.NETHER_BRICKS && block != Blocks.NETHER_BRICK_SLAB) {
                             flag1 = this.level().removeBlock(blockpos, false) || flag1;
                         } else {
                             flag = true;
@@ -708,11 +698,11 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
     }
 
     protected boolean attackDragonFrom(DamageSource source, float amount) {
-        return super.hurtServer(level, source, amount);
+        return level() instanceof ServerLevel serverLevel && super.hurtServer(serverLevel, source, amount);
     }
 
     @Override
-    public void kill() {
+    public void kill(ServerLevel serverLevel) {
         this.remove(Entity.RemovalReason.KILLED);
         if (this.fightManager != null) {
             this.fightManager.guardianUpdate(this);
@@ -734,7 +724,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
             this.level().addParticle(ParticleTypes.EXPLOSION_EMITTER, this.getX() + (double) f, this.getY() + 2.0D + (double) f1, this.getZ() + (double) f2, 0.0D, 0.0D, 0.0D);
         }
 
-        boolean flag = this.level().getGameRules().get(GameRules.MOB_DROPS);
+        boolean flag = level() instanceof ServerLevel serverLevel && serverLevel.getGameRules().get(GameRules.MOB_DROPS);
         int xpAmount = 24000;
 
         if (!this.level().isClientSide()) {
@@ -992,7 +982,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
         if (dmgSrc.getEntity() instanceof Player) {
             playerentity = (Player) dmgSrc.getEntity();
         } else {
-            playerentity = this.level().getNearestPlayer(PLAYER_INVADER_CONDITION, pos.getX(), pos.getY(), pos.getZ());
+            playerentity = level() instanceof ServerLevel serverLevel ? serverLevel.getNearestPlayer(PLAYER_INVADER_CONDITION, pos.getX(), pos.getY(), pos.getZ()) : null;
         }
 
         if (crystal == this.closestGuardianCrystal && destroyed) {
@@ -1043,7 +1033,7 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
     }
 
     @Override
-    public @Nullable Entity changeDimension(TeleportTransition p_350951_) {
+    public @Nullable Entity teleport(TeleportTransition p_350951_) {
         return null;
     }
 
