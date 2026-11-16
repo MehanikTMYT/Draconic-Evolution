@@ -115,13 +115,13 @@ public class TileDraconiumChest extends TileBCore implements IRSSwitchable, Menu
     }
 
     @Override
-    public void writeExtraTileAndStack(HolderLookup.Provider provider, CompoundTag compound) {
+    public void writeExtraTileAndStack(CompoundTag compound) {
         smeltingLogic.saveAdditionalNBT(compound);
         compound.putBoolean("inv_migrated", true);
     }
 
     @Override
-    public void readExtraTileAndStack(HolderLookup.Provider provider, CompoundTag compound) {
+    public void readExtraTileAndStack(CompoundTag compound) {
         smeltingLogic.loadAdditionalNBT(compound);
     }
 }

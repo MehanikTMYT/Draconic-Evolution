@@ -118,11 +118,11 @@ public class DraconiumChestMenu extends DETileMenu<TileDraconiumChest> {
         if (!level.isClientSide()) {
             ServerPlayer serverplayerentity = (ServerPlayer) player;
             ItemStack itemstack = ItemStack.EMPTY;
-            Optional<RecipeHolder<CraftingRecipe>> optional = level.getServer().recipeAccess().getRecipeFor(RecipeType.CRAFTING, craftingInventory.asCraftInput(), level);
+            Optional<RecipeHolder<CraftingRecipe>> optional = ((net.minecraft.server.level.ServerLevel) level).recipeAccess().getRecipeFor(RecipeType.CRAFTING, craftingInventory.asCraftInput(), level);
             if (optional.isPresent()) {
                 RecipeHolder<CraftingRecipe> icraftingrecipe = optional.get();
-                if (resultInventory.setRecipeUsed(level, serverplayerentity, icraftingrecipe)) {
-                    itemstack = icraftingrecipe.value().assemble(craftingInventory.asCraftInput(), level.registryAccess());
+                if (resultInventory.setRecipeUsed(serverplayerentity, icraftingrecipe)) {
+                    itemstack = icraftingrecipe.value().assemble(craftingInventory.asCraftInput());
                 }
             }
 

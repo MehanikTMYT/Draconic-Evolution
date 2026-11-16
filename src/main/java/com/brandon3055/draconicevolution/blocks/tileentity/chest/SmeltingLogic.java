@@ -121,7 +121,7 @@ public class SmeltingLogic {
     }
 
     private void updateSmelting(float speedModifier) {
-        Level world = tile.getLevel();
+        if (!(tile.getLevel() instanceof net.minecraft.server.level.ServerLevel world)) return;
         int validRecipes = 0;
         int completedSmelts = 0;
         int slowestRecipe = 0;
@@ -142,13 +142,13 @@ public class SmeltingLogic {
             }
             SmeltingRecipe recipe = holder.value();
             validRecipes++;
-            slowestRecipe = Math.max(slowestRecipe, recipe.getCookingTime());
+            slowestRecipe = Math.max(slowestRecipe, recipe.cookingTime());
 
             if (attemptSmelt) {
-                ItemStack result = recipe.assemble(input, tile.getLevel().registryAccess());
+                ItemStack result = recipe.assemble(input);
                 if (InventoryUtils.insertItem(outputInv, result, true).isEmpty() && !inputInv.extractItem(i, 1, false).isEmpty()) {
                     InventoryUtils.insertItem(outputInv, result, false);
-                    recipesUsed.addTo(holder.id(), 1);
+                    recipesUsed.addTo(holder.id().identifier(), 1);
                     completedSmelts++;
                 }
             }
@@ -266,14 +266,18 @@ public class SmeltingLogic {
     }
 
     public void loadAdditionalNBT(CompoundTag nbt) {
-        CompoundTag compound = nbt.getCompound("recipes_used");
-        for (String s : compound.getAllKeys()) {
-            this.recipesUsed.put(Identifier.parse(s), compound.getInt(s));
+        CompoundTag compound = nbt.getCompoundOrEmpty("recipes_used");
+        this.recipesUsed.clear();
+        for (String s : compound.keySet()) {
+            Identifier id = Identifier.tryParse(s);
+            if (id != null) compound.getInt(s).ifPresent(count -> this.recipesUsed.put(id, count.intValue()));
         }
     }
 
     public boolean isSmeltable(ItemStack stack) {
-        return tile.getLevel().recipeAccess().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), tile.getLevel()).isPresent();
+        return tile.getLevel() instanceof net.minecraft.server.level.ServerLevel server
+                ? server.recipeAccess().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), server).isPresent()
+                : tile.getLevel() != null && tile.getLevel().recipeAccess().propertySet(RecipePropertySet.FURNACE_INPUT).test(stack);
     }
 
     public enum FeedMode {

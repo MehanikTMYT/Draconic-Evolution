@@ -110,8 +110,9 @@ public class OreDoublingRegistry {
     }
 
     public static ItemStack getSmeltingResult(ItemStack stack, Level world) {
-        RecipeHolder<SmeltingRecipe> recipe = world.recipeAccess().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), world).orElse(null);
-        return recipe == null ? ItemStack.EMPTY : recipe.value().assemble(new SingleRecipeInput(stack), world.registryAccess());
+        if (!(world instanceof net.minecraft.server.level.ServerLevel server)) return ItemStack.EMPTY;
+        RecipeHolder<SmeltingRecipe> recipe = server.recipeAccess().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), server).orElse(null);
+        return recipe == null ? ItemStack.EMPTY : recipe.value().assemble(new SingleRecipeInput(stack));
     }
 
     private static void registerDEOverrides() {

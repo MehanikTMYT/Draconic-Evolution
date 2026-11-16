@@ -136,7 +136,7 @@ public class FusionCraftingCoreGui extends ContainerGuiProvider<FusionCraftingCo
         Constraints.bind(new IngredRenderer(craftArea, tile), craftArea);
 
         gui.onTick(() -> {
-            currentRecipe = tile.getLevel().recipeAccess().getRecipeFor(DraconicAPI.FUSION_RECIPE_TYPE.get(), tile, tile.getLevel()).orElse(null);
+            currentRecipe = tile.getActiveRecipe();
             if (currentRecipe == null) {
                 stackIcon.setStack(ItemStack.EMPTY);
             } else {

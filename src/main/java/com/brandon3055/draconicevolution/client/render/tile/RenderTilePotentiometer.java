@@ -12,19 +12,29 @@ import codechicken.lib.vec.uv.UVTransformation;
 import com.brandon3055.draconicevolution.blocks.Potentiometer;
 import com.brandon3055.draconicevolution.blocks.tileentity.TilePotentiometer;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
-public class RenderTilePotentiometer implements BlockEntityRenderer<TilePotentiometer> {
+public class RenderTilePotentiometer implements BlockEntityRenderer<TilePotentiometer, RenderTilePotentiometer.State> {
 
     private static CCModel model;
+    private final net.minecraft.client.resources.model.sprite.SpriteGetter sprites;
 
 
     public RenderTilePotentiometer(BlockEntityRendererProvider.Context context) {
+        sprites = context.sprites();
 
         double pxl = 1D / 16D;
         double ls = pxl * 2.5;      //Left Side
@@ -67,22 +77,45 @@ public class RenderTilePotentiometer implements BlockEntityRenderer<TilePotentio
         model = model.twoFacedCopy();
     }
 
+    public static class State extends BlockEntityRenderState {
+        Direction facing = Direction.UP;
+        int power;
+    }
+
     @Override
-    public void render(TilePotentiometer te, float partialTicks, PoseStack matrixStackIn, MultiBufferSource buffer, int combinedLightIn, int combinedOverlayIn) {
-        TextureAtlasSprite stoneTex = TextureUtils.getBlockTexture("oak_planks");
+    public State createRenderState() {
+        return new State();
+    }
+
+    @Override
+    public void extractRenderState(TilePotentiometer tile, State state, float partialTicks, Vec3 cameraPosition,
+                                   ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+        BlockEntityRenderer.super.extractRenderState(tile, state, partialTicks, cameraPosition, breakProgress);
+        state.facing = tile.getBlockState().getValue(Potentiometer.FACING);
+        state.power = tile.power.get();
+    }
+
+    @Override
+    public void submit(State state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
+        TextureAtlasSprite stoneTex = sprites.get(new net.minecraft.client.resources.model.sprite.SpriteId(TextureAtlas.LOCATION_BLOCKS,
+                net.minecraft.resources.Identifier.withDefaultNamespace("block/oak_planks")));
         UVTransformation iconTransform = new IconTransformation(stoneTex);
-        CCRenderState state = CCRenderState.instance();
-        state.reset();
-        state.bind(RenderType.solid(), buffer);
-        state.brightness = combinedLightIn;
-        state.overlay = combinedOverlayIn;
-        double pxl = 1D / 16D;
-
-        Matrix4 mat = new Matrix4(matrixStackIn);
-        mat.apply(Rotation.sideOrientation(te.getBlockState().getValue(Potentiometer.FACING).getOpposite().get3DDataValue(), 0).at(Vector3.CENTER));
-        mat.apply(new Translation(6 * pxl, pxl, 6 * pxl));
-        mat.apply(new Rotation(te.power.get() * 22.5D * -MathHelper.torad, 0, 1, 0).at(new Vector3(pxl * 2, 0, pxl * 2)));
-
-        model.render(state, LightModel.standardLightModel, iconTransform, mat);
+        RenderType type = RenderTypes.entitySolid(TextureAtlas.LOCATION_BLOCKS);
+        int light = state.lightCoords;
+        Direction facing = state.facing;
+        int power = state.power;
+        collector.submitCustomGeometry(poseStack, type, (pose, vertices) -> {
+            CCRenderState renderState = CCRenderState.instance();
+            renderState.reset();
+            renderState.bind(vertices, type);
+            renderState.brightness = light;
+            renderState.overlay = OverlayTexture.NO_OVERLAY;
+            double pxl = 1D / 16D;
+            Matrix4 mat = new Matrix4(pose);
+            mat.apply(Rotation.sideOrientation(facing.getOpposite().get3DDataValue(), 0).at(Vector3.CENTER));
+            mat.apply(new Translation(6 * pxl, pxl, 6 * pxl));
+            mat.apply(new Rotation(power * 22.5D * -MathHelper.torad, 0, 1, 0).at(new Vector3(pxl * 2, 0, pxl * 2)));
+            model.render(renderState, LightModel.standardLightModel, iconTransform, mat);
+        });
     }
 }

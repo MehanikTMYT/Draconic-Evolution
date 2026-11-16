@@ -159,14 +159,14 @@ public class TileCrystalDirectIO extends TileCrystalBase   {
     }
 
     @Override
-    public void readExtraNBT(HolderLookup.Provider provider, CompoundTag compound) {
-        super.readExtraNBT(provider, compound);
+    public void readExtraNBT(CompoundTag compound) {
+        super.readExtraNBT(compound);
         updateRotation(facing.get());
     }
 
     @Override
-    public void readFromItemStack(HolderLookup.Provider provider, CompoundTag compound) {
-        super.readFromItemStack(provider, compound);
+    public void readFromItemStack(CompoundTag compound) {
+        super.readFromItemStack(compound);
         updateRotation(facing.get());
     }
 }

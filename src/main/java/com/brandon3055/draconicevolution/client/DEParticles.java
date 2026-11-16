@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.client;
 
+import com.brandon3055.brandonscore.client.particle.IntParticleType;
 import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleData;
 import com.brandon3055.draconicevolution.client.render.particle.*;
 import com.mojang.serialization.MapCodec;
@@ -39,19 +40,18 @@ public class DEParticles {
     }
 
     //@formatter:off
-    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          FLAME                   = PARTICLE_TYPES.register("flame",                  () -> register(false, IntParticleData::codec, IntParticleData::streamCodec));
-    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          LINE_INDICATOR          = PARTICLE_TYPES.register("line_indicator",         () -> register(false, IntParticleData::codec, IntParticleData::streamCodec));
-    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          ENERGY                  = PARTICLE_TYPES.register("energy",                 () -> register(false, IntParticleData::codec, IntParticleData::streamCodec));
-    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          ENERGY_BASIC            = PARTICLE_TYPES.register("energy_basic",           () -> register(false, IntParticleData::codec, IntParticleData::streamCodec));
-    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          ENERGY_CORE             = PARTICLE_TYPES.register("energy_core",            () -> register(false, IntParticleData::codec, IntParticleData::streamCodec));
+    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          FLAME                   = PARTICLE_TYPES.register("flame",                  () -> new IntParticleType(false));
+    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          LINE_INDICATOR          = PARTICLE_TYPES.register("line_indicator",         () -> new IntParticleType(false));
+    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          ENERGY                  = PARTICLE_TYPES.register("energy",                 () -> new IntParticleType(false));
+    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          ENERGY_BASIC            = PARTICLE_TYPES.register("energy_basic",           () -> new IntParticleType(false));
+    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          ENERGY_CORE             = PARTICLE_TYPES.register("energy_core",            () -> new IntParticleType(false));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType>                     GUARDIAN_PROJECTILE     = PARTICLE_TYPES.register("guardian_projectile",    () -> new SimpleParticleType(false));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType>                     BLINK                   = PARTICLE_TYPES.register("blink",                  () -> new SimpleParticleType(false));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType>                     GUARDIAN_CLOUD          = PARTICLE_TYPES.register("guardian_cloud",         () -> new SimpleParticleType(false));
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType>                     GUARDIAN_BEAM           = PARTICLE_TYPES.register("guardian_beam",          () -> new SimpleParticleType(false));
-    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          SPARK                   = PARTICLE_TYPES.register("spark",                  () -> register(false, IntParticleData::codec, IntParticleData::streamCodec));
+    public static final DeferredHolder<ParticleType<?>, ParticleType<IntParticleData>>          SPARK                   = PARTICLE_TYPES.register("spark",                  () -> new IntParticleType(false));
     //@formatter:on
 
-    @OnlyIn (Dist.CLIENT)
     public static void registerFactories(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(FLAME.get(), CustomFlameParticle.Factory::new);
         event.registerSpriteSet(LINE_INDICATOR.get(), ParticleLineIndicator.Factory::new);
@@ -66,7 +66,6 @@ public class DEParticles {
     }
 
 
-    @OnlyIn (Dist.CLIENT)
     public static Particle addParticleDirect(Level world, Particle particle) {
         if (world instanceof ClientLevel && particle instanceof com.brandon3055.draconicevolution.client.render.effect.CrystalFXBase<?> crystal) {
             com.brandon3055.draconicevolution.client.render.effect.CrystalFXRenderer.add(crystal);
@@ -74,8 +73,9 @@ public class DEParticles {
         }
         if (world instanceof ClientLevel) {
             Minecraft mc = Minecraft.getInstance();
+            if (mc == null) return null;
             Camera activerenderinfo = mc.gameRenderer.getMainCamera();
-            if (mc != null && activerenderinfo.isInitialized() && mc.particleEngine != null) {
+            if (activerenderinfo.isInitialized() && mc.particleEngine != null) {
                 mc.particleEngine.add(particle);
                 return particle;
             }
@@ -83,21 +83,4 @@ public class DEParticles {
         return null;
     }
 
-    private static <T extends ParticleOptions> ParticleType<T> register(
-            boolean overrideLimiter,
-            final Function<ParticleType<T>, MapCodec<T>> codec,
-            final Function<ParticleType<T>, StreamCodec<? super RegistryFriendlyByteBuf, T>> streamCodec
-    ) {
-        return new ParticleType<T>(overrideLimiter) {
-            @Override
-            public MapCodec<T> codec() {
-                return codec.apply(this);
-            }
-
-            @Override
-            public StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec() {
-                return streamCodec.apply(this);
-            }
-        };
-    }
 }

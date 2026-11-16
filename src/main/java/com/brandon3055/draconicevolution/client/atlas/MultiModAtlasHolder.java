@@ -29,7 +29,7 @@ public class MultiModAtlasHolder implements PreparableReloadListener, AutoClosea
 
     /**
      * Defines a mod texture atlas.
-     * Must be registered as a resource reload listener via RegisterClientReloadListenersEvent
+     * Must be registered as a resource reload listener via AddClientReloadListenersEvent
      * This is all that is needed to create a custom texture atlas.
      *
      * @param hostModId         The mod id of the mod registering this atlas.
@@ -54,21 +54,14 @@ public class MultiModAtlasHolder implements PreparableReloadListener, AutoClosea
     }
 
     @Override
-    public final @NotNull CompletableFuture<Void> reload(PreparationBarrier prepBarrier, ResourceManager resourceManager, ProfilerFiller profiler, ProfilerFiller profiler2, Executor executor, Executor executor2) {
-        Objects.requireNonNull(prepBarrier);
+    public final @NotNull CompletableFuture<Void> reload(SharedState reload, Executor executor,
+                                                        PreparationBarrier barrier, Executor reloadExecutor) {
         SpriteLoader spriteLoader = SpriteLoader.create(this.textureAtlas);
-        return spriteLoader.loadAndStitch(new ModResourceManager(resourceManager), this.atlasInfoLocation, 0, executor)
-                .thenCompose(SpriteLoader.Preparations::waitForUpload)
-                .thenCompose(prepBarrier::wait)
-                .thenAcceptAsync((preparations) -> this.apply(preparations, profiler2), executor2);
-    }
-
-    private void apply(SpriteLoader.Preparations preparations, ProfilerFiller profilerFiller) {
-        profilerFiller.startTick();
-        profilerFiller.push("upload");
-        this.textureAtlas.upload(preparations);
-        profilerFiller.pop();
-        profilerFiller.endTick();
+        return spriteLoader.loadAndStitch(new ModResourceManager(reload.resourceManager()), this.atlasInfoLocation,
+                        0, executor, Set.of())
+                .thenCompose(preparations -> preparations.readyForUpload().thenApply(ignored -> preparations))
+                .thenCompose(barrier::wait)
+                .thenAcceptAsync(this.textureAtlas::upload, reloadExecutor);
     }
 
     @Override

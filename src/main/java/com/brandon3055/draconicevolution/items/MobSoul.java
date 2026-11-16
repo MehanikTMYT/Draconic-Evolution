@@ -25,6 +25,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.util.ProblemReporter;
+import com.mojang.logging.LogUtils;
 
 import net.minecraft.network.chat.Component;
 
@@ -95,11 +99,11 @@ public class MobSoul extends Item {
                 LogHelper.error("Mob Soul bound entity = null");
                 return super.useOn(context);
             }
-            entity.moveTo(sX, sY, sZ, player.getYRot(), 0F);
+            entity.snapTo(sX, sY, sZ, player.getYRot(), 0F);
 
             if (!level.isClientSide()) {
                 if (!stack.has(ItemData.SOUL_DATA) && entity instanceof Mob mob && level instanceof ServerLevel serverLevel) {
-                    EventHooks.finalizeMobSpawn(mob, serverLevel, serverLevel.getCurrentDifficultyAt(new BlockPos(0, 0, 0)), EntitySpawnReason.SPAWN_EGG, null);
+                    EventHooks.finalizeMobSpawn(mob, serverLevel, serverLevel.getCurrentDifficultyAt(new BlockPos(0, 0, 0)), EntitySpawnReason.SPAWN_ITEM_USE, null);
                 }
                 level.addFreshEntity(entity);
                 if (!player.getAbilities().instabuild) {
@@ -112,7 +116,7 @@ public class MobSoul extends Item {
 
     @Override
     public Component getName(ItemStack stack) {
-        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(getEntity(stack));
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(getEntity(stack));
         return Component.translatable(type.getDescriptionId()).append(" ").append(super.getName(stack));
     }
 
@@ -142,7 +146,7 @@ public class MobSoul extends Item {
     public Entity createEntity(Level level, ItemStack stack) {
         try {
             CompoundTag entityData = getEntityData(stack);
-            EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(getEntity(stack));
+            EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(getEntity(stack));
             Entity entity;
 
             entity = type.create(level, EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
@@ -150,10 +154,12 @@ public class MobSoul extends Item {
                 return EntityType.PIG.create(level, EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
             }
             if (entityData != null) {
-                entity.load(entityData);
+                try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(LogUtils.getLogger())) {
+                    entity.load(TagValueInput.create(reporter, level.registryAccess(), entityData));
+                }
             } else {
                 if (entity instanceof Mob mob && level instanceof ServerLevel serverLevel) {
-                    EventHooks.finalizeMobSpawn(mob, serverLevel, serverLevel.getCurrentDifficultyAt(new BlockPos(0, 0, 0)), EntitySpawnReason.SPAWN_EGG, null);
+                    EventHooks.finalizeMobSpawn(mob, serverLevel, serverLevel.getCurrentDifficultyAt(new BlockPos(0, 0, 0)), EntitySpawnReason.SPAWN_ITEM_USE, null);
                 }
             }
             return entity;
@@ -168,9 +174,11 @@ public class MobSoul extends Item {
         setEntity(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()), soul);
 
         if (saveEntityData) {
-            CompoundTag compound = new CompoundTag();
-            entity.saveWithoutId(compound);
-            setEntityData(compound, soul);
+            try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(LogUtils.getLogger())) {
+                TagValueOutput output = TagValueOutput.createWithContext(reporter, entity.registryAccess());
+                entity.saveWithoutId(output);
+                setEntityData(output.buildResult(), soul);
+            }
         }
 
         return soul;
@@ -180,12 +188,13 @@ public class MobSoul extends Item {
         return getRenderEntity(getEntity(stack));
     }
 
-    @OnlyIn (Dist.CLIENT)
     public Entity getRenderEntity(Identifier name) {
         if (name == null || name.equals(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "random_display_entity"))) {
             if (randomDisplayList == null) {
                 randomDisplayList = new ArrayList<>();
-                SpawnEggItem.BY_ID.keySet().forEach(type -> randomDisplayList.add(BuiltInRegistries.ENTITY_TYPE.getKey(type)));
+                BuiltInRegistries.ITEM.stream().filter(item -> item instanceof SpawnEggItem)
+                        .map(item -> SpawnEggItem.getType(new ItemStack(item))).filter(Objects::nonNull).distinct()
+                        .forEach(type -> randomDisplayList.add(BuiltInRegistries.ENTITY_TYPE.getKey(type)));
             }
 
             if (!randomDisplayList.isEmpty()) {
@@ -197,7 +206,7 @@ public class MobSoul extends Item {
             Level level = Minecraft.getInstance().level;
             Entity entity;
             try {
-                EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(name);
+                EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(name);
                 entity = type.create(level, EntitySpawnReason.MOB_SUMMONED); // port-26.1.2
                 if (entity == null) {
                     entity = EntityType.PIG.create(level, EntitySpawnReason.MOB_SUMMONED); // port-26.1.2

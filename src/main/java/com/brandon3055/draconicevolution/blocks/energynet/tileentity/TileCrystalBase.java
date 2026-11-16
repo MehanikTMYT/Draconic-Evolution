@@ -494,7 +494,7 @@ public abstract class TileCrystalBase extends TileBCore implements ITilePlaceLis
     //region Sync/Save
 
     @Override
-    public void writeExtraNBT(HolderLookup.Provider provider, CompoundTag compound) {
+    public void writeExtraNBT(CompoundTag compound) {
         compound.putByte("tech_level", (byte) techLevel.ordinal());
         ListTag list = new ListTag();
         for (Vec3B vec : linkedCrystals) {
@@ -508,11 +508,11 @@ public abstract class TileCrystalBase extends TileBCore implements ITilePlaceLis
             array[i] = flowRates.get(i);
         }
         compound.putByteArray("flow_rates", array);
-        super.writeExtraNBT(provider, compound);
+        super.writeExtraNBT(compound);
     }
 
     @Override
-    public void readExtraNBT(HolderLookup.Provider provider, CompoundTag compound) {
+    public void readExtraNBT(CompoundTag compound) {
         techLevel = TechLevel.values()[compound.getIntOr("tech_level", 0)];
         ListTag list = compound.getListOrEmpty("linked_crystals");
         linkedCrystals.clear();
@@ -526,7 +526,7 @@ public abstract class TileCrystalBase extends TileBCore implements ITilePlaceLis
         fxHandler.readFromNBT(compound);
 
         if (compound.contains("flow_rates")) {
-            byte[] array = compound.getByteArray("flow_rates");
+            byte[] array = compound.getByteArray("flow_rates").orElseGet(() -> new byte[0]);
             flowRates.clear();
             for (byte b : array) {
                 flowRates.add(b);
@@ -534,7 +534,7 @@ public abstract class TileCrystalBase extends TileBCore implements ITilePlaceLis
         }
         int cap = getCapacityForTier(getTier());
         opStorage.setCapacity(cap).setMaxTransfer(cap);
-        super.readExtraNBT(provider, compound);
+        super.readExtraNBT(compound);
     }
 
     @Override
@@ -628,8 +628,8 @@ public abstract class TileCrystalBase extends TileBCore implements ITilePlaceLis
             ListTag list = compound.getListOrEmpty("L");
 
             for (int i = 0; i < list.size(); i++) {
-                CompoundTag tagData = list.getCompound(i);
-                containerEnergyFlow.put((int) tagData.getByteOr("I", (byte)0), tagData.getInt("E"));
+                CompoundTag tagData = list.getCompoundOrEmpty(i);
+                containerEnergyFlow.put((int) tagData.getByteOr("I", (byte)0), tagData.getIntOr("E", 0));
             }
         }
 

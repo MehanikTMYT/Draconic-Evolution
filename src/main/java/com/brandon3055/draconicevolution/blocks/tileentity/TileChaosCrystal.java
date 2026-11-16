@@ -167,17 +167,17 @@ public class TileChaosCrystal extends TileBCore {
     }
 
     @Override
-    public void writeExtraNBT(HolderLookup.Provider provider, CompoundTag compound) {
-        super.writeExtraNBT(provider, compound);
+    public void writeExtraNBT(CompoundTag compound) {
+        super.writeExtraNBT(compound);
         if (validatePlacement) {
             compound.putBoolean("validate_placement", true);
         }
     }
 
     @Override
-    public void readExtraNBT(HolderLookup.Provider provider, CompoundTag compound) {
-        super.readExtraNBT(provider, compound);
-        validatePlacement = compound.contains("validate_placement") && compound.getBoolean("validate_placement");
+    public void readExtraNBT(CompoundTag compound) {
+        super.readExtraNBT(compound);
+        validatePlacement = compound.getBooleanOr("validate_placement", false);
     }
 
     public void onValidPlacement() {

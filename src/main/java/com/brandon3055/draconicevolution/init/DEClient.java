@@ -35,7 +35,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -102,8 +102,8 @@ public class DEClient {
         NeoForge.EVENT_BUS.register(new KeyInputHandler());
     }
 
-    public static void onResourceReload(RegisterClientReloadListenersEvent event) {
-        event.registerReloadListener(ModuleTextures.getAtlasHolder());
+    public static void onResourceReload(AddClientReloadListenersEvent event) {
+        event.addListener(net.minecraft.resources.Identifier.fromNamespaceAndPath(MODID, "module_atlas"), ModuleTextures.getAtlasHolder());
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
