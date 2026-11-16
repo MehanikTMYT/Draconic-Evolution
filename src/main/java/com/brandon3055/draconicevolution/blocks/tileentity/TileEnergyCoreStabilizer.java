@@ -221,7 +221,7 @@ public class TileEnergyCoreStabilizer extends TileBCore implements IInteractTile
             return true;
         } else if (coreTier >= TileEnergyCore.ADV_STABILIZER_TIER && isValidMultiBlock.get()) {
             BlockPos offset = worldPosition.subtract(core.getBlockPos());
-            Direction direction = Direction.getNearest(offset.getX(), offset.getY(), offset.getZ()).getOpposite();
+            Direction direction = Direction.getNearest((int)offset.getX(), (int)offset.getY(), (int)offset.getZ(), Direction.NORTH).getOpposite();
             return direction.getAxis() == multiBlockAxis.get();
         }
         return false;
@@ -372,7 +372,7 @@ public class TileEnergyCoreStabilizer extends TileBCore implements IInteractTile
 //            return true;
 //        } else if (coreTier >= 5 && isValidMultiBlock.get()) {
 //            BlockPos offset = worldPosition.subtract(core.getBlockPos());
-//            Direction direction = Direction.getNearest(offset.getX(), offset.getY(), offset.getZ()).getOpposite();
+//            Direction direction = Direction.getNearest((int)offset.getX(), (int)offset.getY(), (int)offset.getZ(), Direction.NORTH).getOpposite();
 //            return direction.getAxis() == multiBlockAxis.get();
 //        }
 //        return false;

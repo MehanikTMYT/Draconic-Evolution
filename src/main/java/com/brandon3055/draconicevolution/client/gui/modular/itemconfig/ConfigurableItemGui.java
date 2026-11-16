@@ -26,7 +26,7 @@ import com.brandon3055.draconicevolution.inventory.ConfigurableItemMenu;
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.nbt.CompoundTag;
@@ -165,7 +165,7 @@ public class ConfigurableItemGui extends ContainerGuiProvider<ConfigurableItemMe
         GuiSlots slots = new GuiSlots(scroll.getContentElement(), screenAccess, menu.curios, 1)
                 .setSlotOverlay(this::renderSlotOverlay)
                 .setSlotTexture(slot -> BCGuiTextures.getThemed("slot"))
-                .setEmptyIconI(i -> RenderUtils.fromRawTexture(EquipmentManager.getIcons(menu.inventory.player).get(i)))
+                .setEmptyIconI(i -> com.brandon3055.brandonscore.client.gui.modular.sprite.Material.fromAtlas(net.minecraft.client.renderer.Sheets.GUI_SHEET, EquipmentManager.getIcons(menu.inventory.player).get(i).toString()))
                 .constrain(LEFT, match(scroll.getContentElement().get(LEFT)))
                 .constrain(TOP, match(scroll.getContentElement().get(TOP)));
 
@@ -305,7 +305,7 @@ public class ConfigurableItemGui extends ContainerGuiProvider<ConfigurableItemMe
         hoveredProvider = null;
         if (DEConfig.configUiEnableVisualization) {
             Slot hovered = menu.slots.stream()
-                    .filter(slot -> ((ModularGuiContainer<?>) gui.getScreen()).isHovering(slot, gui.computeMouseX(), gui.computeMouseY()))
+                    .filter(slot -> ((ModularGuiContainer<?>) gui.getScreen()).findSlot(gui.computeMouseX(), gui.computeMouseY()) == slot)
                     .findAny()
                     .orElse(null);
             if (hovered != null) {
@@ -318,7 +318,7 @@ public class ConfigurableItemGui extends ContainerGuiProvider<ConfigurableItemMe
 
         if (!bindReleased) {
             InputConstants.Key bind = KeyBindings.toolConfig.getKey();
-            if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), bind.getValue())) {
+            if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), bind.getValue())) {
                 if (closeOnRelease) {
                     gui.getScreen().onClose();
                 } else {
@@ -453,7 +453,7 @@ public class ConfigurableItemGui extends ContainerGuiProvider<ConfigurableItemMe
         if (screen instanceof ConfigurableItemGui.Screen || player == null) {
             return;
         }
-        InputConstants.Key input = InputConstants.getKey(keyCode, scanCode);
+        InputConstants.Key input = InputConstants.getKey(new net.minecraft.client.input.KeyEvent(keyCode, scanCode, 0));
         if (keyBindCache == null) {
             ModularGui dummy = new ModularGui(e -> {});
             keyBindCache = new ArrayList<>();
@@ -527,8 +527,8 @@ public class ConfigurableItemGui extends ContainerGuiProvider<ConfigurableItemMe
         }
 
         @Override
-        public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-            super.render(graphics, mouseX, mouseY, partialTicks);
+        public void extractRenderState(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+            super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
             ((ConfigurableItemGui) modularGui.getProvider()).updateAnimations.removeIf(UpdateAnim::isFinished);
             ((ConfigurableItemGui) modularGui.getProvider()).updateAnimations.forEach(e -> e.tick(partialTicks));
         }

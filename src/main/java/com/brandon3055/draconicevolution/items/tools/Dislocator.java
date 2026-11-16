@@ -141,7 +141,7 @@ public class Dislocator extends Item implements IHudItem {
             return true;
         }
 
-        if (!(player.level() instanceof ServerLevel serverLevel) || !(entity instanceof LivingEntity) || player.getCooldowns().getCooldownPercent(this, 0) > 0) {
+        if (!(player.level() instanceof ServerLevel serverLevel) || !(entity instanceof LivingEntity) || player.getCooldowns().getCooldownPercent(stack, 0) > 0) {
             return true;
         }
         TargetPos location = getTargetPos(stack, player.level());

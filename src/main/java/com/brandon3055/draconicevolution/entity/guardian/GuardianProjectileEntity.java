@@ -132,7 +132,7 @@ public class GuardianProjectileEntity extends AbstractHurtingProjectile {
 
     @Override
     protected ParticleOptions getTrailParticle() {
-        return ParticleTypes.DRAGON_BREATH;
+        return new SimpleParticleType(ParticleTypes.DRAGON_BREATH.value());
     }
 
     @Override

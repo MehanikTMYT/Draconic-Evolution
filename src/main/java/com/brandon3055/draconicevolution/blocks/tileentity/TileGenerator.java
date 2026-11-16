@@ -10,7 +10,7 @@ import com.brandon3055.brandonscore.client.particle.IntParticleType.IntParticleD
 
 import com.brandon3055.brandonscore.inventory.ItemHandlerIOControl;
 
-import com.brandon3055.brandonscore.inventory.TileItemStackHandler;
+import com.brandon3055.draconicevolution.inventory.ManagedItemHandler;
 
 import com.brandon3055.brandonscore.lib.IInteractTile;
 
@@ -82,7 +82,7 @@ import net.neoforged.api.distmarker.Dist;
 
 import net.neoforged.api.distmarker.OnlyIn;
 
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities.Item;
 
 import net.neoforged.neoforge.capabilities.Capabilities;
 
@@ -114,7 +114,7 @@ public class TileGenerator extends TileBCore implements IRSSwitchable, MenuProvi
     public float rotation = 0;
     public float rotationSpeed = 0;
 
-    public TileItemStackHandler itemHandler = new TileItemStackHandler(this, 4);
+    public ManagedItemHandler itemHandler = new ManagedItemHandler(this, 4);
 //    public SimpleModuleHost moduleHost = new SimpleModuleHost(TechLevel.WYVERN, 5, 5, ModuleCfg.removeInvalidModules, ModuleCategory.ENERGY);
     public OPStorage opStorage = new ModularOPStorage(this, 100000, 0, 32000);
 
@@ -127,21 +127,22 @@ public class TileGenerator extends TileBCore implements IRSSwitchable, MenuProvi
         capManager.setManaged("energy", CapabilityOP.OP, opStorage).saveBoth().syncContainer();
 
         //Inventory Cap
-        capManager.setInternalManaged("inventory", ItemHandler.BLOCK, itemHandler).saveBoth();
-        itemHandler.setStackValidator((slot, stack) -> slot > 2 || stack.getBurnTime(null) > 0);
+        capManager.setInternalManaged("inventory", Capabilities.Item.BLOCK, itemHandler).saveBoth();
+        itemHandler.setStackValidator((slot, stack) -> slot > 2 || burnTime(stack) > 0);
         setupPowerSlot(itemHandler, 3, opStorage, true);
-        capManager.set(ItemHandler.BLOCK, new ItemHandlerIOControl(itemHandler).setExtractCheck(this::canExtractItem));
+        capManager.set(Capabilities.Item.BLOCK, itemHandler.view((slot, stack) -> true, this::canExtractItem));
         installIOTracker(opStorage);
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
         com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_GENERATOR.get());
-        capability(event, DEContent.TILE_GENERATOR, ItemHandler.BLOCK);
-        capability(event, DEContent.TILE_GENERATOR, DECapabilities.Host.BLOCK);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_GENERATOR.get(), (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null));
+        event.registerBlockEntity(DECapabilities.Host.BLOCK, DEContent.TILE_GENERATOR.get(), (tile, side) -> tile.capManager.getCapability(DECapabilities.Host.BLOCK, side).orElse(null));
     }
 
     @Override
     public void tick() {
+        itemHandler.loadPending();
         super.tick();
         if (level.isClientSide()) {
             rotationSpeed = (active.get() ? mode.get().animFanSpeed : 0F);
@@ -198,11 +199,12 @@ public class TileGenerator extends TileBCore implements IRSSwitchable, MenuProvi
         for (int i = 0; i < 3; i++) {
             ItemStack stack = itemHandler.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                int itemBurnTime = stack.getBurnTime(null);
+                int itemBurnTime = burnTime(stack);
 
                 if (itemBurnTime > 0) {
                     if (stack.getCount() == 1) {
-                        stack = stack.getItem().getCraftingRemainingItem(stack);
+                        var remainder = stack.getItem().getCraftingRemainder(stack);
+                        stack = remainder == null ? ItemStack.EMPTY : remainder.create();
                     } else {
                         stack.shrink(1);
                     }
@@ -215,13 +217,16 @@ public class TileGenerator extends TileBCore implements IRSSwitchable, MenuProvi
         }
     }
 
+    private int burnTime(ItemStack stack) {
+        return level == null ? 0 : stack.getBurnTime(null, level.fuelValues());
+    }
+
     private boolean canExtractItem(int slot, ItemStack stack) {
-        return (slot == 3 && EnergyUtils.isFullyOrInvalid(stack)) || (slot != 3 && stack.getBurnTime(null) <= 0);
+        return (slot == 3 && EnergyUtils.isFullyOrInvalid(stack)) || (slot != 3 && burnTime(stack) <= 0);
     }
 
     //Render Stuff
 
-    @OnlyIn (Dist.CLIENT)
     private void updateSoundAndFX() {
         soundHandler.tick();
         if (!active.get() || worldPosition.distSqr(Minecraft.getInstance().player.blockPosition()) > 16 * 16) {

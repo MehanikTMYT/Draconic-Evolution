@@ -268,7 +268,7 @@ public class DislocatorAdvanced extends Dislocator {
 
     private void handleBlink(ServerPlayer player, ItemStack stack, boolean showFuel) {
         if (!player.getAbilities().instabuild) {
-            if (player.getCooldowns().isOnCooldown(stack.getItem())) {
+            if (player.getCooldowns().isOnCooldown(stack)) {
                 return;
             }
             int blinkFuel = getFuel(stack);

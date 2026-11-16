@@ -6,7 +6,7 @@ import codechicken.lib.raytracer.SubHitBlockHitResult;
 
 import com.brandon3055.brandonscore.blocks.TileBCore;
 
-import com.brandon3055.brandonscore.inventory.TileItemStackHandler;
+import com.brandon3055.draconicevolution.inventory.ManagedItemHandler;
 
 import com.brandon3055.brandonscore.lib.IInteractTile;
 
@@ -44,7 +44,7 @@ import net.minecraft.world.item.BlockItem;
 
 import net.minecraft.world.item.ItemStack;
 
-import net.minecraft.world.item.TieredItem;
+import net.minecraft.core.component.DataComponents;
 
 import net.minecraft.world.level.Level;
 
@@ -84,7 +84,7 @@ public class TilePlacedItem extends TileBCore implements IInteractTile {
     public final ManagedBool[] isBlock = new ManagedBool[MAX_STACKS];
 
     //TODO / Something to think about. I could create a new item handler based dynamic inventory for this but i'm not sure if its needed. It should not take much effort to make this work.
-    public TileItemStackHandler itemHandler = new TileItemStackHandler(this, MAX_STACKS);
+    public ManagedItemHandler itemHandler = new ManagedItemHandler(this, MAX_STACKS);
 
     public TilePlacedItem(BlockPos pos, BlockState state) {
         super(DEContent.TILE_PLACED_ITEM.get(), pos, state);
@@ -93,13 +93,15 @@ public class TilePlacedItem extends TileBCore implements IInteractTile {
             isBlock[i] = register(new ManagedBool("is_block_" + i, DataFlags.SAVE_NBT_SYNC_TILE));
         }
 
-        capManager.setInternalManaged("inventory", Capabilities.ItemHandler.BLOCK, itemHandler).saveBoth().syncTile();
+        capManager.setInternalManaged("inventory", Capabilities.Item.BLOCK, itemHandler).saveBoth().syncTile();
         itemHandler.setContentsChangeListener(e -> updatePlacedItem());
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        capability(event, DEContent.TILE_PLACED_ITEM, Capabilities.ItemHandler.BLOCK);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_PLACED_ITEM.get(), (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null));
     }
+
+    @Override public void tick() { itemHandler.loadPending(); super.tick(); }
 
     private void updatePlacedItem() {
         List<ItemStack> stacks = getStacksInOrder();
@@ -109,7 +111,7 @@ public class TilePlacedItem extends TileBCore implements IInteractTile {
         }
         if (stacks.size() == 1) {
             ItemStack stack = stacks.get(0);
-            toolMode.set(stack.getItem() instanceof TieredItem || stack.isDamageableItem());
+            toolMode.set(stack.has(DataComponents.TOOL) || stack.isDamageableItem());
         } else {
             toolMode.set(false);
         }
@@ -159,13 +161,14 @@ public class TilePlacedItem extends TileBCore implements IInteractTile {
     }
 
     @Override
-    public InteractionResult useItemOn(ItemStack heldStack, BlockState state, Player player, InteractionHand hand, BlockHitResult traceIn) {
+    public InteractionResult onBlockUse(BlockState state, Player player, InteractionHand hand, BlockHitResult traceIn) {
+        ItemStack heldStack = player.getItemInHand(hand);
         if (player.level().isClientSide()) return InteractionResult.SUCCESS;
         List<ItemStack> stacks = getStacksInOrder();
 
         HitResult hit = RayTracer.retrace(player);
         if (!(hit instanceof SubHitBlockHitResult)){
-            return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.PASS;
         }
 
         int index = ((SubHitBlockHitResult) hit).subHit - 1;
@@ -229,7 +232,7 @@ public class TilePlacedItem extends TileBCore implements IInteractTile {
     }
 
     public static void popResource(Level world, BlockPos pos, ItemStack stack, boolean noPickupDelay) {
-        if (!world.isClientSide() && !stack.isEmpty() && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !world.restoringBlockSnapshots) {
+        if (!world.isClientSide() && !stack.isEmpty() && world instanceof net.minecraft.server.level.ServerLevel server && server.getGameRules().get(GameRules.BLOCK_DROPS) && !world.restoringBlockSnapshots) {
             double d0 = (double) (world.getRandom().nextFloat() * 0.5F) + 0.25D;
             double d1 = (double) (world.getRandom().nextFloat() * 0.5F) + 0.25D;
             double d2 = (double) (world.getRandom().nextFloat() * 0.5F) + 0.25D;

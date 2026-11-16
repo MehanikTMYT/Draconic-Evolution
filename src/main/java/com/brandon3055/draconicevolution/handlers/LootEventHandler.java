@@ -183,7 +183,7 @@ public class LootEventHandler {
                 item.setItem(new ItemStack(DEContent.DRAGON_HEART.get()));
                 // port-26.1.2: EnderDragonFight.origin стал приватным -> EnderDragon.getFightOrigin()
                 BlockPos podiumPos = entity.level().getHeightmapPos(Heightmap.Types.WORLD_SURFACE, EndPodiumFeature.getLocation(dragon.getFightOrigin() != null ? dragon.getFightOrigin() : entity.blockPosition())).offset(0, 3, 0);
-                item.moveTo(podiumPos.getX() + 0.5, podiumPos.getY(), podiumPos.getZ() + 0.5, 0.0F, 0.0F);
+                item.snapTo(podiumPos.getX() + 0.5, podiumPos.getY(), podiumPos.getZ() + 0.5, 0.0F, 0.0F);
                 item.setDeltaMovement(0, 0, 0);
                 item.setUnlimitedLifetime();
                 item.setNoGravity(true);

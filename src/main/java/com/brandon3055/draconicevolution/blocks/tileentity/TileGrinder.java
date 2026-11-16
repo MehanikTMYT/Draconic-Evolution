@@ -150,7 +150,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
         capManager.setManaged("energy", CapabilityOP.OP, opStorage).saveBoth().syncContainer();
         installIOTracker(opStorage);
 
-        capManager.setInternalManaged("inventory", Capabilities.ItemHandler.BLOCK, itemHandler).saveBoth();
+        capManager.setInternalManaged("inventory", Capabilities.Item.BLOCK, itemHandler).saveBoth();
         setupPowerSlot(itemHandler, 0, opStorage, false);
 
         entityFilter = new EntityFilter(true, FilterType.HOSTILE, FilterType.TAMED, FilterType.ADULTS, FilterType.ENTITY_TYPE, FilterType.FILTER_GROUP, FilterType.PLAYER);
@@ -160,8 +160,9 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
         entityFilter.setupClientPacketHandling(() -> createServerBoundPacket(0));
         setClientSidePacketHandler(0, input -> entityFilter.receivePacketFromServer(input));
         setServerSidePacketHandler(0, (input, player) -> entityFilter.receivePacketFromClient(input));
-        setSavedDataObject("entity_filter", entityFilter);
-        setItemSavedDataObject("entity_filter", entityFilter);
+        // port-26.1.2: EntityFilter needs to implement BCSerializable<CompoundTag> for setSavedDataObject - TODO
+        // setSavedDataObject("entity_filter", entityFilter);
+        // setItemSavedDataObject("entity_filter", entityFilter);
 
         aoe.setValidator(value -> (byte) MathHelper.clip(value, 1, getMaxAOE()));
         aoe.addValueListener(e -> killZone = null);
@@ -171,7 +172,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
 
     public static void register(RegisterCapabilitiesEvent event) {
         com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_GRINDER.get());
-        capability(event, DEContent.TILE_GRINDER, Capabilities.ItemHandler.BLOCK);
+        capability(event, DEContent.TILE_GRINDER, Capabilities.Item.BLOCK);
     }
 
     private boolean canExtractItem(int slot, ItemStack stack) {
@@ -372,24 +373,14 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
             for (Direction dir : Direction.values()) {
                 BlockEntity target = level.getBlockEntity(worldPosition.relative(dir));
                 if (target != null) {
-                    IItemHandler handler = Capabilities.ItemHandler.BLOCK.getCapability(level, target.getBlockPos(), null, target, dir.getOpposite());
-                    if (handler != null) {
-                        Iterator<ItemEntity> i = items.iterator();
-                        while (i.hasNext()) {
-                            ItemEntity next = i.next();
-                            if (next.isAlive()) {
-                                ItemStack stack = next.getItem();
-                                stack = InventoryUtils.insertItem(handler, stack, false);
-                                if (stack.isEmpty()) {
-                                    next.setItem(ItemStack.EMPTY);
-                                    next.discard();
-                                    i.remove();
-                                } else {
-                                    next.setItem(stack);
-                                }
-                            }
-                        }
-                    }
+                    // port-26.1.2: Item capability now returns ResourceHandler<ItemResource>, not IItemHandler
+                    // Logic requires rewrite to use transfer API - skipping insertion for now
+                    /*
+                     ResourceHandler<ItemResource> handler = Capabilities.Item.BLOCK.getCapability(level, target.getBlockPos(), null, target, dir.getOpposite());
+                     if (handler != null) {
+                         // TODO: Rewrite item insertion using ResourceHandler API
+                     }
+                     */
                 }
             }
         }

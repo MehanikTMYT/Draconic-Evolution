@@ -154,7 +154,7 @@ public interface IModularItem extends IItemExtension, IFusionDataTransfer {
 //        provider.addCapability(host, "module_host", DECapabilities.Host.ITEM, DECapabilities.Properties.ITEM);
 //        ModularOPStorage opStorage = createOPStorage(stack, host);
 //        if (opStorage != null) {
-//            provider.addCapability(opStorage, "energy", CapabilityOP.ITEM, Capabilities.EnergyStorage.ITEM);
+//            provider.addCapability(opStorage, "energy", CapabilityOP.ITEM, Capabilities.Energy.ITEM);
 //            host.addCategories(ModuleCategory.ENERGY);
 //        }
 
@@ -196,8 +196,8 @@ public interface IModularItem extends IItemExtension, IFusionDataTransfer {
 //    }
 
 //    public static void register(RegisterCapabilitiesEvent event) {
-//        capability(event, DEContent.TILE_ENERGY_TRANSFUSER, CapabilityOP.BLOCK);
-//        capability(event, DEContent.TILE_ENERGY_TRANSFUSER, Capabilities.ItemHandler.BLOCK);
+//        capability(event, DEContent.TILE_ENERGY_TRANSFUSER, CapabilityOP.OP);
+//        capability(event, DEContent.TILE_ENERGY_TRANSFUSER, Capabilities.Item.BLOCK);
 //    }
 
 //    static <T, C> void capability(RegisterCapabilitiesEvent event, Supplier<ItemLike> type, ItemCapability<T, C> capability) {

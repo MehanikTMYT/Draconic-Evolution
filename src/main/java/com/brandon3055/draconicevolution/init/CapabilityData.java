@@ -71,7 +71,7 @@ public class CapabilityData {
                 event.registerItem(DECapabilities.Host.ITEM, (stack, v) -> getItemHostCap(stack), item);
                 if (item instanceof IModularEnergyItem modularEnergyItem) {
                     event.registerItem(CapabilityOP.ITEM, (stack, v) -> getEnergyCap(stack), item);
-                    event.registerItem(Capabilities.EnergyStorage.ITEM, (stack, v) -> getEnergyCap(stack), item);
+                    event.registerItem(Capabilities.Energy.ITEM, (stack, v) -> getEnergyCap(stack), item);
                 }
             }
             if (item instanceof IDEEquipment) {

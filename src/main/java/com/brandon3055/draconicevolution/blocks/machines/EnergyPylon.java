@@ -1,5 +1,7 @@
 package com.brandon3055.draconicevolution.blocks.machines;
 
+
+import net.minecraft.world.level.redstone.Orientation;
 import codechicken.lib.math.MathHelper;
 
 import com.brandon3055.brandonscore.blocks.BlockBCore;
@@ -87,7 +89,7 @@ public class EnergyPylon extends EntityBlockBCore {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {;
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block blockIn, BlockPos fromPos, Orientation orientation, boolean isMoving) {
         if (level.getBlockEntity(pos) instanceof TileEnergyPylon tile && !StructureBlock.buildingLock) {
             tile.validateStructure();
         }

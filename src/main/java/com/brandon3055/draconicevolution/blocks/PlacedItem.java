@@ -186,7 +186,9 @@ public class PlacedItem extends EntityBlockBCore implements CustomTabHandling {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
+        // port-26.1.2: API убрал HitResult — восстанавливаем pick кликнувшего игрока (та же цель в пределах дистанции клика)
+        HitResult target = player.pick(5.0D, 0.0F, false);
         BlockEntity tile = level.getBlockEntity(pos);
         if (tile instanceof TilePlacedItem && target instanceof SubHitBlockHitResult) {
             List<ItemStack> stacks = ((TilePlacedItem) tile).getStacksInOrder();
@@ -208,7 +210,7 @@ public class PlacedItem extends EntityBlockBCore implements CustomTabHandling {
     }
 
     @Override
-    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, ItemStack toolStack, boolean willHarvest, FluidState fluid) {
         BlockEntity tile = level.getBlockEntity(pos);
         if (tile instanceof TilePlacedItem) {
             ((TilePlacedItem) tile).onBroken(player, pos, false);

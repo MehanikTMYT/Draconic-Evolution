@@ -10,7 +10,7 @@ import com.brandon3055.brandonscore.blocks.TileBCore;
 
 import com.brandon3055.brandonscore.capability.CapabilityOP;
 
-import com.brandon3055.brandonscore.inventory.TileItemStackHandler;
+import com.brandon3055.draconicevolution.inventory.ManagedItemHandler;
 
 import com.brandon3055.brandonscore.lib.IInteractTile;
 
@@ -75,10 +75,10 @@ import org.jetbrains.annotations.Nullable;
  */
 public class TileEnergyTransfuser extends TileBCore implements IInteractTile, MenuProvider, IRSSwitchable {
 
-    public TileItemStackHandler itemNorth = new TileItemStackHandler(this, 1).setSlotLimit(1).setStackValidator(EnergyUtils::isEnergyItem);
-    public TileItemStackHandler itemEast = new TileItemStackHandler(this, 1).setSlotLimit(1).setStackValidator(EnergyUtils::isEnergyItem);
-    public TileItemStackHandler itemSouth = new TileItemStackHandler(this, 1).setSlotLimit(1).setStackValidator(EnergyUtils::isEnergyItem);
-    public TileItemStackHandler itemWest = new TileItemStackHandler(this, 1).setSlotLimit(1).setStackValidator(EnergyUtils::isEnergyItem);
+    public ManagedItemHandler itemNorth = new ManagedItemHandler(this, 1).setSlotLimit(1).setStackValidator(EnergyUtils::isEnergyItem);
+    public ManagedItemHandler itemEast = new ManagedItemHandler(this, 1).setSlotLimit(1).setStackValidator(EnergyUtils::isEnergyItem);
+    public ManagedItemHandler itemSouth = new ManagedItemHandler(this, 1).setSlotLimit(1).setStackValidator(EnergyUtils::isEnergyItem);
+    public ManagedItemHandler itemWest = new ManagedItemHandler(this, 1).setSlotLimit(1).setStackValidator(EnergyUtils::isEnergyItem);
     private IItemHandlerModifiable[] indexedItemHandlers = {itemNorth, itemEast, itemSouth, itemWest};
     public IItemHandlerModifiable itemsCombined = (IItemHandlerModifiable) ItemCapMerger.merge(itemNorth, itemEast, itemSouth, itemWest);
     public IOPStorage opStorage = new OPIOAdapter();
@@ -88,17 +88,21 @@ public class TileEnergyTransfuser extends TileBCore implements IInteractTile, Me
 
     public TileEnergyTransfuser(BlockPos pos, BlockState state) {
         super(DEContent.TILE_ENERGY_TRANSFUSER.get(), pos, state);
-        capManager.setInternalManaged("item_north", Capabilities.ItemHandler.BLOCK, itemNorth).syncTile().saveBoth();
-        capManager.setInternalManaged("item_east", Capabilities.ItemHandler.BLOCK, itemEast).syncTile().saveBoth();
-        capManager.setInternalManaged("item_south", Capabilities.ItemHandler.BLOCK, itemSouth).syncTile().saveBoth();
-        capManager.setInternalManaged("item_west", Capabilities.ItemHandler.BLOCK, itemWest).syncTile().saveBoth();
+        capManager.setInternalManaged("item_north", Capabilities.Item.BLOCK, itemNorth).syncTile().saveBoth();
+        capManager.setInternalManaged("item_east", Capabilities.Item.BLOCK, itemEast).syncTile().saveBoth();
+        capManager.setInternalManaged("item_south", Capabilities.Item.BLOCK, itemSouth).syncTile().saveBoth();
+        capManager.setInternalManaged("item_west", Capabilities.Item.BLOCK, itemWest).syncTile().saveBoth();
         capManager.set(CapabilityOP.OP, opStorage, Direction.UP, Direction.DOWN, null);
 
-        capManager.set(Capabilities.ItemHandler.BLOCK, new ItemIOAdapter(0, itemNorth), Direction.NORTH);
-        capManager.set(Capabilities.ItemHandler.BLOCK, new ItemIOAdapter(1, itemEast), Direction.EAST);
-        capManager.set(Capabilities.ItemHandler.BLOCK, new ItemIOAdapter(2, itemSouth), Direction.SOUTH);
-        capManager.set(Capabilities.ItemHandler.BLOCK, new ItemIOAdapter(3, itemWest), Direction.WEST);
-        capManager.set(Capabilities.ItemHandler.BLOCK, new ItemIOAdapter(-1, itemsCombined), Direction.UP, Direction.DOWN, null);
+        capManager.set(Capabilities.Item.BLOCK, itemNorth.view((slot, stack) -> ioModes[0].get() != ItemIOMode.DISABLED, (slot, stack) -> canAutomateExtract(0, stack)), Direction.NORTH);
+        capManager.set(Capabilities.Item.BLOCK, itemEast.view((slot, stack) -> ioModes[1].get() != ItemIOMode.DISABLED, (slot, stack) -> canAutomateExtract(1, stack)), Direction.EAST);
+        capManager.set(Capabilities.Item.BLOCK, itemSouth.view((slot, stack) -> ioModes[2].get() != ItemIOMode.DISABLED, (slot, stack) -> canAutomateExtract(2, stack)), Direction.SOUTH);
+        capManager.set(Capabilities.Item.BLOCK, itemWest.view((slot, stack) -> ioModes[3].get() != ItemIOMode.DISABLED, (slot, stack) -> canAutomateExtract(3, stack)), Direction.WEST);
+        capManager.set(Capabilities.Item.BLOCK, new net.neoforged.neoforge.transfer.CombinedResourceHandler<>(
+                itemNorth.view((slot, stack) -> ioModes[0].get() != ItemIOMode.DISABLED, (slot, stack) -> canAutomateExtract(0, stack)),
+                itemEast.view((slot, stack) -> ioModes[1].get() != ItemIOMode.DISABLED, (slot, stack) -> canAutomateExtract(1, stack)),
+                itemSouth.view((slot, stack) -> ioModes[2].get() != ItemIOMode.DISABLED, (slot, stack) -> canAutomateExtract(2, stack)),
+                itemWest.view((slot, stack) -> ioModes[3].get() != ItemIOMode.DISABLED, (slot, stack) -> canAutomateExtract(3, stack))), Direction.UP, Direction.DOWN, null);
 
         for (int i = 0; i < 4; i++) {
             ioModes[i] = register(new ManagedEnum<>("item_mode_" + i, ItemIOMode.CHARGE, DataFlags.SAVE_BOTH_SYNC_TILE, DataFlags.CLIENT_CONTROL));
@@ -107,11 +111,13 @@ public class TileEnergyTransfuser extends TileBCore implements IInteractTile, Me
 
     public static void register(RegisterCapabilitiesEvent event) {
         com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_ENERGY_TRANSFUSER.get());
-        capability(event, DEContent.TILE_ENERGY_TRANSFUSER, Capabilities.ItemHandler.BLOCK);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_ENERGY_TRANSFUSER.get(),
+                (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null));
     }
 
     @Override
     public void tick() {
+        itemNorth.loadPending(); itemEast.loadPending(); itemSouth.loadPending(); itemWest.loadPending();
         super.tick();
         if (level.isClientSide() || !isTileEnabled()) {
             return;
@@ -168,7 +174,8 @@ public class TileEnergyTransfuser extends TileBCore implements IInteractTile, Me
     }
 
     @Override
-    public InteractionResult useItemOn(ItemStack heldStack, BlockState state, Player player, InteractionHand hand, BlockHitResult hitIn) {
+    public InteractionResult onBlockUse(BlockState state, Player player, InteractionHand hand, BlockHitResult hitIn) {
+        ItemStack heldStack = player.getItemInHand(hand);
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
@@ -350,6 +357,11 @@ public class TileEnergyTransfuser extends TileBCore implements IInteractTile, Me
         public long modifyEnergyStored(long amount) {
             return 0; //Invalid operation for this device
         }
+    }
+
+    private boolean canAutomateExtract(int slot, ItemStack stack) {
+        IOPStorage storage = EnergyUtils.getStorage(stack);
+        return storage != null && ioModes[slot].get().canExtract(storage);
     }
 
     public class ItemIOAdapter implements IItemHandler {

@@ -175,7 +175,7 @@ public class BoundDislocator extends Dislocator {
             return true;
         }
 
-        MinecraftServer server = player.getServer();
+        MinecraftServer server = player.level().getServer();
         if (server == null || !(server.getLevel(location.getDimension()) instanceof Level targetLevel)) {
             return true;
         }

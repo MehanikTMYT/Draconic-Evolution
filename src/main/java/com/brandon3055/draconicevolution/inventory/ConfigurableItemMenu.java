@@ -1,7 +1,8 @@
 package com.brandon3055.draconicevolution.inventory;
 
 import com.brandon3055.brandonscore.client.gui.modular.lib.container.SlotGroup;
-import codechicken.lib.inventory.container.modular.ModularGuiContainerMenu;
+// port-26.1.2: trap80 — BC vendored the modular GUI menu; CCL base returns CCL SlotGroup which BC APIs reject
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.ModularGuiContainerMenu;
 import codechicken.lib.inventory.container.modular.ModularSlot;
 import com.brandon3055.brandonscore.inventory.PlayerSlot;
 import com.brandon3055.brandonscore.lib.Pair;

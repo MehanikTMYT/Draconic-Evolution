@@ -36,20 +36,20 @@ public class TileFluxGate extends TileFlowGate {
     private boolean capsLoaded = false;
 
     public static void register(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(CapabilityOP.BLOCK, DEContent.TILE_FLUX_GATE.get(), (tile, side) -> {
+        event.registerBlockEntity(CapabilityOP.OP, DEContent.TILE_FLUX_GATE.get(), (tile, side) -> {
             if (!tile.capsLoaded) {
                 tile.updateCapabilities();
                 tile.capsLoaded = true;
             }
-            return tile.getCapManager().getCapability(CapabilityOP.BLOCK, side);
+            return tile.getCapManager().getCapability(CapabilityOP.OP, side);
         });
 
-        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, DEContent.TILE_FLUX_GATE.get(), (tile, side) -> {
+        event.registerBlockEntity(Capabilities.Energy.BLOCK, DEContent.TILE_FLUX_GATE.get(), (tile, side) -> {
             if (!tile.capsLoaded) {
                 tile.updateCapabilities();
                 tile.capsLoaded = true;
             }
-            return tile.getCapManager().getCapability(CapabilityOP.BLOCK, side);
+            return tile.getCapManager().getCapability(CapabilityOP.OP, side);
         });
     }
 
@@ -59,9 +59,9 @@ public class TileFluxGate extends TileFlowGate {
     }
 
     private void updateCapabilities() {
-        capManager.remove(CapabilityOP.BLOCK);
-        capManager.set(CapabilityOP.BLOCK, inputReg, getDirection().getOpposite());
-        capManager.set(CapabilityOP.BLOCK, outputReg, getDirection());
+        capManager.remove(CapabilityOP.OP);
+        capManager.set(CapabilityOP.OP, inputReg, getDirection().getOpposite());
+        capManager.set(CapabilityOP.OP, outputReg, getDirection());
     }
 
     @Override

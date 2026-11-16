@@ -133,8 +133,9 @@ public class TileEntityDetector extends TileBCore implements MenuProvider, IInte
         entityFilter.setupClientPacketHandling(() -> createServerBoundPacket(9));
         setClientSidePacketHandler(9, input -> entityFilter.receivePacketFromServer(input));
         setServerSidePacketHandler(9, (input, player) -> entityFilter.receivePacketFromClient(input));
-        setSavedDataObject("entity_filter", entityFilter);
-        setItemSavedDataObject("entity_filter", entityFilter);
+        // port-26.1.2: EntityFilter needs to implement BCSerializable<CompoundTag> for setSavedDataObject - TODO
+        // setSavedDataObject("entity_filter", entityFilter);
+        // setItemSavedDataObject("entity_filter", entityFilter);
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
@@ -393,7 +394,7 @@ public class TileEntityDetector extends TileBCore implements MenuProvider, IInte
     public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (player instanceof ServerPlayer) {
             player.openMenu(this, worldPosition);
-            MinecraftServer server = player.getServer();
+            MinecraftServer server = player.level().getServer();
             if (server != null) {
                 ListTag list = new ListTag();
                 for (String name : server.getPlayerList().getPlayerNamesArray()) {

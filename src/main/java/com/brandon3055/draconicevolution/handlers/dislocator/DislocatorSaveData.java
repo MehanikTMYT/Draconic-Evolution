@@ -115,12 +115,12 @@ public class DislocatorSaveData extends SavedData {
         ListTag linkList = nbt.getListOrEmpty("link_map"); // port-26.1.2
         for (Tag lnbt : linkList) {
             CompoundTag linkNBT = (CompoundTag) lnbt;
-            UUID linkID = TagUtils26.getUUID(TagUtils26, linkNBT, "link_id");
+             UUID linkID = TagUtils26.getUUID(linkNBT, "link_id");
             ListTag targetList = linkNBT.getListOrEmpty("targets");
             Map<UUID, DislocatorTarget> targetMap = data.linkTargetMap.computeIfAbsent(linkID, uuid -> new HashMap<>());
             for (Tag tnbt : targetList) {
                 CompoundTag targetNBT = (CompoundTag) tnbt;
-                UUID targetID = TagUtils26.getUUID(TagUtils26, targetNBT, "target_id");
+                UUID targetID = TagUtils26.getUUID( targetNBT, "target_id");
                 DislocatorTarget target = DislocatorTarget.load(targetNBT);
                 targetMap.put(targetID, target);
             }
@@ -134,13 +134,13 @@ public class DislocatorSaveData extends SavedData {
         for (UUID linkID : linkTargetMap.keySet()) {
             Map<UUID, DislocatorTarget> targetMap = linkTargetMap.get(linkID);
             CompoundTag linkNBT = new CompoundTag();
-            TagUtils26.putUUID(TagUtils26, linkNBT, "link_id", linkID);
+            TagUtils26.putUUID( linkNBT, "link_id", linkID);
 
             ListTag targetList = new ListTag();
             for (UUID targetID : targetMap.keySet()) {
                 DislocatorTarget target = targetMap.get(targetID);
                 CompoundTag targetNBT = new CompoundTag();
-                TagUtils26.putUUID(TagUtils26, targetNBT, "target_id", targetID);
+                TagUtils26.putUUID( targetNBT, "target_id", targetID);
                 target.save(targetNBT);
                 targetList.add(targetNBT);
             }

@@ -112,7 +112,7 @@ public class StabilizedSpawnerLogic extends BaseSpawner {
                 }
 
                 LivingEntity entityliving = entity instanceof LivingEntity ? (LivingEntity) entity : null;
-                entity.moveTo(entity.getX(), entity.getY(), entity.getZ(), level.getRandom().nextFloat() * 360.0F, 0.0F);
+                entity.snapTo(entity.getX(), entity.getY(), entity.getZ(), level.getRandom().nextFloat() * 360.0F, 0.0F);
 
                 if (entityliving == null || !(entityliving instanceof Mob) || canEntitySpawnSpawner((Mob) entityliving, (ServerLevel) tile.getLevel(), (float) entity.getX(), (float) entity.getY(), (float) entity.getZ(), this)) {
                     if (!tier.requiresPlayer() && entity instanceof Mob) {

@@ -33,34 +33,29 @@ public class StabilizedSpawner extends EntityBlockBCore {
     }
 
     @Override
-    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        super.onRemove(state, worldIn, pos, newState, isMoving);
-    }
-
-    @Override
     public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction side) {
         return true;
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, context, tooltip, flagIn);
-        if (!stack.has(BlockBCore.BC_TILE_DATA_TAG) || context.level() == null) {
+    public void appendHoverText(ItemStack stack, List<Component> tooltip) {
+        super.appendHoverText(stack, tooltip);
+        if (!com.brandon3055.brandonscore.utils.ItemNBTHelper.getCompound(stack).contains(BlockBCore.BC_TILE_DATA_TAG)) {
             return;
         }
-        CompoundTag tag = stack.get(BlockBCore.BC_TILE_DATA_TAG).copyTag();
-        CompoundTag data = tag.getCompound(BlockBCore.BC_MANAGED_DATA_FLAG);
+        CompoundTag tag = com.brandon3055.brandonscore.utils.ItemNBTHelper.getCompound(stack).getCompoundOrEmpty(BlockBCore.BC_TILE_DATA_TAG);
+        CompoundTag data = tag.getCompoundOrEmpty(BlockBCore.BC_MANAGED_DATA_FLAG);
 
-        CompoundTag tier = data.getCompound("spawner_tier");
+        CompoundTag tier = data.getCompoundOrEmpty("spawner_tier");
         if (tier.contains("value")) {
-            int index = tier.getByte("value");
+            int index = tier.getByteOr("value", (byte) 0);
             if (index >= 0 && index < TileStabilizedSpawner.SpawnerTier.values().length) {
                 TechLevel techLevel = TileStabilizedSpawner.SpawnerTier.values()[index].getTechLevel();
                 tooltip.add(techLevel.getDisplayName().copy().withStyle(techLevel.getTextColour()));
             }
         }
         if (data.contains("mob_soul")) {
-            ItemStack soul = ItemStack.parseOptional(context.level().registryAccess(), data.getCompound("mob_soul"));
+            ItemStack soul = data.read("mob_soul", ItemStack.OPTIONAL_CODEC, net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(net.minecraft.core.registries.BuiltInRegistries.REGISTRY).createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE)).orElse(ItemStack.EMPTY);
             if (!soul.isEmpty()) {
                 tooltip.add(soul.getDisplayName().copy().withStyle(ChatFormatting.YELLOW));
             }

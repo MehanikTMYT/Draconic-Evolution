@@ -1,5 +1,7 @@
 package com.brandon3055.draconicevolution.blocks;
 
+
+import net.minecraft.world.level.redstone.Orientation;
 import com.brandon3055.brandonscore.blocks.EntityBlockBCore;
 
 import com.brandon3055.brandonscore.blocks.TileBCore;
@@ -132,7 +134,7 @@ public class Portal extends EntityBlockBCore implements CustomTabHandling {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, Orientation orientation, boolean isMoving) {
         if (world.isClientSide()) return;
 
         if (!canSurvive(state, world, pos)) {

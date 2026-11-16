@@ -98,7 +98,8 @@ public class TileStabilizedSpawner extends TileBCore implements IInteractTile, I
     }
 
     @Override
-    public InteractionResult useItemOn(ItemStack stack, BlockState state, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, InteractionHand hand, BlockHitResult hit) {
+        ItemStack stack = player.getItemInHand(hand);
         if (stack.is(DEContent.MOB_SOUL.get())) {
             if (!level.isClientSide()) {
                 (mobSoul.set(stack.copy())).setCount(1);
@@ -152,11 +153,11 @@ public class TileStabilizedSpawner extends TileBCore implements IInteractTile, I
     }
 
     @Override
-    public void writeToItemStack(HolderLookup.Provider provider, CompoundTag compound, boolean willHarvest) {
+    public void writeToItemStack(CompoundTag compound, boolean willHarvest) {
         if (willHarvest) {
             mobSoul.set(ItemStack.EMPTY);
         }
-        super.writeToItemStack(provider, compound, willHarvest);
+        super.writeToItemStack(compound, willHarvest);
     }
 
     //region Render

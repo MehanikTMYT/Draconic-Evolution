@@ -1,5 +1,7 @@
 package com.brandon3055.draconicevolution.blocks;
 
+
+import net.minecraft.world.level.redstone.Orientation;
 import com.brandon3055.brandonscore.blocks.EntityBlockBCore;
 
 import com.brandon3055.brandonscore.lib.CustomTabHandling;
@@ -99,7 +101,7 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, Orientation orientation, boolean isMoving) {
         neighborChanged(world, pos);
     }
 
@@ -117,13 +119,13 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
     }
 
     @Override
-    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, ItemStack toolStack, boolean willHarvest, FluidState fluid) {
         BlockEntity tile = world.getBlockEntity(pos);
 
         if (tile instanceof TileStructureBlock structureTile) {
             Identifier blockName = structureTile.blockName.get();
             if (blockName != null) {
-                Block block = BuiltInRegistries.BLOCK.get(blockName);
+                Block block = BuiltInRegistries.BLOCK.getValue(blockName);
                 MultiBlockController controller = structureTile.getController();
                 world.removeBlock(pos, false);
                 if (block != Blocks.AIR && !player.getAbilities().instabuild) {
@@ -139,12 +141,13 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader world, BlockPos pos, Player player) {
+    // port-26.1.2: Neo removed HitResult from the clone API (IBlockExtension.getCloneItemStack level,pos,state,data,player)
+    public ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData, Player player) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileStructureBlock structureTile) {
             Identifier blockName = structureTile.blockName.get();
             if (blockName != null) {
-                Block block = BuiltInRegistries.BLOCK.get(blockName);
+                Block block = BuiltInRegistries.BLOCK.getValue(blockName);
                 return new ItemStack(block);
             }
         }
@@ -157,7 +160,7 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState p_60578_, BlockGetter p_60579_, BlockPos p_60580_) {
+    protected VoxelShape getOcclusionShape(BlockState p_60578_) {
         return Shapes.block();
     }
 
@@ -193,7 +196,7 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
         if (level.getBlockEntity(pos) instanceof TileStructureBlock tile) {
             Identifier name = tile.blockName.get();
             if (name != null) {
-                return BuiltInRegistries.BLOCK.get(name);
+                return BuiltInRegistries.BLOCK.getValue(name);
             }
         }
         return Blocks.AIR;

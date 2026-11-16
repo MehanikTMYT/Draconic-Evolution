@@ -1,5 +1,7 @@
 package com.brandon3055.draconicevolution.blocks.machines;
 
+
+import net.minecraft.world.level.redstone.Orientation;
 import com.brandon3055.brandonscore.blocks.EntityBlockBCore;
 import com.brandon3055.draconicevolution.blocks.tileentity.TileFusionCraftingCore;
 import com.brandon3055.draconicevolution.init.DEContent;
@@ -31,7 +33,7 @@ public class FusionCraftingCore extends EntityBlockBCore {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, Orientation orientation, boolean isMoving) {
         if (!world.isClientSide()) {
             if (isBlockPowered(world, pos)) {
                 BlockEntity tile = world.getBlockEntity(pos);
