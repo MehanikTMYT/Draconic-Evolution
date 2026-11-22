@@ -150,7 +150,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
         capManager.setManaged("energy", CapabilityOP.OP, opStorage).saveBoth().syncContainer();
         installIOTracker(opStorage);
 
-        capManager.setInternalManaged("inventory", Capabilities.Item.BLOCK, itemHandler).saveBoth();
+        capManager.set(Capabilities.Item.BLOCK, itemHandler); // port-26.1.2: TileItemStackHandler не BCSerializable → set() вместо setInternalManaged()
         setupPowerSlot(itemHandler, 0, opStorage, false);
 
         entityFilter = new EntityFilter(true, FilterType.HOSTILE, FilterType.TAMED, FilterType.ADULTS, FilterType.ENTITY_TYPE, FilterType.FILTER_GROUP, FilterType.PLAYER);
@@ -172,7 +172,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
 
     public static void register(RegisterCapabilitiesEvent event) {
         com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_GRINDER.get());
-        capability(event, DEContent.TILE_GRINDER, Capabilities.Item.BLOCK);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_GRINDER, (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
     }
 
     private boolean canExtractItem(int slot, ItemStack stack) {
@@ -291,7 +291,7 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
         DamageSource source = level.damageSources().playerAttack(getFakePlayer());
 
         //Attack the mob and enter cooldown mode for 5 ticks if successful. Else cooldown for 3 ticks.
-        if (nextTarget.hurt(source, damage)) {
+        if (nextTarget.hurtServer((ServerLevel) level, source, damage)) {
             if (!weapon.isEmpty()) {
                 ItemStack justInCase = weapon.copy();
                 justInCase.setDamageValue(justInCase.getMaxDamage() - 1);
@@ -359,8 +359,8 @@ public class TileGrinder extends TileBCore implements IRSSwitchable, MenuProvide
         debug("Detected: " + xp.size() + " XP entities");
         for (ExperienceOrb orb : xp) {
             if (!orb.isAlive()) continue;
-            if (collectXP.get() && storedXP.get() + orb.value <= getXPStorageCapacity()) {
-                storedXP.add(orb.value);
+            if (collectXP.get() && storedXP.get() + orb.getValue() <= getXPStorageCapacity()) {
+                storedXP.add(orb.getValue());
                 orb.discard();
             } else if (orb.age < 5400) {
                 orb.age = 5700;

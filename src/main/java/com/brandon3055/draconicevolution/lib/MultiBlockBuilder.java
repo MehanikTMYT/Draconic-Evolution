@@ -14,14 +14,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Comparator;
+import net.minecraft.world.entity.player.Inventory;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Comparator;
 
 /**
  * Created by brandon3055 on 2/11/18.
@@ -103,18 +101,13 @@ public class MultiBlockBuilder implements IProcess {
             return part.getFirstValidBlock();
         }
 
-        IItemHandler handler = player.getCapability(Capabilities.Item.ENTITY);
-        if (handler != null) {
-            for (int i = 0; i < handler.getSlots(); i++) {
-                ItemStack inSlot = handler.getStackInSlot(i);
-                if (!inSlot.isEmpty() && inSlot.getItem() instanceof BlockItem) {
-                    Block slotBlock = ((BlockItem) inSlot.getItem()).getBlock();
-                    if (part.validBlocks().contains(slotBlock)) {
-                        ItemStack extracted = handler.extractItem(i, 1, false);
-                        if (!extracted.isEmpty() && extracted.getItem() instanceof BlockItem && ((BlockItem) extracted.getItem()).getBlock() == slotBlock) {
-                            return slotBlock;
-                        }
-                    }
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack inSlot = inventory.getItem(i);
+            if (!inSlot.isEmpty() && inSlot.getItem() instanceof BlockItem) {
+                Block slotBlock = ((BlockItem) inSlot.getItem()).getBlock();
+                if (part.validBlocks().contains(slotBlock)) {
+                    return slotBlock;
                 }
             }
         }

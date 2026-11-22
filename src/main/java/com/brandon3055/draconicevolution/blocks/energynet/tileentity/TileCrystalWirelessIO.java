@@ -172,7 +172,7 @@ public class TileCrystalWirelessIO extends TileCrystalBase {
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (player.isShiftKeyDown()) {
             inputMode.invert();
             return InteractionResult.SUCCESS;

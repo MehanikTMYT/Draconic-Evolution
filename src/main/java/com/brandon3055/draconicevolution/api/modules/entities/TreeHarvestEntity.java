@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.api.modules.entities;
 
+import com.brandon3055.draconicevolution.lib.DECodecs;
 import com.brandon3055.brandonscore.api.power.IOPStorage;
 
 import com.brandon3055.brandonscore.capability.CapabilityOP;
@@ -113,7 +114,7 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
             DEModules.codec().fieldOf("module").forGetter(ModuleEntity::getModule),
             Codec.INT.fieldOf("gridx").forGetter(ModuleEntity::getGridX),
             Codec.INT.fieldOf("gridy").forGetter(ModuleEntity::getGridY),
-            InventoryDynamic.CODEC.fieldOf("item_buffer").forGetter(e -> e.itemBuffer),
+            DECodecs.INVENTORY_DYNAMIC.fieldOf("item_buffer").forGetter(e -> e.itemBuffer),
             BooleanProperty.CODEC.fieldOf("harvest_leaves").forGetter(e -> e.harvestLeaves),
             IntegerProperty.CODEC.fieldOf("harvest_range").forGetter(e -> e.harvestRange)
     ).apply(builder, TreeHarvestEntity::new));
@@ -122,7 +123,7 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
             DEModules.streamCodec(), ModuleEntity::getModule,
             ByteBufCodecs.INT, ModuleEntity::getGridX,
             ByteBufCodecs.INT, ModuleEntity::getGridY,
-            InventoryDynamic.STREAM_CODEC, e -> e.itemBuffer,
+            DECodecs.INVENTORY_DYNAMIC_STREAM, e -> e.itemBuffer,
             BooleanProperty.STREAM_CODEC, e -> e.harvestLeaves,
             IntegerProperty.STREAM_CODEC, e -> e.harvestRange,
             TreeHarvestEntity::new
@@ -277,7 +278,7 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
 
     @Override
     @OnlyIn (Dist.CLIENT)
-    public void modifyPlayerModelPose(Player player, PlayerModel<?> model, boolean leftHand) {
+    public void modifyPlayerModelPose(Player player, PlayerModel model, boolean leftHand) {
         if (!leftHand) {
             model.rightArm.yRot = -0.1F + model.head.yRot;
             model.leftArm.yRot = 0.1F + model.head.yRot + 0.4F;
@@ -290,11 +291,11 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
             model.leftArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot;
         }
 
-        model.leftPants.copyFrom(model.leftLeg);
-        model.rightPants.copyFrom(model.rightLeg);
-        model.leftSleeve.copyFrom(model.leftArm);
-        model.rightSleeve.copyFrom(model.rightArm);
-        model.jacket.copyFrom(model.body);
+        model.leftPants.loadPose(model.leftLeg.storePose()); // port-26.1.2: ModelPart.copyFrom удалён;
+        model.rightPants.loadPose(model.rightLeg.storePose());
+        model.leftSleeve.loadPose(model.leftArm.storePose());
+        model.rightSleeve.loadPose(model.rightArm.storePose());
+        model.jacket.loadPose(model.body.storePose());
     }
 
     @Override

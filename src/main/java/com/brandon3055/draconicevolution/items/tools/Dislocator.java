@@ -15,6 +15,7 @@ import com.brandon3055.draconicevolution.init.DEContent;
 import com.brandon3055.draconicevolution.init.ItemData;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
@@ -49,12 +50,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 
 import net.minecraft.world.level.Level;
-
-import net.neoforged.api.distmarker.Dist;
-
-import net.neoforged.api.distmarker.OnlyIn;
 
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
 
@@ -100,8 +98,7 @@ public class Dislocator extends Item implements IHudItem {
         super(properties.fireResistant());
     }
 
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
+    public boolean isEnchantable(ItemStack stack) { // port-26.1.2: Item.isEnchantable удалён — анчантинг через компоненты
         return false;
     }
 
@@ -134,8 +131,7 @@ public class Dislocator extends Item implements IHudItem {
         }
     }
 
-    @Override
-    public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
+    public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) { // port-26.1.2: Item.onLeftClickEntity удалён
         if (entity instanceof Player && !(this instanceof DislocatorAdvanced)) {
             messageUser(player, Component.translatable("dislocate.draconicevolution.player_need_advanced").withStyle(ChatFormatting.RED));
             return true;
@@ -203,20 +199,19 @@ public class Dislocator extends Item implements IHudItem {
         return getTargetPos(stack, null) != null;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltip, TooltipFlag flagIn) {
         TargetPos targetPos = getTargetPos(stack, context.level());
         if (targetPos == null) {
-            tooltip.add(Component.translatable("dislocate.draconicevolution.un_set_info1").withStyle(ChatFormatting.RED));
-            tooltip.add(Component.translatable("dislocate.draconicevolution.un_set_info2").withStyle(ChatFormatting.WHITE));
-            tooltip.add(Component.translatable("dislocate.draconicevolution.un_set_info3").withStyle(ChatFormatting.WHITE));
-            tooltip.add(Component.translatable("dislocate.draconicevolution.un_set_info4").withStyle(ChatFormatting.WHITE));
-            tooltip.add(Component.translatable("dislocate.draconicevolution.un_set_info5").withStyle(ChatFormatting.WHITE));
+            tooltip.accept(Component.translatable("dislocate.draconicevolution.un_set_info1").withStyle(ChatFormatting.RED));
+            tooltip.accept(Component.translatable("dislocate.draconicevolution.un_set_info2").withStyle(ChatFormatting.WHITE));
+            tooltip.accept(Component.translatable("dislocate.draconicevolution.un_set_info3").withStyle(ChatFormatting.WHITE));
+            tooltip.accept(Component.translatable("dislocate.draconicevolution.un_set_info4").withStyle(ChatFormatting.WHITE));
+            tooltip.accept(Component.translatable("dislocate.draconicevolution.un_set_info5").withStyle(ChatFormatting.WHITE));
         } else {
-            tooltip.add(Component.translatable("dislocate.draconicevolution.bound_to").withStyle(ChatFormatting.GREEN));
-            tooltip.add(Component.literal(ChatFormatting.WHITE + "{" + targetPos.getReadableName(flagIn.isAdvanced()) + "}"));
-            tooltip.add(Component.translatable("dislocate.draconicevolution.uses_remain", stack.getMaxDamage() - stack.getDamageValue() + 1).withStyle(ChatFormatting.BLUE));
+            tooltip.accept(Component.translatable("dislocate.draconicevolution.bound_to").withStyle(ChatFormatting.GREEN));
+            tooltip.accept(Component.literal(ChatFormatting.WHITE + "{" + targetPos.getReadableName(flagIn.isAdvanced()) + "}"));
+            tooltip.accept(Component.translatable("dislocate.draconicevolution.uses_remain", stack.getMaxDamage() - stack.getDamageValue() + 1).withStyle(ChatFormatting.BLUE));
         }
     }
 
@@ -229,18 +224,15 @@ public class Dislocator extends Item implements IHudItem {
         stack.set(ItemData.DISLOCATOR_TARGET, pos);
     }
 
-    @Override
-    public boolean hasCustomEntity(ItemStack stack) {
+    public boolean hasCustomEntity(ItemStack stack) { // port-26.1.2: Item.hasCustomEntity удалён — логика перенесена в ItemEntity-обработчики
         return true;
     }
 
-    @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) { // port-26.1.2: vanilla repair API удалён (canCombineRepair)
         return repair.getItem() == DEContent.INGOT_DRACONIUM.get();
     }
 
-    @Override
-    public float getXpRepairRatio(ItemStack stack) {
+    public float getXpRepairRatio(ItemStack stack) { // port-26.1.2: vanilla repair API удалён
         return 1F;
     }
 

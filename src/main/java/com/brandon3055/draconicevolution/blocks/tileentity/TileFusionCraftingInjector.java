@@ -41,7 +41,7 @@ public class TileFusionCraftingInjector extends TileBCore implements IFusionInje
 
     public TileFusionCraftingInjector(BlockPos pos, BlockState state) {
         super(DEContent.TILE_CRAFTING_INJECTOR.get(), pos, state);
-        capManager.setManaged("inventory", Capabilities.Item.BLOCK, itemHandler).saveBoth().syncTile();
+        capManager.set(Capabilities.Item.BLOCK, itemHandler); // port-26.1.2: TileItemStackHandler не BCSerializable → set() вместо setManaged()
         itemHandler.setPerSlotLimit(() -> singleItem.get() ? 1 : 64);
         itemHandler.setContentsChangeListener(i -> inventoryChange());
         capManager.set(CapabilityOP.OP, new OPStorage(this, 0) {
@@ -74,7 +74,7 @@ public class TileFusionCraftingInjector extends TileBCore implements IFusionInje
 
     public static void register(RegisterCapabilitiesEvent event) {
         com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_CRAFTING_INJECTOR.get());
-        capability(event, DEContent.TILE_CRAFTING_INJECTOR, Capabilities.Item.BLOCK);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_CRAFTING_INJECTOR, (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
     }
 
     public boolean setCore(@Nullable TileFusionCraftingCore core) {
@@ -203,7 +203,7 @@ public class TileFusionCraftingInjector extends TileBCore implements IFusionInje
     @Override
     public void setRemoved() {
         super.setRemoved();
-        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+        if (getLevel() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
             onDestroyed();
         }
     }

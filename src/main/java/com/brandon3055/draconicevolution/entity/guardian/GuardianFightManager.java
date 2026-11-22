@@ -310,7 +310,7 @@ public class GuardianFightManager extends WorldEntity implements ITickableWorldE
         if (guardian.getUUID().equals(this.guardianUniqueId)) {
             this.bossInfo.setProgress(guardian.getHealth() / guardian.getMaxHealth());
             this.bossInfo.setShieldPower(guardian.getShieldPower() / (float) DEConfig.guardianShield);
-            this.bossInfo.setImmune(guardian.getPhaseManager().getCurrentPhase().isInvulnerable());
+            this.bossInfo.setImmune(guardian.getPhaseManager().getCurrentPhase().isInvulnerable(guardian.damageSources().generic()));
             bossInfo.setColor(guardian.getShieldPower() > 0 ? BossEvent.BossBarColor.PURPLE : BossEvent.BossBarColor.RED);
             this.ticksSinceGuardianSeen = 0;
             if (!arenaOrigin.equals(guardian.getArenaOrigin())) {

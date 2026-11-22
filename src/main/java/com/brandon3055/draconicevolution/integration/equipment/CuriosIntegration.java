@@ -2,9 +2,9 @@ package com.brandon3055.draconicevolution.integration.equipment;
 
 import com.brandon3055.draconicevolution.init.DEContent;
 import com.brandon3055.draconicevolution.lib.WTFException;
-import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagBuilder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -75,7 +75,7 @@ public class CuriosIntegration extends EquipmentManager {
             List<Identifier> icons = new ArrayList<>();
             handler.getCurios().forEach((s, h) -> {
                 for (int i = 0; i < h.getSlots(); i++) {
-                    Identifier icon = CuriosApi.getSlotIcon(s); //Why couldnt this just be the full path?
+                    Identifier icon = Identifier.fromNamespaceAndPath(CuriosApi.MODID, s); // CuriosApi.getSlotIcon(s) removed in 26
                     icons.add(Identifier.fromNamespaceAndPath(icon.getNamespace(), "textures/" + icon.getPath() + ".png"));
                 }
             });
@@ -87,16 +87,17 @@ public class CuriosIntegration extends EquipmentManager {
     /**
      * Data Gen
      */
-    public static void generateTags(Function<TagKey<Item>, TagsProvider.TagAppender> builder) {
-        builder.apply(CURIO_TAG).add(
-                DEContent.DISLOCATOR_ADVANCED.getKey(),
-                DEContent.MAGNET.getKey(),
-                DEContent.MAGNET_ADVANCED.getKey(),
-                DEContent.CAPACITOR_WYVERN.getKey(),
-                DEContent.CAPACITOR_DRACONIC.getKey(),
-                DEContent.CAPACITOR_CHAOTIC.getKey(),
-                DEContent.CAPACITOR_CREATIVE.getKey());
+    public static void generateTags(Function<TagKey<Item>, TagBuilder> builder) {
+        builder.apply(CURIO_TAG).addElement(DEContent.DISLOCATOR_ADVANCED.getKey().identifier())
+                .addElement(DEContent.MAGNET.getKey().identifier())
+                .addElement(DEContent.MAGNET_ADVANCED.getKey().identifier())
+                .addElement(DEContent.CAPACITOR_WYVERN.getKey().identifier())
+                .addElement(DEContent.CAPACITOR_DRACONIC.getKey().identifier())
+                .addElement(DEContent.CAPACITOR_CHAOTIC.getKey().identifier())
+                .addElement(DEContent.CAPACITOR_CREATIVE.getKey().identifier());
 
-        builder.apply(BODY_TAG).add(DEContent.CHESTPIECE_WYVERN.getKey(), DEContent.CHESTPIECE_DRACONIC.getKey(), DEContent.CHESTPIECE_CHAOTIC.getKey());
+        builder.apply(BODY_TAG).addElement(DEContent.CHESTPIECE_WYVERN.getKey().identifier())
+                .addElement(DEContent.CHESTPIECE_DRACONIC.getKey().identifier())
+                .addElement(DEContent.CHESTPIECE_CHAOTIC.getKey().identifier());
     }
 }

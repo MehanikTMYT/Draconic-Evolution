@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.items.tools;
 
+import com.brandon3055.draconicevolution.lib.DECodecs;
 import codechicken.lib.data.MCDataInput;
 
 import codechicken.lib.data.MCDataOutput;
@@ -284,7 +285,7 @@ public class DislocatorAdvanced extends Dislocator {
             if (showFuel) {
                 player.sendOverlayMessage(Component.translatable("dislocate.draconicevolution.teleport_fuel").append(" " + getFuel(stack)).withStyle(ChatFormatting.WHITE));
             }
-            player.getCooldowns().addCooldown(stack.getItem(), 5);
+            player.getCooldowns().addCooldown(stack, 5); // port-26.1.2: addCooldown принимает ItemStack
         }
 
         Vec3 playerVec = player.getEyePosition(1);
@@ -555,14 +556,14 @@ public class DislocatorAdvanced extends Dislocator {
 
     public static class DislocatorTarget {
         public static final Codec<DislocatorTarget> CODEC = RecordCodecBuilder.create(b -> b.group(
-                        TargetPos.CODEC.fieldOf("pos").forGetter(DislocatorTarget::getPos),
+                        DECodecs.TARGET_POS.fieldOf("pos").forGetter(DislocatorTarget::getPos),
                         Codec.STRING.fieldOf("name").forGetter(DislocatorTarget::getName),
                         Codec.BOOL.fieldOf("locked").forGetter(DislocatorTarget::isLocked)
                 ).apply(b, DislocatorTarget::new)
         );
 
         public static final StreamCodec<ByteBuf, DislocatorTarget> STREAM_CODEC = StreamCodec.composite(
-                TargetPos.STREAM_CODEC, DislocatorTarget::getPos,
+                DECodecs.TARGET_POS_STREAM, DislocatorTarget::getPos,
                 ByteBufCodecs.STRING_UTF8, DislocatorTarget::getName,
                 ByteBufCodecs.BOOL, DislocatorTarget::isLocked,
                 DislocatorTarget::new

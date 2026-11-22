@@ -400,7 +400,7 @@ public abstract class TileReactorComponent extends TileBCore {
     @Override
     public void setRemoved() {
         super.setRemoved();
-        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+        if (getLevel() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
             onBroken();
         }
     }

@@ -184,17 +184,16 @@ public class StabilizedSpawnerLogic extends BaseSpawner {
 
     @OnlyIn (Dist.CLIENT)
     @Override
-    public double getoSpin() {
+    public double getOSpin() {
         return prevMobRotation;
     }
 
     @Override
-    public CompoundTag save(CompoundTag compound) {
-        return compound;
+    public void save(net.minecraft.world.level.storage.ValueOutput output) {
     }
 
     @Override
-    public void load(@Nullable Level level, BlockPos pos, CompoundTag tag) {
+    public void load(net.minecraft.world.level.Level level, BlockPos pos, net.minecraft.world.level.storage.ValueInput input) {
     }
 
     @Override

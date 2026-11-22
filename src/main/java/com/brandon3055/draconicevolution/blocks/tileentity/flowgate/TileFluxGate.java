@@ -41,7 +41,7 @@ public class TileFluxGate extends TileFlowGate {
                 tile.updateCapabilities();
                 tile.capsLoaded = true;
             }
-            return tile.getCapManager().getCapability(CapabilityOP.OP, side);
+            return tile.getCapManager().getCapability(CapabilityOP.OP, side).orElse(null); // port-26.1.2: provider возвращает IOPStorage, не Optional
         });
 
         event.registerBlockEntity(Capabilities.Energy.BLOCK, DEContent.TILE_FLUX_GATE.get(), (tile, side) -> {
@@ -49,7 +49,7 @@ public class TileFluxGate extends TileFlowGate {
                 tile.updateCapabilities();
                 tile.capsLoaded = true;
             }
-            return tile.getCapManager().getCapability(CapabilityOP.OP, side);
+            return tile.getCapManager().getCapability(CapabilityOP.OP, side).orElse(null); // port-26.1.2: см. выше
         });
     }
 
@@ -78,7 +78,7 @@ public class TileFluxGate extends TileFlowGate {
     }
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (player instanceof ServerPlayer) {
             player.openMenu(this, worldPosition);
             return InteractionResult.CONSUME;

@@ -129,7 +129,7 @@ public class LaserBeamPhase extends ChargeUpPhase {
         List<Player> targetOptions = guardian.level().players()
                 .stream()
                 .filter(e -> e.distanceToSqr(focus) <= 200 * 200)
-                .filter(e -> StartPhase.AGRO_TARGETS.test(guardian, e))
+                .filter(e -> StartPhase.AGRO_TARGETS.test((ServerLevel) guardian.level(), guardian, e)) // port-26.1.2: TargetingConditions.test updated
                 .collect(Collectors.toList());
 
         if (targetOptions.isEmpty()) {
@@ -192,7 +192,7 @@ public class LaserBeamPhase extends ChargeUpPhase {
     }
 
     @Override
-    public boolean isInvulnerable() {
+    public boolean isInvulnerable(DamageSource source) { // port-26.1.2: Signature update
         return getBeamCharge() < 0.5;
     }
 

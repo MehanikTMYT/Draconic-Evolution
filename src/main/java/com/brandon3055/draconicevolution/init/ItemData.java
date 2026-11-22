@@ -1,5 +1,6 @@
 package com.brandon3055.draconicevolution.init;
 
+import com.brandon3055.draconicevolution.lib.DECodecs;
 import com.brandon3055.brandonscore.api.TechLevel;
 import com.brandon3055.brandonscore.inventory.InventoryDynamic;
 import com.brandon3055.brandonscore.utils.TargetPos;
@@ -52,7 +53,7 @@ public class ItemData {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>>                       DISLOCATOR_LINK_ID          = DATA.register("dislocator_link_id",           () -> DataComponentType.<UUID>builder().persistent(UUIDUtil.CODEC).networkSynchronized(UUIDUtil.STREAM_CODEC).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>>                     DISLOCATOR_PLAYER_NAME      = DATA.register("dislocator_player_name",       () -> DataComponentType.<String>builder().persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8).build());
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<TargetPos>>                  DISLOCATOR_TARGET           = DATA.register("dislocator_target",            () -> DataComponentType.<TargetPos>builder().persistent(TargetPos.CODEC).networkSynchronized(TargetPos.STREAM_CODEC).build());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<TargetPos>>                  DISLOCATOR_TARGET           = DATA.register("dislocator_target",            () -> DataComponentType.<TargetPos>builder().persistent(DECodecs.TARGET_POS).networkSynchronized(DECodecs.TARGET_POS_STREAM).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>>                    DISLOCATOR_FUEL             = DATA.register("dislocator_fuel",              () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>>                    DISLOCATOR_SELECTED         = DATA.register("dislocator_selected",          () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>>                    DISLOCATOR_BLINK            = DATA.register("dislocator_blink",             () -> DataComponentType.<Boolean>builder().persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build());
@@ -65,8 +66,8 @@ public class ItemData {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlobalPos>>                  BINDER_POS                  = DATA.register("binder_pos",                   () -> DataComponentType.<GlobalPos>builder().persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC).build());
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DumData<ModuleHost>>>        HOST_CAP_HOLDER             = DATA.register("module_host_cap_instance",     () -> DataComponentType.<DumData<ModuleHost>>builder().persistent(Codec.unit(DumData::new)).build());
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DumData<ModularOPStorage>>>  ENERGY_CAP_HOLDER           = DATA.register("energy_cap_instance",          () -> DataComponentType.<DumData<ModularOPStorage>>builder().persistent(Codec.unit(DumData::new)).build());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DumData<ModuleHost>>>        HOST_CAP_HOLDER             = DATA.register("module_host_cap_instance",     () -> DataComponentType.<DumData<ModuleHost>>builder().persistent(Codec.unit(new DumData<>())).build()); // port-26.1.2: Codec.unit принимает значение, не supplier
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<DumData<ModularOPStorage>>>  ENERGY_CAP_HOLDER           = DATA.register("energy_cap_instance",          () -> DataComponentType.<DumData<ModularOPStorage>>builder().persistent(Codec.unit(new DumData<>())).build());
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<DestroySpeedData>>           DESTROY_SPEED_DATA          = DATA.register("destroy_speed_data",           () -> DataComponentType.<DestroySpeedData>builder().persistent(DestroySpeedData.CODEC).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<AttributeData>>              ATTRIBUTE_DATA              = DATA.register("attribute_data",               () -> DataComponentType.<AttributeData>builder().persistent(AttributeData.CODEC).build());
@@ -75,8 +76,8 @@ public class ItemData {
 //    public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomData>>               MODULAR_ENERGY_STORAGE      = DATA.register("modular_energy_storage",       () -> DataComponentType.<CustomData>builder().persistent(CustomData.CODEC).networkSynchronized(CustomData.STREAM_CODEC).build());
 
     //Module host / property provider
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ModuleEntity<?>>>>      MODULE_ENTITIES             = DATA.register("module_entities",              () -> DataComponentType.<List<ModuleEntity<?>>>builder().persistent(ModuleEntity.CODEC.listOf()).networkSynchronized(ModuleEntity.STREAM_CODEC.apply(ByteBufCodecs.list())).build());
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ConfigProperty>>>       CONFIG_PROPERTIES           = DATA.register("config_properties",            () -> DataComponentType.<List<ConfigProperty>>builder().persistent(ConfigProperty.CODEC.listOf()).networkSynchronized(ConfigProperty.STREAM_CODEC.apply(ByteBufCodecs.list())).build());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ModuleEntity<?>>>>      MODULE_ENTITIES             = DATA.register("module_entities",              () -> DataComponentType.<List<ModuleEntity<?>>>builder().persistent(ModuleEntity.CODEC.listOf()).networkSynchronized(DECodecs.nbtMapped(ModuleEntity.CODEC).apply(ByteBufCodecs.list())).build()); // port-26.1.2: MCDataInput-стрим кодек неприменим для networkSynchronized — NBT-маппинг
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ConfigProperty>>>       CONFIG_PROPERTIES           = DATA.register("config_properties",            () -> DataComponentType.<List<ConfigProperty>>builder().persistent(ConfigProperty.CODEC.listOf()).networkSynchronized(DECodecs.nbtMapped(ConfigProperty.CODEC).apply(ByteBufCodecs.list())).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>>                       PROVIDER_IDENTITY           = DATA.register("provider_identity",            () -> DataComponentType.<UUID>builder().persistent(UUIDUtil.CODEC).networkSynchronized(UUIDUtil.STREAM_CODEC).build());
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>>                       MODULAR_ENERGY_CAPABILITY   = DATA.register("modular_energy_capability",    () -> DataComponentType.<Long>builder().persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG).build());
 
@@ -105,7 +106,7 @@ public class ItemData {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Double>>                     AUTO_FEED_MODULE_FOOD       = DATA.register("auto_feed_module_food",        () -> DataComponentType.<Double>builder().persistent(Codec.DOUBLE).networkSynchronized(ByteBufCodecs.DOUBLE).build());
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<InventoryDynamic>>           TREE_MODULE_INVENTORY       = DATA.register("tree_module_inventory",        () -> DataComponentType.<InventoryDynamic>builder().persistent(InventoryDynamic.CODEC).networkSynchronized(InventoryDynamic.STREAM_CODEC).build());
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<InventoryDynamic>>           TREE_MODULE_INVENTORY       = DATA.register("tree_module_inventory",        () -> DataComponentType.<InventoryDynamic>builder().persistent(DECodecs.INVENTORY_DYNAMIC).networkSynchronized(DECodecs.INVENTORY_DYNAMIC_STREAM).build());
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<Filter>>>               FILTER_MODULE_FILTERS       = DATA.register("filter_module_filters",        () -> DataComponentType.<List<Filter>>builder().persistent(FilteredModuleEntity.FILTERS_CODEC).networkSynchronized(FilteredModuleEntity.FILTERS_STREAM_CODEC).build());
 

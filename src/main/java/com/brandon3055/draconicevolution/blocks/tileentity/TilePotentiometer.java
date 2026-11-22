@@ -110,10 +110,10 @@ public class TilePotentiometer extends TileBCore implements IRedstoneEmitter, II
     @Override
     public void setRemoved() {
         super.setRemoved();
-        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+        if (getLevel() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
             if (power.get() > 0) {
                 ((com.brandon3055.draconicevolution.blocks.Potentiometer) getBlockState().getBlock())
-                        .updateNeighborsAfterRemoval(getBlockState(), level(), worldPosition);
+                        .updateNeighborsAfterRemoval(getBlockState(), getLevel(), worldPosition);
             }
         }
     }

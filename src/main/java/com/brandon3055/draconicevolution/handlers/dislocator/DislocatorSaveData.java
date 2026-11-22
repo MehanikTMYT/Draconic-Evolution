@@ -1,8 +1,11 @@
 package com.brandon3055.draconicevolution.handlers.dislocator;
 
+import com.brandon3055.draconicevolution.DraconicEvolution;
 import com.brandon3055.draconicevolution.items.tools.BoundDislocator;
 
 import com.brandon3055.draconicevolution.lib.TagUtils26;
+
+import com.mojang.serialization.Codec;
 
 import java.util.HashMap;
 
@@ -20,6 +23,8 @@ import net.minecraft.nbt.ListTag;
 
 import net.minecraft.nbt.Tag;
 
+import net.minecraft.resources.Identifier;
+
 import net.minecraft.server.level.ServerLevel;
 
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +32,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import net.minecraft.world.level.saveddata.SavedData;
+
+import net.minecraft.world.level.saveddata.SavedDataType;
 
 
 
@@ -50,7 +57,9 @@ import net.minecraft.world.level.saveddata.SavedData;
  * Created by brandon3055 on 28/8/21
  */
 public class DislocatorSaveData extends SavedData {
-    private static final String FILE_NAME = "draconic_dislocator_data";
+    private static final Identifier ID = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "draconic_dislocator_data");
+    private static final Codec<DislocatorSaveData> CODEC = Codec.unit(DislocatorSaveData::new); // port-26.1.2: codec простой, данные не хранятся в NBT через SavedData
+    private static final SavedDataType<DislocatorSaveData> TYPE = new SavedDataType<>(ID, DislocatorSaveData::new, CODEC); // port-26.1.2: SavedData.Factory удалён
 
     private Map<UUID, Map<UUID, DislocatorTarget>> linkTargetMap = new HashMap<>();
 
@@ -104,7 +113,7 @@ public class DislocatorSaveData extends SavedData {
         if (world instanceof ServerLevel && world.getServer() != null) {
             ServerLevel level = world.getServer().getLevel(Level.OVERWORLD);
             if (level != null) {
-                return level.getDataStorage().computeIfAbsent(new Factory<>(DislocatorSaveData::new, DislocatorSaveData::load), FILE_NAME);
+                return level.getDataStorage().computeIfAbsent(TYPE);
             }
         }
         return null;

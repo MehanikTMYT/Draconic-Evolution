@@ -1,8 +1,8 @@
 package com.brandon3055.draconicevolution.client.gui.modular.itemconfig;
-
 import codechicken.lib.data.MCDataInput;
-
 import codechicken.lib.data.MCDataOutput;
+
+
 
 import codechicken.lib.math.MathHelper;
 
@@ -49,8 +49,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
 
 import net.minecraft.nbt.ListTag;
-
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 
 import net.minecraft.network.chat.contents.TranslatableContents;
 
@@ -347,9 +348,9 @@ public class PropertyData {
         }
 
         if (toolTip != null) {
-            nbt.putString("tooltip", Component.Serializer.toJson(toolTip, provider));
+            nbt.put("tooltip", ComponentSerialization.CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), toolTip).getOrThrow());
         }
-        nbt.putString("display_name", Component.Serializer.toJson(displayName, provider));
+        nbt.put("display_name", ComponentSerialization.CODEC.encodeStart(provider.createSerializationContext(NbtOps.INSTANCE), displayName).getOrThrow());
         nbt.putString("display_value", displayValue);
         nbt.putBoolean("global", isGlobal);
         switch (type) {
@@ -392,7 +393,7 @@ public class PropertyData {
 
         PropertyData data = new PropertyData(
                 TagUtils26.getUUID(nbt, "prov_id"),
-                nbt.getString("prov_name"),
+                nbt.getStringOr("prov_name", ""),
                 Type.getSafe(nbt.getByteOr("type", (byte)0)));
 
         if (TagUtils26.hasUUID(nbt, "prop_name")) {
@@ -402,17 +403,11 @@ public class PropertyData {
         }
 
         if (nbt.contains("tooltip")) {
-            try {
-                data.toolTip = Component.Serializer.fromJsonLenient(nbt.getString("tooltip"), provider);
-            } catch (JsonParseException ignored) {
-                data.toolTip = Component.literal(nbt.getStringOr("tooltip", ""));
-            }
+            data.toolTip = ComponentSerialization.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), nbt.get("tooltip"))
+                    .result().orElseGet(() -> Component.literal(nbt.getStringOr("tooltip", "")));
         }
-        try {
-            data.displayName = Component.Serializer.fromJsonLenient(nbt.getString("display_name"), provider);
-        }catch (JsonParseException ignored) {
-            data.displayName = Component.literal(nbt.getStringOr("display_name", ""));
-        }
+        data.displayName = ComponentSerialization.CODEC.parse(provider.createSerializationContext(NbtOps.INSTANCE), nbt.get("display_name"))
+                .result().orElseGet(() -> Component.literal(nbt.getStringOr("display_name", "")));
 
         data.displayValue = nbt.getStringOr("display_value", "");
         data.isGlobal = nbt.getBooleanOr("global", false);

@@ -210,7 +210,7 @@ public abstract class ChargeUpPhase extends Phase {
     }
 
     public float onAttacked(DamageSource source, float damage, float shield, boolean effective) {
-        if (isInvulnerable()) {
+        if (isInvulnerable(source)) { // port-26.1.2: isInvulnerable updated
             if (source.getDirectEntity() instanceof AbstractArrow) {
                 source.getDirectEntity().setRemainingFireTicks(1);
             }
@@ -227,8 +227,7 @@ public abstract class ChargeUpPhase extends Phase {
         }
     }
 
-    @Override
-    public boolean isInvulnerable() {
+    public boolean isInvulnerable(DamageSource source) { // port-26.1.2: isInvulnerable signature
         return true;
     }
 }

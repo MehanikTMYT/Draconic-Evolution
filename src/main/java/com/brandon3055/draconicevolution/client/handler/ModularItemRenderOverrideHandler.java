@@ -132,7 +132,7 @@ public class ModularItemRenderOverrideHandler {
         poseStack.popPose();
     }
 
-    public static void modifyPlayerPose(LivingEntity livingEntity, PlayerModel<?> model) {
+    public static void modifyPlayerPose(LivingEntity livingEntity, PlayerModel model) {
         ItemStack stack = livingEntity.getUseItem();
         if (!(livingEntity instanceof Player player) || !livingEntity.isUsingItem() || stack.isEmpty() || livingEntity.getUseItemRemainingTicks() <= 0 || !(stack.getItem() instanceof IModularItem)) return;
         boolean mainHand = player.getUsedItemHand() == InteractionHand.MAIN_HAND;

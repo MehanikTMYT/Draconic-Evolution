@@ -14,7 +14,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -24,6 +24,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.world.BossEvent;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -154,7 +155,7 @@ public class CustomBossInfoHandler {
         render.drawString(itextcomponent, (float) stringX, (float) stringY, 0xff0000);
     }
 
-    private static void drawBar(GuiGraphics graphics, int x, int y, BossEvent info) {
+    private static void drawBar(GuiGraphicsExtractor graphics, int x, int y, BossEvent info) {
         drawRect(graphics, x, y, 0, info.getColor().ordinal() * 5 * 2, 182, 5);
         if (info.getOverlay() != BossEvent.BossBarOverlay.PROGRESS) {
             drawRect(graphics, x, y, 0, 80 + (info.getOverlay().ordinal() - 1) * 5 * 2, 182, 5);
@@ -196,8 +197,8 @@ public class CustomBossInfoHandler {
         }
     }
 
-    public static void drawRect(GuiGraphics render, int x, int y, int u, int v, int width, int height) {
-        render.blit(GUI_BARS_LOCATION, x, y, 0, (float) u, (float) v, width, height, 256, 256);
+    public static void drawRect(GuiGraphicsExtractor render, int x, int y, int u, int v, int width, int height) {
+        event.getGuiGraphics().blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, GUI_BARS_LOCATION, x, y, (int)u, (int)v, width, height, 256, 256);
     }
 
     public static void drawShieldRect(VertexConsumer builder, int x, int y, int width, int height) {

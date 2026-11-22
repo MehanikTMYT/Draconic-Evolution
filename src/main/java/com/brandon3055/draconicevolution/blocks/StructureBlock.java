@@ -101,7 +101,7 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, Orientation orientation, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, Orientation orientation, boolean isMoving) {
         neighborChanged(world, pos);
     }
 
@@ -219,10 +219,9 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
         }
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean renderSelectionBox(ExtractBlockOutlineRenderStateEvent event, Level level) {
-        if (level.getBlockEntity(event.getTarget().getBlockPos()) instanceof TileStructureBlock tile) {
+    public boolean renderSelectionBox(ExtractBlockOutlineRenderStateEvent event, Level level) { // port-26.1.2: не переопределяет метод vanilla (нет такого в Block/BlockBehaviour 26); event.getTarget() удалён — используем getHitResult().getBlockPos()
+        if (level.getBlockEntity(event.getHitResult().getBlockPos()) instanceof TileStructureBlock tile) {
             return tile.renderSelectionBox(event);
         }
         return true;

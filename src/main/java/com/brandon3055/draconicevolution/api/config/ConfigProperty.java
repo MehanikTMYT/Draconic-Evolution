@@ -224,7 +224,7 @@ public abstract class ConfigProperty {
 //        CompoundTag nbt = new CompoundTag();
 //        nbt.putBoolean("hud", showOnHud);
 //        if (uniqueName != null) {
-//            TagUtils26.putUUID(TagUtils26, nbt, "uni_name", uniqueName);
+//            TagUtils26.putUUID(nbt, "uni_name", uniqueName);
 //        }
 //        return nbt;
 //    }
@@ -232,8 +232,8 @@ public abstract class ConfigProperty {
 //    @Override
 //    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
 //        showOnHud = nbt.getBoolean("hud");
-//        if (TagUtils26.hasUUID(TagUtils26, nbt, "uni_name")) {
-//            uniqueName = TagUtils26.getUUID(TagUtils26, nbt, "uni_name");
+//        if (TagUtils26.hasUUID(nbt, "uni_name")) {
+//            uniqueName = TagUtils26.getUUID(nbt, "uni_name");
 //        }
 //    }
 

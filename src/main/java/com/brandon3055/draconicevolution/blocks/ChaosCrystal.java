@@ -12,6 +12,7 @@ import com.brandon3055.draconicevolution.init.DEDamage;
 
 import net.minecraft.core.BlockPos;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 
 import net.minecraft.world.entity.LivingEntity;
@@ -60,7 +61,7 @@ public class ChaosCrystal extends EntityBlockBCore implements CustomTabHandling 
             }
         }
 
-        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+        return super.onDestroyedByPlayer(state, level, pos, player, toolStack, willHarvest, fluid);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class ChaosCrystal extends EntityBlockBCore implements CustomTabHandling 
     }
 
     @Override
-    public void wasExploded(Level worldIn, BlockPos pos, Explosion explosionIn) {}
+    public void wasExploded(ServerLevel worldIn, BlockPos pos, Explosion explosionIn) {}
 
     @Override
     public boolean canEntityDestroy(BlockState state, BlockGetter world, BlockPos pos, Entity entity) {
@@ -89,7 +90,7 @@ public class ChaosCrystal extends EntityBlockBCore implements CustomTabHandling 
                 ((TileChaosCrystal) tile).guardianDefeated.set(true);
             }
         } else {
-            placer.hurt(DEDamage.chaosImplosion(level), Float.MAX_VALUE / 100F);
+            placer.hurtServer((ServerLevel) level, DEDamage.chaosImplosion(level), Float.MAX_VALUE / 100F);
         }
     }
 

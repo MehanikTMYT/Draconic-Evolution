@@ -139,7 +139,7 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
 
     public TileEnergyCore(BlockPos pos, BlockState state) {
         super(DEContent.TILE_STORAGE_CORE.get(), pos, state);
-        capManager.setInternalManaged("energy", CapabilityOP.OP, energy).saveTile().syncContainer();
+        capManager.set(CapabilityOP.OP, energy); // port-26.1.2: OPStorageOP не BCSerializable (INBTSerializable) → set() вместо setInternalManaged()
         energy.setIOTracker(addTickable(new IOTracker()));
 
         for (int i = 0; i < stabilizerPositions.length; i++) {
@@ -523,7 +523,7 @@ public class TileEnergyCore extends TileBCore implements MenuProvider, IInteract
     @Override
     public void setRemoved() {
         super.setRemoved();
-        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+        if (getLevel() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
             onRemoved();
         }
     }

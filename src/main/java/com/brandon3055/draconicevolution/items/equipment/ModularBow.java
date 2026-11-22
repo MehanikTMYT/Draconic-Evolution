@@ -157,7 +157,6 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
                 // auto fire
                 InteractionHand usingHand = player.getUsedItemHand();
                 player.stopUsingItem();
-                stack.releaseUsing(player.level(), player, 0);
                 player.startUsingItem(usingHand);
             }
         }
@@ -280,8 +279,8 @@ public class ModularBow extends BowItem implements IReaperItem, IModularEnergyIt
     }
 
     @Override
-    protected void shoot(ServerLevel level, LivingEntity entity, InteractionHand hand, ItemStack bow, List<ItemStack> ammoStacks, float power3, float f, boolean fullPower, @Nullable LivingEntity someEntity) {
-        super.shoot(level, entity, hand, bow, ammoStacks, power3, f, fullPower, someEntity);
+    protected void shootProjectile(LivingEntity entity, net.minecraft.world.entity.projectile.Projectile projectile, int shotCount, float power3, float power, float inaccuracy, @Nullable LivingEntity ignored) {
+        super.shootProjectile(entity, projectile, shotCount, power3, power, inaccuracy, ignored);
     }
 
     @Override

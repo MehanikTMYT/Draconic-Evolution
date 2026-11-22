@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class StartPhase extends Phase {
     private static final Logger LOGGER = DraconicEvolution.LOGGER;
-    public static final TargetingConditions AGRO_TARGETS = TargetingConditions.forCombat().ignoreLineOfSight().range(300).selector(e -> e instanceof Player && e instanceof LivingEntity);
+    public static final TargetingConditions AGRO_TARGETS = TargetingConditions.forCombat().ignoreLineOfSight().range(300).selector((e, level) -> e instanceof Player); // port-26.1.2: TargetingConditions.test updated
     private Path currentPath;
     private Vec3 targetLocation;
     private boolean clockwise;

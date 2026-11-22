@@ -33,7 +33,7 @@ public class FusionCraftingCore extends EntityBlockBCore {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, Orientation orientation, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, Orientation orientation, boolean isMoving) {
         if (!world.isClientSide()) {
             if (isBlockPowered(world, pos)) {
                 BlockEntity tile = world.getBlockEntity(pos);
@@ -50,11 +50,11 @@ public class FusionCraftingCore extends EntityBlockBCore {
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos, net.minecraft.core.Direction dir) {
         BlockEntity tile = worldIn.getBlockEntity(pos);
         if (tile instanceof TileFusionCraftingCore) {
             return ((TileFusionCraftingCore) tile).getComparatorOutput();
         }
-        return super.getAnalogOutputSignal(blockState, worldIn, pos);
+        return super.getAnalogOutputSignal(blockState, worldIn, pos, dir);
     }
 }

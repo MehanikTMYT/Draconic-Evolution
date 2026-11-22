@@ -144,7 +144,7 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
 
     public TileDislocatorReceptacle(BlockPos pos, BlockState state) {
         super(DEContent.TILE_DISLOCATOR_RECEPTACLE.get(), pos, state);
-        capManager.setManaged("inventory", Capabilities.Item.BLOCK, itemHandler).saveBoth().syncTile();
+        capManager.set(Capabilities.Item.BLOCK, itemHandler); // port-26.1.2: TileItemStackHandler не BCSerializable → set() вместо setManaged()
         itemHandler.setContentsChangeListener(e -> onInventoryChange());
         itemHandler.setSlotValidator(0, (stack) -> stack.getItem() instanceof Dislocator);
         fxHandler = DraconicEvolution.proxy.createENetFXHandler(this);
@@ -152,7 +152,7 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
 
     public static void register(RegisterCapabilitiesEvent event) {
         com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_DISLOCATOR_RECEPTACLE.get());
-        capability(event, DEContent.TILE_DISLOCATOR_RECEPTACLE, Capabilities.Item.BLOCK);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_DISLOCATOR_RECEPTACLE, (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
     }
 
     @Override
@@ -165,7 +165,7 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
     }
 
     @Override
-    public InteractionResult useItemOn(ItemStack stack, BlockState state, Player player, InteractionHand hand, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (hasRSSignal()) {
             return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
@@ -692,7 +692,7 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
     @Override
     public void setRemoved() {
         super.setRemoved();
-        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+        if (getLevel() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
             deactivate();
         }
     }

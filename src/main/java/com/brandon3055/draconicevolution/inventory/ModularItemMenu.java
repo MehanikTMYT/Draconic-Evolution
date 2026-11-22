@@ -1,10 +1,10 @@
 package com.brandon3055.draconicevolution.inventory;
 
-import com.brandon3055.brandonscore.client.gui.modular.lib.container.SlotGroup;
-// port-26.1.2: trap80 — BC vendored the modular GUI menu; CCL base returns CCL SlotGroup which BC APIs reject
 import com.brandon3055.brandonscore.client.gui.modular.lib.container.ModularGuiContainerMenu;
-import codechicken.lib.inventory.container.modular.ModularSlot;
+import com.brandon3055.brandonscore.client.gui.modular.lib.container.SlotGroup;
 import com.brandon3055.brandonscore.inventory.PlayerSlot;
+import codechicken.lib.inventory.container.modular.ModularSlot;
+import com.brandon3055.draconicevolution.inventory.ConfigurableItemMenu;
 import com.brandon3055.draconicevolution.api.capability.DECapabilities;
 import com.brandon3055.draconicevolution.api.capability.IdentityProvider;
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
@@ -109,7 +109,7 @@ public class ModularItemMenu extends ModularGuiContainerMenu implements ModuleHo
     }
 
     private static Stream<ItemStack> getPlayerInventory(Inventory player) {
-        return Streams.concat(player.items.stream(), player.armor.stream(), player.offhand.stream()).filter(e -> !e.isEmpty());
+        return ConfigurableItemMenu.getPlayerInventory(player);
     }
 
     public static void tryOpenGui(ServerPlayer sender) {

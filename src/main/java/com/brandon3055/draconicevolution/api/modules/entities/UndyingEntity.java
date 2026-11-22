@@ -215,7 +215,7 @@ public class UndyingEntity extends ModuleEntity<UndyingData> {
                 while (iterator.hasNext()) {
                     MobEffectInstance effect = iterator.next();
                     if (!effect.getEffect().value().isBeneficial()) {
-                        entity.onEffectRemoved(effect);
+                        entity.removeEffect(effect.getEffect());
                         iterator.remove();
                     }
                 }

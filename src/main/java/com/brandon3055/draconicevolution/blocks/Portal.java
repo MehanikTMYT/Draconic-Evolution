@@ -133,8 +133,7 @@ public class Portal extends EntityBlockBCore implements CustomTabHandling {
         }
     }
 
-    @Override
-    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, Orientation orientation, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, Orientation orientation, boolean isMoving) {
         if (world.isClientSide()) return;
 
         if (!canSurvive(state, world, pos)) {
@@ -149,7 +148,7 @@ public class Portal extends EntityBlockBCore implements CustomTabHandling {
     }
 
     @Override
-    public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity, net.minecraft.world.entity.InsideBlockEffectApplier applier, boolean p_222651_6_) {
         BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TilePortal && ((TilePortal) tile).getController() != null) {
             ((TilePortal) tile).getController().handleEntityTeleport(entity);

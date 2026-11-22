@@ -15,8 +15,4 @@ public class DraconiumBlock extends BlockBCore {
         super(properties);
     }
 
-    @Override
-    public float getEnchantPowerBonus(BlockState state, LevelReader world, BlockPos pos) {
-        return 4f;
-    }
 }

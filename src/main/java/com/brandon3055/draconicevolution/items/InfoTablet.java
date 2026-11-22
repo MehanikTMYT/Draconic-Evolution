@@ -60,8 +60,8 @@ public class InfoTablet extends Item {
             Player player = Minecraft.getInstance().player;
             MutableComponent message = Component.literal("Project Intelligence is required to view DE documentation. ").withStyle(ChatFormatting.RED);
             MutableComponent link = Component.literal("[Click here to view curse page]").withStyle(ChatFormatting.BLUE);
-            link.setStyle(link.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/project-intelligence")));
-            link.setStyle(link.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("https://www.curseforge.com/minecraft/mc-mods/project-intelligence"))));
+            link.setStyle(link.getStyle().withClickEvent(new net.minecraft.network.chat.ClickEvent$OpenUrl(java.net.URI.create("https://www.curseforge.com/minecraft/mc-mods/project-intelligence"))));
+            link.setStyle(link.getStyle().withHoverEvent(new net.minecraft.network.chat.HoverEvent$ShowText(Component.literal("https://www.curseforge.com/minecraft/mc-mods/project-intelligence"))));
             message.append(link);
             player.sendSystemMessage(message);
         }

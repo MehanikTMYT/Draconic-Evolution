@@ -64,7 +64,7 @@ public interface IPhase {
     */
    default void targetPlayer(Player player) {}
 
-   default boolean isInvulnerable() {
+   default boolean isInvulnerable(DamageSource source) {
       return false;
    }
 }

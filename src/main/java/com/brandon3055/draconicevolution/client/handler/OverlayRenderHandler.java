@@ -25,7 +25,7 @@ public class OverlayRenderHandler {
     }
 
     public static void renderLevelStage(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+        if (event.getStage() != Stage.AFTER_PARTICLES) {
             return;
         }
         ClientEventHandler.MODELVIEW.set(event.getPoseStack().last().pose());
@@ -33,7 +33,7 @@ public class OverlayRenderHandler {
 
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
-        Level world = player.getCommandSenderWorld();
+        Level world = player.level();
         ItemStack stack = player.getMainHandItem();
         ItemStack offStack = player.getOffhandItem();
         Minecraft mc = Minecraft.getInstance();

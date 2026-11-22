@@ -82,12 +82,12 @@ public class TileDislocatorPedestal extends TileBCore implements DislocatorEndPo
 
     public TileDislocatorPedestal(BlockPos pos, BlockState state) {
         super(DEContent.TILE_DISLOCATOR_PEDESTAL.get(), pos, state);
-        capManager.setManaged("inventory", Capabilities.Item.BLOCK, itemHandler).saveBoth().syncTile();
+        capManager.set(Capabilities.Item.BLOCK, itemHandler); // port-26.1.2: TileItemStackHandler не BCSerializable → set() вместо setManaged()
         itemHandler.setSlotValidator(0, stack -> stack.getItem() instanceof Dislocator);
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        capability(event, DEContent.TILE_DISLOCATOR_PEDESTAL, Capabilities.Item.BLOCK);
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_DISLOCATOR_PEDESTAL, (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
     }
 
     @Override

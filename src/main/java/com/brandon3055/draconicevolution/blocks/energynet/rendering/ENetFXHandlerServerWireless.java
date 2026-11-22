@@ -62,7 +62,7 @@ public class ENetFXHandlerServerWireless extends ENetFXHandler<TileCrystalWirele
         ServerLevel serverWorld = ((ServerLevel) tile.getLevel());
 
         if (serverWorld != null) {
-            serverWorld.getChunkSource().chunkMap.getPlayers(new ChunkPos(tile.getBlockPos()), false).forEach(player -> CrystalUpdateBatcher.queData(update, player));
+            serverWorld.getChunkSource().chunkMap.getPlayers(new ChunkPos(tile.getBlockPos().getX(), tile.getBlockPos().getZ()), false).forEach(player -> CrystalUpdateBatcher.queData(update, player));
         }
     }
 }

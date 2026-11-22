@@ -1,7 +1,7 @@
 package com.brandon3055.draconicevolution.api.modules.lib;
-
 import codechicken.lib.data.MCDataInput;
 import codechicken.lib.data.MCDataOutput;
+
 import com.brandon3055.brandonscore.client.gui.modular.elements.GuiElement;
 import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
 import com.brandon3055.brandonscore.client.gui.modular.sprite.Material;
@@ -22,7 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.MCDataInput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -50,15 +50,15 @@ import java.util.stream.Stream;
 public abstract class ModuleEntity<T extends ModuleData<T>> {
 
     public static final Codec<ModuleEntity<?>> CODEC = new ModuleEntityCodec();
-    public static final StreamCodec<RegistryFriendlyByteBuf, ModuleEntity<?>> STREAM_CODEC = new StreamCodec<>() {
+    public static final StreamCodec<MCDataInput, ModuleEntity<?>> STREAM_CODEC = new StreamCodec<>() {
         @Override
-        public ModuleEntity<?> decode(RegistryFriendlyByteBuf buf) {
+        public ModuleEntity<?> decode(MCDataInput buf) {
             Module<?> module = DEModules.streamCodec().decode(buf);
             return module.entityStreamCodec().decode(buf);
         }
 
         @Override
-        public void encode(RegistryFriendlyByteBuf buf, ModuleEntity<?> entity) {
+        public void encode(MCDataInput buf, ModuleEntity<?> entity) {
             DEModules.streamCodec().encode(buf, entity.getModule());
             entity.getModule().entityStreamCodec().encode(buf, entity);
         }
@@ -332,7 +332,7 @@ public abstract class ModuleEntity<T extends ModuleData<T>> {
         render.borderRect(x, y, width, height, 1, colour, GuiRender.mixColours(colour, 0x20202000, true));
 
         if (module.getProperties().getTechLevel() == TechLevel.CHAOTIC) {
-            VertexConsumer builder = new TransformingVertexConsumer(render.buffers().getBuffer(RenderType.glint()), render.pose());
+            VertexConsumer builder = new TransformingVertexConsumer(render.buffers().getBuffer(net.minecraft.client.renderer.rendertype.RenderTypes.glint()), render.pose()); // port-26.1.2: RenderTypes.glint
             builder.addVertex(x, y + height, 0).setUv(0, ((float) height / width) / 64F);
             builder.addVertex(x + width, y + height, 0).setUv(((float) width / height) / 64F, ((float) height / width) / 64F);
             builder.addVertex(x + width, y, 0).setUv(((float) width / height) / 64F, 0);

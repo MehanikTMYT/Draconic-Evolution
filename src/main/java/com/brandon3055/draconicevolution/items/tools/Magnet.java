@@ -19,6 +19,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.server.level.ServerLevel;
 
 import net.minecraft.world.InteractionResult;
 
@@ -121,13 +123,13 @@ public class Magnet extends Item /*implements IBauble*/ {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
+    public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, EquipmentSlot slot) {
         updateMagnet(stack, entity);
     }
 
     private void updateMagnet(ItemStack stack, Entity entity) {
         if (!entity.isShiftKeyDown() && isEnabled(stack) && entity instanceof Player player) {
-            Level world = entity.getCommandSenderWorld();
+            Level world = entity.level();
             List<ItemEntity> items;
             if (entity.tickCount % 10 == 0) {
                 items = world.getEntitiesOfClass(ItemEntity.class, new AABB(entity.getX(), entity.getY(), entity.getZ(), entity.getX(), entity.getY(), entity.getZ()).inflate(range, range, range));
@@ -217,7 +219,7 @@ public class Magnet extends Item /*implements IBauble*/ {
                         world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.1F, 0.5F * ((world.getRandom().nextFloat() - world.getRandom().nextFloat()) * 0.7F + 1.8F));
                     }
                     player.take(orb, 1);
-                    player.giveExperiencePoints(orb.value);
+                    player.giveExperiencePoints(orb.getValue());
                     orb.discard();
                 }
             }

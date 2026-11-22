@@ -80,7 +80,7 @@ import net.neoforged.neoforge.event.entity.living.*;
 
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
@@ -307,11 +307,9 @@ public class ModularArmorEventHandler {
                 getUndyingEntities(stacks.get(i), undyingModules, player.getInventory().getSelectedSlot() == i ? EquipmentSlot.MAINHAND : null, false, entity.registryAccess());
             }
             for (EquipmentSlot slot : ARMOR_SLOTS) {
-                getUndyingEntities(player.getInventory().armor.get(slot.getIndex()), undyingModules, slot, false, entity.registryAccess());
+                getUndyingEntities(player.getItemBySlot(slot), undyingModules, slot, false, entity.registryAccess());
             }
-            for (ItemStack stack : player.getInventory().offhand) {
-                getUndyingEntities(stack, undyingModules, EquipmentSlot.OFFHAND, false, entity.registryAccess());
-            }
+            getUndyingEntities(player.getItemBySlot(EquipmentSlot.OFFHAND), undyingModules, EquipmentSlot.OFFHAND, false, entity.registryAccess());
             for (ItemStack stack : EquipmentManager.getAllItems(entity)) {
                 getUndyingEntities(stack, undyingModules, null, true, entity.registryAccess());
             }
@@ -361,11 +359,9 @@ public class ModularArmorEventHandler {
                 tryTickStack(stacks.get(i), player, player.getInventory().getSelectedSlot() == i ? EquipmentSlot.MAINHAND : null, armorAbilities, false);
             }
             for (EquipmentSlot slot : ARMOR_SLOTS) {
-                tryTickStack(player.getInventory().armor.get(slot.getIndex()), player, slot, armorAbilities, false);
+                tryTickStack(player.getItemBySlot(slot), player, slot, armorAbilities, false);
             }
-            for (ItemStack stack : player.getInventory().offhand) {
-                tryTickStack(stack, player, EquipmentSlot.OFFHAND, armorAbilities, false);
-            }
+            tryTickStack(player.getItemBySlot(EquipmentSlot.OFFHAND), player, EquipmentSlot.OFFHAND, armorAbilities, false);
             if (EquipmentManager.equipModLoaded()) {
                 EquipmentManager.findItems(e -> e.getItem() instanceof IModularItem, entity).forEach(stack -> {
                     tryTickStack(stack, player, null, armorAbilities, true);
@@ -535,7 +531,7 @@ public class ModularArmorEventHandler {
         }
     }
 
-    private static void blockBreakEvent(BlockEvent.BreakEvent event) {
+    private static void blockBreakEvent(BreakBlockEvent event) {
         ItemStack stack = event.getPlayer().getMainHandItem();
         if (event.isCanceled() || !(stack.getItem() instanceof IModularMiningTool miningTool)) {
             return;

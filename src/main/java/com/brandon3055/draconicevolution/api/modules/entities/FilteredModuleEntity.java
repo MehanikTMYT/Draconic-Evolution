@@ -446,7 +446,7 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
         List<TagKey<Item>> tagOps = new ArrayList<>();
         ItemStack filterStack = getStackFilter(index);
         if (!filterStack.isEmpty()) {
-            tagOps.addAll(filterStack.getTags().toList());
+            tagOps.addAll(stack.getItem().builtInRegistryHolder().tags().toList());
         }
 
         if (!tagOps.isEmpty()) {

@@ -15,8 +15,9 @@ import com.brandon3055.draconicevolution.utils.LogHelper;
 import java.util.*;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 
-import net.minecraft.core.Orientation;
+import net.minecraft.world.level.redstone.Orientation;
 
 import net.minecraft.core.SectionPos;
 
@@ -38,6 +39,7 @@ import net.minecraft.world.level.block.Blocks;
 
 import net.minecraft.world.level.block.EntityBlock;
 
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.block.FallingBlock;
 
 import net.minecraft.world.level.block.state.BlockState;
@@ -219,13 +221,15 @@ public class ExplosionHelper {
                 int i = 0;
                 List<Vector3> list = new ArrayList<>();
                 for (long pos : helper.blocksToUpdate) {
-                    BlockState state = helper.serverWorld.getBlockState(mPos.set(pos));
+                    BlockPos.MutableBlockPos mPos2 = helper.mPos.set(pos);
+                    BlockState state = helper.serverWorld.getBlockState(mPos2);
                     if (state.getBlock() instanceof FallingBlock) {
-//                        i++;
-                        state.tick(helper.serverWorld, helper.mPos.set(pos), helper.serverWorld.getRandom());
+                        FallingBlockEntity fallingEntity = FallingBlockEntity.fall(helper.serverWorld, mPos2, state);
+                        fallingEntity.setStartPos(mPos2);
+                        ((FallingBlockEntity) fallingEntity).tick();
                     }
 //                    list.add(Vector3.fromBlockPos(mPos.set(pos)));
-                    state.handleNeighborChanged(helper.serverWorld, mPos.set(pos), Blocks.AIR, mPos.set(pos).above(), Orientation.UP);
+                    helper.serverWorld.neighborChanged(mPos2, state.getBlock(), Orientation.of(Direction.UP, Direction.UP, net.minecraft.world.level.redstone.Orientation.SideBias.LEFT), false);
                 }
 //                BCClientEventHandler.debugBlockList = list;
                 LogHelper.dev("Total Falling Blocks " + i);

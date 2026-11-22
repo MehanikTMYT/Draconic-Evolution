@@ -104,7 +104,9 @@ public class GuardianProjectileEntity extends AbstractHurtingProjectile {
             }
             df *= Explosion.getSeenPercent(position(), entity);
             float damage = (float) ((int) ((df * df + df) / 2.0D * 6.0D * power + 1.0D));
-            entity.hurt(DEDamage.guardianProjectile(level(), this, shooter), damage);
+            if (entity instanceof LivingEntity living && level() instanceof ServerLevel sl) {
+                living.hurtServer(sl, DEDamage.guardianProjectile(level(), this, shooter), damage);
+            }
         }
         boolean destroy = false;
         if (shooter instanceof DraconicGuardianEntity) {

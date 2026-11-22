@@ -104,7 +104,7 @@ public class TileCrystalDirectIO extends TileCrystalBase   {
     //endregion
 
     @Override
-    public InteractionResult useWithoutItem(BlockState state, Player player, BlockHitResult hit) {
+    public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (player instanceof ServerPlayer && player.isShiftKeyDown()) {
             outputMode.invert();
             updateRotation(facing.get());

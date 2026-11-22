@@ -161,7 +161,7 @@ public class PlacedItem extends EntityBlockBCore implements CustomTabHandling {
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState state) {
         return state.getFluidState().isEmpty();
     }
 
@@ -210,7 +210,7 @@ public class PlacedItem extends EntityBlockBCore implements CustomTabHandling {
         if (tile instanceof TilePlacedItem) {
             ((TilePlacedItem) tile).onBroken(player, pos, false);
         }
-        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+        return super.onDestroyedByPlayer(state, level, pos, player, toolStack, willHarvest, fluid);
     }
 
     @Override

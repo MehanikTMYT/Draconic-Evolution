@@ -150,12 +150,15 @@ public class DraconiumCapacitor extends Item implements IInvCharge, IModularEner
             }
         } else {
             if (held) {
-                entity.getHandSlots().forEach(stacks::add);
+                stacks.add(entity.getItemBySlot(EquipmentSlot.MAINHAND));
+                stacks.add(entity.getItemBySlot(EquipmentSlot.OFFHAND));
             }
         }
 
         if (armor) {
-            entity.getArmorSlots().forEach(stacks::add);
+            for (EquipmentSlot armorSlot : ModularArmorEventHandler.ARMOR_SLOTS) {
+                stacks.add(entity.getItemBySlot(armorSlot));
+            }
         }
 
         stacks.remove(stack);

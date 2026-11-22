@@ -31,7 +31,7 @@ public class ChargingPlayerPhase extends Phase {
     }
 
     public void serverTick() {
-        if (targetPlayer == null || isValidTarget(targetPlayer)) {
+        if (targetPlayer == null || !isValidTarget(targetPlayer)) { // port-26.1.2: Fix logic
             debug("Aborting charge player as no target was set or target is dead");
             guardian.getPhaseManager().setPhase(PhaseType.START).prevAttackFailed();
         } else if (timeSinceCharge > 0 && timeSinceCharge >= 20 * 5) {

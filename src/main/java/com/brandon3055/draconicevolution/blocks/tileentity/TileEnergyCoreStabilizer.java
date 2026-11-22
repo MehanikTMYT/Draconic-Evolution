@@ -300,7 +300,7 @@ public class TileEnergyCoreStabilizer extends TileBCore implements IInteractTile
         }
         BlockPos offset = worldPosition.subtract(core.getBlockPos());
         coreOffset.set(offset);
-        coreDirection.set(Direction.getNearest(offset.getX(), offset.getY(), offset.getZ()).getOpposite());
+        coreDirection.set(Direction.getNearest(offset.getX(), offset.getY(), offset.getZ(), Direction.NORTH).getOpposite());
     }
 
     // ### Tick / Rendering
@@ -420,7 +420,7 @@ public class TileEnergyCoreStabilizer extends TileBCore implements IInteractTile
     @Override
     public void setRemoved() {
         super.setRemoved();
-        if (level() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
+        if (getLevel() instanceof ServerLevel sl && sl.getBlockState(worldPosition).getBlock() != getBlockState().getBlock()) {
             if (isValidMultiBlock.get()) {
                 revertStructure();
             }

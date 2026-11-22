@@ -42,6 +42,7 @@ import net.minecraft.world.InteractionHand;
 
 import net.minecraft.world.InteractionResult;
 
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Entity;
 
 import net.minecraft.world.entity.LivingEntity;
@@ -138,13 +139,13 @@ public class BoundDislocator extends Dislocator {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level world, Entity entity, int itemSlot, boolean isSelected) {
-        if (world instanceof ServerLevel && TimeKeeper.getServerTick() % 20 == 0) {
-            if (isValid(stack) && !isPlayer(stack) && entity instanceof Player) {
-                DislocatorSaveData.updateLinkTarget(world, stack, new PlayerTarget((Player) entity));
+    public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, EquipmentSlot slot) {
+        if (TimeKeeper.getServerTick() % 20 == 0) {
+            if (isValid(stack) && !isPlayer(stack) && entity instanceof Player player) {
+                DislocatorSaveData.updateLinkTarget(level, stack, new PlayerTarget(player));
             }
         }
-        super.inventoryTick(stack, world, entity, itemSlot, isSelected);
+        super.inventoryTick(stack, level, entity, slot);
     }
 
     @Override

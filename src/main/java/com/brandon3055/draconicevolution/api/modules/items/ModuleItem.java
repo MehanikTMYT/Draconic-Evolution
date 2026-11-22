@@ -13,9 +13,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -53,14 +55,16 @@ public class ModuleItem<P extends ModuleData<P>> extends Item implements ModuleP
         return moduleCache;
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, context, tooltip, flagIn);
-        getModule().addInformation(tooltip, new LimitedModuleContext(stack, null, context.level(), null));
+    public void appendHoverText(ItemStack stack, TooltipContext context, net.minecraft.world.item.component.TooltipDisplay tooltipDisplay, java.util.function.Consumer<Component> tooltip, TooltipFlag flagIn) { // port-26.1.2: @Override removed, signature now from Item appendHoverText(ItemStack,TooltipContext,TooltipDisplay,Consumer<T>,TooltipFlag)
+        List<Component> tooltipList = new ArrayList<>();
+        getModule().addInformation(tooltipList, new LimitedModuleContext(stack, null, context.level(), null));
+        tooltipList.forEach(tooltip);
         ModuleEntity<?> entity = getModule().createEntity();
         if (context.level() != null) {
             entity.loadEntityFromStack(stack, new StackModuleContext(stack, null, null));
-            entity.addToolTip(tooltip);
+            List<Component> entityTooltip = new ArrayList<>();
+            entity.addToolTip(entityTooltip);
+            entityTooltip.forEach(tooltip);
         }
     }
 
