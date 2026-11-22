@@ -5,9 +5,7 @@ import codechicken.lib.data.MCDataOutput;
 import com.brandon3055.brandonscore.client.gui.modular.elements.GuiElement;
 import com.brandon3055.brandonscore.client.gui.modular.lib.GuiRender;
 import com.brandon3055.brandonscore.client.gui.modular.sprite.Material;
-import codechicken.lib.render.buffer.TransformingVertexConsumer;
 import com.brandon3055.brandonscore.api.TechLevel;
-import com.brandon3055.brandonscore.client.render.RenderUtils;
 import com.brandon3055.draconicevolution.api.capability.ModuleHost;
 import com.brandon3055.draconicevolution.api.config.ConfigProperty;
 import com.brandon3055.draconicevolution.api.modules.Module;
@@ -15,12 +13,8 @@ import com.brandon3055.draconicevolution.api.modules.data.ModuleData;
 import com.brandon3055.draconicevolution.init.DEModules;
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
 import com.google.common.collect.Multimap;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -35,7 +29,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -322,42 +315,7 @@ public abstract class ModuleEntity<T extends ModuleData<T>> {
     //end
 
     public void renderModule(GuiElement<?> parent, GuiRender render, int x, int y, int width, int height, double mouseX, double mouseY, boolean stackRender, float partialTicks) {
-        if (stackRender) {
-//            render.pose().translate(0, 0, 210);
-        }
-
-        int colour = getModuleColour(module);
-        render.rect(x, y, width, height, colour);
-        render.borderRect(x, y, width, height, 1, colour, GuiRender.mixColours(colour, 0x20202000, true));
-
-        if (module.getProperties().getTechLevel() == TechLevel.CHAOTIC) {
-            VertexConsumer builder = new TransformingVertexConsumer(render.buffers().getBuffer(net.minecraft.client.renderer.rendertype.RenderTypes.glint()), render.pose()); // port-26.1.2: RenderTypes.glint
-            builder.addVertex(x, y + height, 0).setUv(0, ((float) height / width) / 64F);
-            builder.addVertex(x + width, y + height, 0).setUv(((float) width / height) / 64F, ((float) height / width) / 64F);
-            builder.addVertex(x + width, y, 0).setUv(((float) width / height) / 64F, 0);
-            builder.addVertex(x, y, 0).setUv(0, 0);
-            RenderUtils.endBatch(render.buffers());
-        }
-
-        Material texture = module.getTexture();
-        TextureAtlasSprite sprite = texture.sprite();
-        float ar = (float) sprite.contents().width() / (float) sprite.contents().height();
-        float iar = (float) sprite.contents().height() / (float) sprite.contents().width();
-
-        if (iar * width <= height) { //Fit Width
-            double h = width * iar;
-            render.texRect(texture, x, y + (height / 2D) - (h / 2D), width, h);
-        } else { //Fit height
-            double w = height * ar;
-            render.texRect(texture, x + (width / 2D) - (w / 2D), y, w, height);
-        }
-
-        //Hover highlight
-        if (stackRender) {
-//            render.pose().translate(0, 0, -210);
-        } else if (GuiRender.isInRect(x, y, width, height, mouseX, mouseY)) {
-            render.rect(x, y, width, height, 0x50FFFFFF);
-        }
+        com.brandon3055.draconicevolution.client.DEClientHooks.renderModuleBase(this, parent, render, x, y, width, height, mouseX, mouseY, stackRender, partialTicks);
     }
 
     /**
@@ -368,14 +326,7 @@ public abstract class ModuleEntity<T extends ModuleData<T>> {
      */
     public boolean renderModuleOverlay(GuiElement<?> parent, ModuleContext context, GuiRender render, int x, int y, int width, int height, double mouseX, double mouseY, float partialTicks, int hoverTicks) {
         if (hoverTicks > 10) {
-            Minecraft mc = Minecraft.getInstance();
-            Item item = getModule().getItem();
-            ItemStack stack = new ItemStack(item);
-            saveEntityToStack(stack, context);
-            List<Component> list = stack.getTooltipLines(Item.TooltipContext.of(mc.level), mc.player, mc.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
-            render.componentTooltip(list, mouseX, mouseY);
-            //TODO, need a new get stack that encodes the required data. Probably going to need tata components for module data.... but maybe I can atleast use the builtin data component tooltip stuff?
-            return true;
+            return com.brandon3055.draconicevolution.client.DEClientHooks.moduleOverlayTooltip(this, context, render, mouseX, mouseY);
         }
         return false;
     }
@@ -486,7 +437,7 @@ public abstract class ModuleEntity<T extends ModuleData<T>> {
                 (th < ty || th > ry));
     }
 
-    protected int getModuleColour(Module<?> module) {
+    public int getModuleColour(Module<?> module) {
         return switch (module.getProperties().getTechLevel()) {
             case DRACONIUM -> 0xff1e4596;
             case WYVERN -> 0xFF3c1551;
@@ -545,25 +496,7 @@ public abstract class ModuleEntity<T extends ModuleData<T>> {
 
     @Deprecated //TODO, Can probably use RenderUtils version... maybe.
     protected void drawChargeProgress(GuiRender render, int x, int y, int width, int height, double progress, @Nullable Component text1, @Nullable Component text2) {
-        double diameter = Math.min(width, height) * 0.425;
-
-        render.rect(x, y, width, height, 0x60FF0000);
-        VertexConsumer builder = new TransformingVertexConsumer(render.buffers().getBuffer(RenderUtils.FAN_TYPE), render.pose());
-        builder.addVertex(x + (width / 2F), y + (height / 2F), 0).setColor(0, 255, 255, 128);
-        for (double d = 0; d <= 1; d += 1D / 30D) {
-            double angle = (d * progress) + 0.5 - progress;
-            double vertX = x + (width / 2D) + Math.sin(angle * (Math.PI * 2)) * diameter;
-            double vertY = y + (height / 2D) + Math.cos(angle * (Math.PI * 2)) * diameter;
-            builder.addVertex((float) vertX, (float) vertY, 0).setColor(255, 255, 255, 128);
-        }
-        RenderUtils.endBatch(render.buffers());
-
-        if (text1 != null) {
-            drawBackgroundString(render, text1, x + width / 2F, y + height / 2F - (text2 == null ? 4 : 8), 0, 0x8000FF00, 1, false, true);
-        }
-        if (text2 != null) {
-            drawBackgroundString(render, text2, x + width / 2F, y + height / 2F + 1, 0, 0x8000FF00, 1, false, true);
-        }
+        com.brandon3055.draconicevolution.client.DEClientHooks.drawChargeProgress(render, x, y, width, height, progress, text1, text2);
     }
 
     public static void drawBackgroundString(GuiRender render, Component text, float x, float y, int colour, int background, int padding, boolean shadow, boolean centered) {

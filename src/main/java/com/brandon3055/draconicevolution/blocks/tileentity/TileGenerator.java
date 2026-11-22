@@ -36,7 +36,7 @@ import com.brandon3055.draconicevolution.api.modules.lib.ModularOPStorage;
 
 import com.brandon3055.draconicevolution.blocks.machines.Generator;
 
-import com.brandon3055.draconicevolution.client.DEParticles;
+import com.brandon3055.draconicevolution.init.DEParticles; // port-26.1.2: регистрация типов вынесена в common
 
 import com.brandon3055.draconicevolution.init.DEContent;
 

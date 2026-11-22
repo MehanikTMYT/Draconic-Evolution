@@ -6,10 +6,7 @@ import com.brandon3055.brandonscore.lib.datamanager.DataFlags;
 import com.brandon3055.brandonscore.lib.datamanager.ManagedPos;
 import com.brandon3055.brandonscore.utils.Utils;
 import com.brandon3055.draconicevolution.blocks.Portal;
-import com.brandon3055.draconicevolution.client.render.particle.ParticlePortal;
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -71,36 +68,8 @@ public class TilePortal extends TileBCore {
             }
             return;
         }
-        Minecraft mc = Minecraft.getInstance();
-        Player player = mc.player;
-
-        double distanceMod = Utils.getDistance(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, player.getX(), player.getY(), player.getZ());
-        if (level.getRandom().nextInt(Math.max((int) (distanceMod * (distanceMod / 5D)), 1)) == 0) {
-            BlockState state = level.getBlockState(worldPosition);
-            if (!state.is(DEContent.PORTAL.get())) {
-                return;
-            }
-            Direction.Axis axis = state.getValue(Portal.AXIS);
-
-            double rD1 = level.getRandom().nextDouble();
-            double rD2 = level.getRandom().nextDouble();
-            double rO1 = -0.1 + level.getRandom().nextDouble() * 0.2;
-            double rO2 = -0.1 + level.getRandom().nextDouble() * 0.2;
-
-            if (axis == Direction.Axis.Z && player.getZ() < worldPosition.getZ() + 0.5) {
-                mc.particleEngine.add(new ParticlePortal((ClientLevel) level, Vector3.fromTile(this).add(rD1, rD2, 0), Vector3.fromTile(this).add(rD1 + rO1, rD2 + rO2, 0.75)));
-            } else if (axis == Direction.Axis.Z && player.getZ() > worldPosition.getZ() + 0.5) {
-                mc.particleEngine.add(new ParticlePortal((ClientLevel) level, Vector3.fromTile(this).add(rD1, rD2, 1), Vector3.fromTile(this).add(rD1 + rO1, rD2 + rO2, 0.25)));
-            } else if (axis == Direction.Axis.X && player.getX() < worldPosition.getX() + 0.5) {
-                mc.particleEngine.add(new ParticlePortal((ClientLevel) level, Vector3.fromTile(this).add(0, rD1, rD2), Vector3.fromTile(this).add(0.75, rD1 + rO1, rD2 + rO2)));
-            } else if (axis == Direction.Axis.X && player.getX() > worldPosition.getX() + 0.5) {
-                mc.particleEngine.add(new ParticlePortal((ClientLevel) level, Vector3.fromTile(this).add(1, rD1, rD2), Vector3.fromTile(this).add(0.25, rD1 + rO1, rD2 + rO2)));
-            } else if (axis == Direction.Axis.Y && player.getY() + player.getEyeHeight() > worldPosition.getY() + 0.5) {
-                mc.particleEngine.add(new ParticlePortal((ClientLevel) level, Vector3.fromTile(this).add(rD1, 1, rD2), Vector3.fromTile(this).add(rD1 + rO1, 0.25, rD2 + rO2)));
-            } else if (axis == Direction.Axis.Y && player.getY() + player.getEyeHeight() < worldPosition.getY() + 0.5) {
-                mc.particleEngine.add(new ParticlePortal((ClientLevel) level, Vector3.fromTile(this).add(rD1, 0, rD2), Vector3.fromTile(this).add(rD1 + rO1, 0.75, rD2 + rO2)));
-            }
-        }
+        // port-26.1.2: клиентские партиклы вынесены в DEClientHooks (dist-clean)
+        com.brandon3055.draconicevolution.client.DEClientHooks.portalParticles(this);
     }
 
     public void clientArrived(Player player) {

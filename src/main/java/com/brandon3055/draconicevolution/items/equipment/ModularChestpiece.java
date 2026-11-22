@@ -2,7 +2,7 @@ package com.brandon3055.draconicevolution.items.equipment;
 
 import net.minecraft.world.item.equipment.ArmorType;
 import com.brandon3055.brandonscore.api.TechLevel;
-import com.brandon3055.brandonscore.client.model.DummyHumanoidModel;
+import net.minecraft.client.model.HumanoidModel; // port-26.1.2: только в дескрипторе @Override (BC interface), безопасно на сервере
 import com.brandon3055.brandonscore.client.render.EquippedItemModel;
 import com.brandon3055.brandonscore.items.EquippedModelItem;
 import com.brandon3055.draconicevolution.DEConfig;
@@ -15,13 +15,11 @@ import com.brandon3055.draconicevolution.api.modules.data.JumpData;
 import com.brandon3055.draconicevolution.api.modules.data.SpeedData;
 import com.brandon3055.draconicevolution.api.modules.lib.ModularOPStorage;
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleHostImpl;
-import com.brandon3055.draconicevolution.client.model.ModularChestpieceModel;
 import com.brandon3055.draconicevolution.init.EquipCfg;
 import com.brandon3055.draconicevolution.init.ModuleCfg;
 import com.brandon3055.draconicevolution.init.TechProperties;
 import com.brandon3055.draconicevolution.integration.equipment.EquipmentManager;
 import com.brandon3055.draconicevolution.integration.equipment.IDEEquipment;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -36,7 +34,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -126,21 +123,10 @@ public class ModularChestpiece extends Item implements IModularArmor, IDEEquipme
         tooltip.forEach(builder);
     }
 
-    private ModularChestpieceModel<?> model;
-
-    private ModularChestpieceModel<?> model_on_armor;
-
     @Override
     public EquippedItemModel getExtendedModel(LivingEntity entity, ItemStack stack, @Nullable EquipmentSlot slot, HumanoidModel<?> parentModel, boolean slim) {
-        ItemStack chest = entity.getItemBySlot(EquipmentSlot.CHEST);
-        boolean onArmor = slot == null && !chest.isEmpty() && chest.has(net.minecraft.core.component.DataComponents.EQUIPPABLE); // port-26.1.2: ArmorItem удалён -> EQUIPPABLE-компонент
-        if (model == null || model_on_armor == null) {
-            model = new ModularChestpieceModel<>(techLevel, false);
-            model_on_armor = new ModularChestpieceModel<>(techLevel, true);
-        }
-        ModularChestpieceModel<?> activeModel = onArmor ? model_on_armor : model;
-        ClientHooks.copyModelProperties(parentModel, activeModel);
-        return activeModel;
+        // port-26.1.2: HumanoidModel-код вынесен в DEClientHooks (dist-clean)
+        return com.brandon3055.draconicevolution.client.DEClientHooks.chestExtendedModel(this, entity, stack, slot, parentModel, slim);
     }
 
     @Override

@@ -15,6 +15,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate; // port-26.1.2: ItemStack.CODEC нельзя в datapack-reload (ловушка 9)
 import net.minecraft.world.item.crafting.*;
 
 import java.util.ArrayList;
@@ -26,14 +27,25 @@ import java.util.stream.Collectors;
  */
 public class FusionRecipe implements IFusionRecipe {
 
-    private final ItemStack result;
+    private final ItemStackTemplate resultTemplate;
+    private final ItemStack result; // lazily created via create() (runtime)
     private final Ingredient catalyst;
     private final long totalEnergy;
     private final TechLevel techLevel;
     private final List<FusionIngredient> ingredients;
 
     public FusionRecipe(ItemStack result, Ingredient catalyst, long totalEnergy, TechLevel techLevel, List<FusionIngredient> ingredients) {
+        this.resultTemplate = ItemStackTemplate.fromNonEmptyStack(result);
         this.result = result;
+        this.catalyst = catalyst;
+        this.totalEnergy = totalEnergy;
+        this.techLevel = techLevel;
+        this.ingredients = ingredients;
+    }
+
+    public FusionRecipe(ItemStackTemplate resultTemplate, Ingredient catalyst, long totalEnergy, TechLevel techLevel, List<FusionIngredient> ingredients) { // port-26.1.2: datapack-reload использует template (ловушка 9)
+        this.resultTemplate = resultTemplate;
+        this.result = ItemStack.EMPTY;
         this.catalyst = catalyst;
         this.totalEnergy = totalEnergy;
         this.techLevel = techLevel;
@@ -67,7 +79,7 @@ public class FusionRecipe implements IFusionRecipe {
 
     @Override
     public ItemStack assemble(IFusionInventory inv, HolderLookup.Provider provider) {
-        ItemStack stack = result.copy();
+        ItemStack stack = resultTemplate.create();
         if (stack.getItem() instanceof IFusionDataTransfer) {
             ((IFusionDataTransfer) stack.getItem()).transferIngredientData(stack, inv, provider);
         }
@@ -76,7 +88,7 @@ public class FusionRecipe implements IFusionRecipe {
 
     @Override
     public ItemStack getResultItem(HolderLookup.Provider provider) {
-        return result.copy();
+        return resultTemplate.create();
     }
 
     @Override
@@ -139,7 +151,7 @@ public class FusionRecipe implements IFusionRecipe {
         }, tier -> tier.name().toLowerCase(java.util.Locale.ROOT));
         public static RecipeSerializer<FusionRecipe> create() { return new RecipeSerializer<>(CODEC, STREAM_CODEC); }
         private static final MapCodec<FusionRecipe> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
-                        ItemStack.CODEC.fieldOf("result").forGetter(e -> e.result),
+                        ItemStackTemplate.CODEC.fieldOf("result").forGetter(e -> e.resultTemplate),
                         Ingredient.CODEC.fieldOf("catalyst").forGetter(e -> e.catalyst),
                         Codec.LONG.fieldOf("totalEnergy").forGetter(e -> e.totalEnergy),
                         TECH_LEVEL_CODEC.fieldOf("techLevel").forGetter(e -> e.techLevel),
@@ -160,7 +172,7 @@ public class FusionRecipe implements IFusionRecipe {
         }
 
         private static FusionRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
-            ItemStack result =  ItemStack.STREAM_CODEC.decode(buffer);
+            ItemStackTemplate resultTemplate = ItemStackTemplate.STREAM_CODEC.decode(buffer); // port-26.1.2: template вместо ItemStack
             Ingredient catalyst = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
 
             int count = buffer.readUnsignedByte();
@@ -172,11 +184,11 @@ public class FusionRecipe implements IFusionRecipe {
             long totalEnergy = buffer.readLong();
             TechLevel techLevel = TechLevel.VALUES[Mth.clamp(buffer.readByte(), 0, TechLevel.values().length - 1)];
 
-            return new FusionRecipe(result, catalyst, totalEnergy, techLevel, fusionIngredients);
+            return new FusionRecipe(resultTemplate, catalyst, totalEnergy, techLevel, fusionIngredients);
         }
 
         private static void toNetwork(RegistryFriendlyByteBuf buffer, FusionRecipe recipe) {
-            ItemStack.STREAM_CODEC.encode(buffer, recipe.result);
+            ItemStackTemplate.STREAM_CODEC.encode(buffer, recipe.resultTemplate);
             Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.catalyst);
 
             if (recipe.ingredients.size() > 255) throw new IllegalArgumentException("Fusion recipe has more than 255 ingredients");

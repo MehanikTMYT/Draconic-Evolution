@@ -66,11 +66,8 @@ import net.covers1624.quack.collection.FastStream;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.Minecraft;
 
-import net.minecraft.client.gui.screens.Screen;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 import net.minecraft.core.Holder;
 
@@ -261,19 +258,8 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
             render.rect(x, y, width, height, bgColour);
             render.borderRect(x, y, width, height, 1, bgColour, GuiRender.mixColours(bgColour, 0x20202000, true));
 
-            Material texture = ModuleTextures.get(module);
-            TextureAtlasSprite sprite = texture.sprite();
-            ;
-            float ar = (float) sprite.contents().width() / (float) sprite.contents().height();
-            float iar = (float) sprite.contents().height() / (float) sprite.contents().width();
-
-            if (iar * width <= height) { //Fit Width
-                double h = width * iar;
-                render.texRect(texture, x, y + (height / 2D) - (h / 2D), width, h, 1F, 1F, 1F, alpha);
-            } else { //Fit height
-                double w = height * ar;
-                render.texRect(texture, x + (width / 2D) - (w / 2D), y, w, height, 1F, 1F, 1F, alpha);
-            }
+            // port-26.1.2: TextureAtlasSprite-код вынесен в DEClientHooks (dist-clean)
+            com.brandon3055.draconicevolution.client.DEClientHooks.drawModuleTexture(render, ModuleTextures.get(module), x, y, width, height, alpha);
         }
     }
 
@@ -283,15 +269,10 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
             return super.renderModuleOverlay(parent, context, render, x, y, width, height, mouseX, mouseY, partialTicks, hoverTicks);
         }
 
-        if (Minecraft.getInstance().hasShiftDown()) {
+        if (com.brandon3055.draconicevolution.client.DEClientHooks.hasShiftDown()) {
             if (hoverTicks <= 10) return false;
-            Minecraft mc = Minecraft.getInstance();
-            Item item = getModule().getItem();
-            ItemStack stack = new ItemStack(item);
-            saveEntityToStack(stack, context);
-            List<Component> list = stack.getTooltipLines(Item.TooltipContext.of(mc.level), mc.player, mc.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
-            render.componentTooltip(list, (int) mouseX, (int) mouseY);
-            return true;
+            // port-26.1.2: клиентский код вынесен в DEClientHooks (dist-clean)
+            return com.brandon3055.draconicevolution.client.DEClientHooks.moduleOverlayTooltip(this, context, render, mouseX, mouseY);
         }
         if (hoverTicks <= 5) return false;
 
@@ -339,7 +320,7 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
         ItemStack carrying = player.containerMenu.getCarried();
 
         //Clear Filter
-        if (button == 1 && Minecraft.getInstance().hasShiftDown()) {
+        if (button == 1 && com.brandon3055.draconicevolution.client.DEClientHooks.hasShiftDown()) {
             filters.removeIf(filter -> filter.slot() == index);
             sendConfigToServer(player.registryAccess());
             markDirty();
@@ -364,7 +345,7 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
     }
 
     private void displayTagDialog(GuiElement<?> parent, int index) {
-        Minecraft mc = parent.mc();
+        var access = com.brandon3055.draconicevolution.client.DEClientHooks.clientRegistryAccess(); // port-26.1.2: dist-clean
         GuiDialogBase dialog = new GuiDialogBase(parent);
         dialog.setCloseOnOutsideClick(true);
         dialog.addMoveHandle(20);
@@ -483,7 +464,7 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
 
             if (location == null && key != null) {
                 filters.removeIf(filter -> filter.slot() == index); //Remove old key from server
-                sendMessageToServer(mc.level.registryAccess(), e -> sendConfigToServer(mc.level.registryAccess()));
+                sendMessageToServer(access, e -> sendConfigToServer(access));
                 return;
             } else if (location == null || (key != null && location.equals(key.location()) && !content.getChildren().isEmpty())) {
                 return;
@@ -498,7 +479,7 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
             List<Item> matchingItems = FastStream.of(BuiltInRegistries.ITEM.getTagOrEmpty(key)).map(Holder::value).toList();
             if (matchingItems.isEmpty()) {
                 filters.removeIf(filter -> filter.slot() == index);
-                sendConfigToServer(mc.level.registryAccess());
+                sendConfigToServer(access);
                 return;
             }
 
@@ -511,7 +492,7 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
 
             filters.removeIf(filter -> filter.slot() == index);
             filters.add(Filter.tagKey(index, key));
-            sendConfigToServer(mc.level.registryAccess());
+            sendConfigToServer(access);
         }));
 
         textField.setEnterPressed(dialog::close);

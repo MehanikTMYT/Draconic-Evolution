@@ -30,7 +30,6 @@ import java.util.List;
 
 import java.util.Random;
 
-import net.minecraft.client.Minecraft;
 
 import net.minecraft.core.BlockPos;
 
@@ -293,9 +292,8 @@ public interface IModularMiningTool extends IModularTieredItem {
 
             stack.mineBlock(world, state, pos, player);
 
-            if (Minecraft.getInstance().hitResult instanceof BlockHitResult) {
-                Minecraft.getInstance().getConnection().send(new ServerboundPlayerActionPacket(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, pos, ((BlockHitResult) Minecraft.getInstance().hitResult).getDirection()));
-            }
+            // port-26.1.2: клиентский код вынесен в DEClientHooks (dist-clean)
+            com.brandon3055.draconicevolution.client.DEClientHooks.sendStopDestroy(pos);
         }
     }
 }

@@ -83,7 +83,7 @@ public class DEClient {
         modBus.addListener(DEClient::onResourceReload);
         modBus.addListener(DEClient::registerClientExtensions);
         modBus.addListener(DEClient::registerMenuScreens);
-        modBus.addListener(DEParticles::registerFactories);
+        modBus.addListener(DEParticlesClient::registerFactories); // port-26.1.2: клиентский класс переименован
         modBus.addListener(com.brandon3055.draconicevolution.client.render.particle.DEParticleLayers::register);
 
 //        modBus.addListener((RegisterColorHandlersEvent.Block event) -> moduleSpriteUploader = new ModuleSpriteUploader());

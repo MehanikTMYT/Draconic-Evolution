@@ -24,7 +24,7 @@ import com.brandon3055.draconicevolution.blocks.machines.EnergyPylon.Mode;
 
 import com.brandon3055.draconicevolution.blocks.machines.EnergyPylon;
 
-import com.brandon3055.draconicevolution.client.DEParticles;
+import com.brandon3055.draconicevolution.init.DEParticles; // port-26.1.2: регистрация типов вынесена в common
 
 import com.brandon3055.draconicevolution.init.DEContent;
 

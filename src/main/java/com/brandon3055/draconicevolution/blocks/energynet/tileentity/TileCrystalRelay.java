@@ -8,7 +8,6 @@ import com.brandon3055.draconicevolution.blocks.tileentity.TileDislocatorRecepta
 import com.brandon3055.draconicevolution.client.render.effect.CrystalFXBase;
 import com.brandon3055.draconicevolution.client.render.effect.CrystalFXRing;
 import com.brandon3055.draconicevolution.init.DEContent;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -42,7 +41,8 @@ public class TileCrystalRelay extends TileCrystalBase {
 
     @Override
     public CrystalFXBase createStaticFX() {
-        return new CrystalFXRing((ClientLevel)level, this);
+        // port-26.1.2: клиентский FX вынесен в DEClientHooks (dist-clean)
+        return com.brandon3055.draconicevolution.client.DEClientHooks.crystalFXRing(this);
     }
 
     @Override

@@ -38,7 +38,7 @@ import com.brandon3055.draconicevolution.api.crafting.IFusionRecipe;
 
 import com.brandon3055.draconicevolution.api.crafting.IFusionStateMachine;
 
-import com.brandon3055.draconicevolution.client.DEParticles;
+import com.brandon3055.draconicevolution.init.DEParticles; // port-26.1.2: регистрация типов вынесена в common
 
 import com.brandon3055.draconicevolution.client.render.tile.fxhandlers.ITileFXHandler;
 

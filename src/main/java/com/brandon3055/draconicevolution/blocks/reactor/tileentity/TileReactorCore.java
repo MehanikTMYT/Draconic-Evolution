@@ -32,7 +32,6 @@ import com.brandon3055.draconicevolution.blocks.reactor.ProcessExplosion;
 
 import com.brandon3055.draconicevolution.blocks.reactor.ReactorEffectHandler;
 
-import com.brandon3055.draconicevolution.client.gui.ReactorGui;
 
 import com.brandon3055.draconicevolution.init.DEContent;
 
@@ -52,9 +51,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.Minecraft;
 
-import net.minecraft.client.gui.screens.Screen;
 
 import net.minecraft.core.BlockPos;
 
@@ -653,10 +650,8 @@ public class TileReactorCore extends TileBCore implements MenuProvider {
         if (id == 1) {
             BlockPos pos = data.readPos();
             BlockEntity tile = level.getBlockEntity(pos);
-            Screen screen = Minecraft.getInstance().screen;
-            if (tile instanceof TileReactorComponent && screen instanceof ReactorGui.Screen gui) {
-                ((ReactorGui)gui.getModularGui().getProvider()).component = (TileReactorComponent) tile;
-            }
+            // port-26.1.2: Screen-код вынесен в DEClientHooks (dist-clean)
+            com.brandon3055.draconicevolution.client.DEClientHooks.reactorComponentSelected(tile, pos);
         }
     }
 

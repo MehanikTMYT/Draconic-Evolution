@@ -1,12 +1,8 @@
 package com.brandon3055.draconicevolution.handlers;
 
-import codechicken.lib.render.CCModel;
 
-import codechicken.lib.render.RenderUtils;
 
-import codechicken.lib.render.buffer.TransformingVertexConsumer;
 
-import codechicken.lib.vec.Cuboid6;
 
 import com.brandon3055.brandonscore.lib.ChatHelper;
 
@@ -14,7 +10,6 @@ import com.brandon3055.draconicevolution.api.energy.ICrystalBinder;
 
 import com.brandon3055.draconicevolution.api.energy.ICrystalLink;
 
-import com.brandon3055.draconicevolution.api.render.DERenderTypes;
 
 import com.brandon3055.draconicevolution.blocks.energynet.tileentity.TileCrystalBase;
 
@@ -22,23 +17,18 @@ import com.brandon3055.draconicevolution.init.ItemData;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import com.mojang.blaze3d.vertex.VertexFormat;
 
-import java.util.HashMap;
 
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.Camera;
 
 import net.minecraft.client.Minecraft;
 
 import net.minecraft.client.player.LocalPlayer;
 
-import net.minecraft.client.renderer.MultiBufferSource;
 
 import net.minecraft.core.BlockPos;
 
@@ -60,17 +50,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 import net.minecraft.world.level.block.state.BlockState;
 
-import net.minecraft.world.phys.AABB;
 
-import net.minecraft.world.phys.Vec3;
 
 import net.minecraft.world.phys.shapes.Shapes;
 
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.neoforged.api.distmarker.Dist;
 
-import net.neoforged.api.distmarker.OnlyIn;
 
 import static com.brandon3055.draconicevolution.init.ItemData.BINDER_POS;
 
@@ -195,8 +181,6 @@ public class BinderHandler {
         return false;
     }
 
-    public static Map<AABB, CCModel> modelCache = new HashMap<>();
-
     public static void renderWorldOverlay(LocalPlayer player, PoseStack pStack, Level level, ItemStack stack, Minecraft mc, float partialTicks) {
         if (!isBound(stack)) {
             return;
@@ -206,49 +190,8 @@ public class BinderHandler {
         if (gPos.dimension() != level.dimension()) {
             return;
         }
-        BlockPos pos = gPos.pos();
 
-        boolean valid = level.getBlockEntity(pos) instanceof ICrystalLink;
-
-        BlockState state = level.getBlockState(pos);
-        VoxelShape shape = state.getShape(level, pos);
-        if (shape.isEmpty()) {
-            shape = Shapes.block();
-        }
-        Cuboid6 cuboid6 = new Cuboid6(shape.bounds());
-
-
-        MultiBufferSource.BufferSource source = Minecraft.getInstance().renderBuffers().bufferSource();
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        Vec3 cameraPos = camera.position();
-
-        pStack.pushPose();
-        pStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
-        pStack.translate(pos.getX(), pos.getY(), pos.getZ());
-
-        RenderUtils.bufferCuboidSolid(
-                new TransformingVertexConsumer(source.getBuffer(DERenderTypes.BOX_NO_DEPTH), pStack),
-                cuboid6,
-                valid ? 0 : 1, valid ? 1 : 0, 0, 0.5F
-        );
-
-        source.endBatch();
-
-        RenderUtils.bufferCuboidOutline(
-                new TransformingVertexConsumer(source.getBuffer(DERenderTypes.OUTLINE_TYPE), pStack),
-                cuboid6,
-                0, 0, 0, 1
-        );
-
-        source.endBatch();
-        pStack.popPose();
-    }
-
-    private static CCModel modelForAABB(AABB aabb) {
-        if (!modelCache.containsKey(aabb)) {
-            modelCache.put(aabb, CCModel.newModel(VertexFormat.Mode.QUADS, 24).generateBlock(0, new Cuboid6(aabb)));
-        }
-
-        return modelCache.get(aabb);
+        // port-26.1.2: клиентский код вынесен в DEClientHooks (dist-clean)
+        com.brandon3055.draconicevolution.client.DEClientHooks.renderBinderOverlay(player, pStack, level, stack, gPos, partialTicks);
     }
 }

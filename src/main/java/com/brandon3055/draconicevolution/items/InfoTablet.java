@@ -6,7 +6,6 @@ import com.brandon3055.draconicevolution.DraconicEvolution;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.Minecraft;
 
 import net.minecraft.network.chat.ClickEvent;
 
@@ -56,13 +55,8 @@ public class InfoTablet extends Item {
         if (PIHelper.isInstalled()) {
             PIHelper.openMod(null, DraconicEvolution.MODID);
         } else {
-            Player player = Minecraft.getInstance().player;
-            MutableComponent message = Component.literal("Project Intelligence is required to view DE documentation. ").withStyle(ChatFormatting.RED);
-            MutableComponent link = Component.literal("[Click here to view curse page]").withStyle(ChatFormatting.BLUE);
-            link.setStyle(link.getStyle().withClickEvent(new net.minecraft.network.chat.ClickEvent.OpenUrl(java.net.URI.create("https://www.curseforge.com/minecraft/mc-mods/project-intelligence"))));
-            link.setStyle(link.getStyle().withHoverEvent(new net.minecraft.network.chat.HoverEvent.ShowText(Component.literal("https://www.curseforge.com/minecraft/mc-mods/project-intelligence"))));
-            message.append(link);
-            player.sendSystemMessage(message);
+            // port-26.1.2: клиентский код вынесен в DEClientHooks (dist-clean)
+            com.brandon3055.draconicevolution.client.DEClientHooks.sendPIRequiredMessage();
         }
     }
 }

@@ -53,7 +53,6 @@ import net.covers1624.quack.collection.FastStream;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.Minecraft;
 
 import net.minecraft.core.BlockPos;
 
@@ -249,7 +248,8 @@ public class DislocatorAdvanced extends Dislocator {
     }
 
     private void openGui(ItemStack stack, Player player) {
-        Minecraft.getInstance().setScreen(new DislocatorGui.Screen(stack.getHoverName(), player));
+        // port-26.1.2: клиентский код вынесен в DEClientHooks (dist-clean)
+        com.brandon3055.draconicevolution.client.DEClientHooks.openDislocatorGui(stack, player);
     }
 
     private void handleTeleport(Player player, ItemStack stack, TargetPos targetPos, boolean showFuel) {

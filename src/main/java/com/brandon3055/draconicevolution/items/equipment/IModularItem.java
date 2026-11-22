@@ -64,9 +64,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.Minecraft;
 
-import net.minecraft.client.gui.screens.Screen;
 
 import net.minecraft.core.component.DataComponents;
 
@@ -211,7 +209,7 @@ public interface IModularItem extends IItemExtension, IFusionDataTransfer {
     ModularOPStorage instantiateOPStorage(ItemStack stack, Supplier<ModuleHost> hostSupplier);
 
     default void addModularItemInformation(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        if (!Minecraft.getInstance().hasShiftDown()) {
+        if (!com.brandon3055.draconicevolution.client.DEClientHooks.hasShiftDown()) {
             tooltip.add(Component.translatable("[Modular Item]").withStyle(ChatFormatting.BLUE));
         }
 

@@ -5,7 +5,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import com.brandon3055.brandonscore.utils.Utils;
 import com.brandon3055.draconicevolution.api.DraconicAPI;
 import com.brandon3055.draconicevolution.client.ClientProxy;
-import com.brandon3055.draconicevolution.client.DEParticles;
+import com.brandon3055.draconicevolution.init.DEParticles; // port-26.1.2: регистрация типов вынесена в common
 import com.brandon3055.draconicevolution.command.DECommands;
 import com.brandon3055.draconicevolution.handlers.*;
 import com.brandon3055.draconicevolution.init.*;

@@ -4,13 +4,11 @@ import codechicken.lib.data.MCDataInput;
 import codechicken.lib.vec.Vector3;
 import com.brandon3055.brandonscore.lib.TeleportUtils;
 import com.brandon3055.draconicevolution.DraconicEvolution;
-import com.brandon3055.draconicevolution.client.DEParticles;
+import com.brandon3055.draconicevolution.init.DEParticles; // port-26.1.2: регистрация типов вынесена в common
 import com.brandon3055.draconicevolution.client.render.particle.GuardianChargeParticle;
 import com.brandon3055.draconicevolution.entity.guardian.DraconicGuardianEntity;
 import com.brandon3055.draconicevolution.entity.guardian.GuardianFightManager;
 import com.brandon3055.draconicevolution.handlers.DESounds;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -123,7 +121,7 @@ public abstract class ChargeUpPhase extends Phase {
         }
         BlockPos origin = guardian.getArenaOrigin();
         if (origin == null) return;
-        Player player = Minecraft.getInstance().player;
+        Player player = com.brandon3055.draconicevolution.client.DEClientHooks.clientPlayer(); // port-26.1.2: dist-clean
         if (player == null || !isValidTarget(player)) return;
 
         if (effectTimer == 0) {
@@ -131,9 +129,8 @@ public abstract class ChargeUpPhase extends Phase {
             effectTime = effectTimer = (int) (20F - (speedMod * 10F));
             guardian.level().playLocalSound(guardian.getX(), guardian.getY(), guardian.getZ(), DESounds.CRYSTAL_BEAM.get(), SoundSource.HOSTILE, 64, 1F + speedMod, false);
             if (origin != null) {
-                for (int i = 0; i < 32; i++) {
-                    Minecraft.getInstance().particleEngine.add(new GuardianChargeParticle((ClientLevel) guardian.level(), Vector3.fromBlockPosCenter(origin), Vector3.fromEntity(guardian), i / 32D, effectTime, guardian.getPhaseManager()));
-                }
+                // port-26.1.2: клиентские партиклы вынесены в DEClientHooks (dist-clean)
+                com.brandon3055.draconicevolution.client.DEClientHooks.spawnChargeParticles(guardian, origin, effectTime);
             }
         } else {
             effectTimer--;

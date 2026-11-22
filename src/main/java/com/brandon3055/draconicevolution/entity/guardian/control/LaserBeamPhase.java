@@ -1,13 +1,11 @@
 package com.brandon3055.draconicevolution.entity.guardian.control;
 
 import codechicken.lib.vec.Vector3;
-import com.brandon3055.draconicevolution.client.sound.SimpleSoundImpl;
 import com.brandon3055.draconicevolution.entity.guardian.DraconicGuardianEntity;
 import com.brandon3055.draconicevolution.entity.guardian.GuardianFightManager;
 import com.brandon3055.draconicevolution.handlers.DESounds;
 import com.brandon3055.draconicevolution.init.DEDamage;
 import com.brandon3055.draconicevolution.network.DraconicNetwork;
-import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -152,23 +150,12 @@ public class LaserBeamPhase extends ChargeUpPhase {
         super.clientTick();
         if (isCharged() && !soundInitialized) {
             soundInitialized = true;
-            SimpleSoundImpl.create(DESounds.BEAM.get(), SoundSource.HOSTILE, random)
-                    .setPitchSupplier(() -> 0.5F + getBeamCharge())
-                    .setStoppedSupplier(this::isEnded)
-                    .setPos(guardian)
-                    .setVolume(100)
-                    .loop()
-                    .play(Minecraft.getInstance());
+            // port-26.1.2: SimpleSoundImpl-код вынесен в DEClientHooks (dist-clean)
+            com.brandon3055.draconicevolution.client.DEClientHooks.playBeamSound(DESounds.BEAM.get(), SoundSource.HOSTILE, random, () -> 0.5F + getBeamCharge(), this::isEnded, guardian, 100);
         }
         if (fireSecondary() && !secondarySoundInit) {
             secondarySoundInit = true;
-            SimpleSoundImpl.create(DESounds.BEAM.get(), SoundSource.HOSTILE, random)
-                    .setPitchSupplier(() -> 1.5F + (getSecondaryCharge() / 2F))
-                    .setStoppedSupplier(this::isEnded)
-                    .setPos(guardian)
-                    .setVolume(100)
-                    .loop()
-                    .play(Minecraft.getInstance());
+            com.brandon3055.draconicevolution.client.DEClientHooks.playBeamSound(DESounds.BEAM.get(), SoundSource.HOSTILE, random, () -> 1.5F + (getSecondaryCharge() / 2F), this::isEnded, guardian, 100);
         }
     }
 

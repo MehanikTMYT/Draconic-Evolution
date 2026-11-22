@@ -14,9 +14,7 @@ import java.util.function.Supplier;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.Minecraft;
 
-import net.minecraft.client.gui.screens.Screen;
 
 import net.minecraft.network.chat.Component;
 
@@ -49,7 +47,7 @@ public class EnergyModuleItem extends ModuleItem<EnergyData> {
                     .append(": ")
                     .append(Utils.formatNumber(energy))
                     .append(" ")
-                    .append(Component.translatable("op.brandonscore." + (Minecraft.getInstance().hasShiftDown() ? "operational_potential" : "op")))
+                    .append(Component.translatable("op.brandonscore." + (com.brandon3055.draconicevolution.client.DEClientHooks.hasShiftDown() ? "operational_potential" : "op")))
                     .withStyle(ChatFormatting.GRAY));
         }
         extra.forEach(tooltip::accept);

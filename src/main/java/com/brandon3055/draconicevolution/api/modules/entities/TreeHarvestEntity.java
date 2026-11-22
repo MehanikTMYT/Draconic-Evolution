@@ -37,9 +37,7 @@ import com.brandon3055.draconicevolution.init.DEModules;
 
 import com.brandon3055.draconicevolution.init.ItemData;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import com.mojang.math.Axis;
 
 import com.mojang.serialization.Codec;
 
@@ -55,9 +53,7 @@ import java.util.UUID;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.Minecraft;
 
-import net.minecraft.client.gui.screens.Screen;
 
 import net.minecraft.client.model.player.PlayerModel;
 
@@ -237,7 +233,7 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
 
     @Override
     public void addHostHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (Minecraft.getInstance().hasShiftDown()) {
+        if (com.brandon3055.draconicevolution.client.DEClientHooks.hasShiftDown()) {
             tooltip.add(Component.translatable("module." + MODID + ".tree_harvest.single").withStyle(ChatFormatting.DARK_GRAY));
             if (getModule().getData().range() > 0) {
                 tooltip.add(Component.translatable("module." + MODID + ".tree_harvest.area").withStyle(ChatFormatting.DARK_GRAY));
@@ -247,52 +243,14 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
 
     @Override
     public void modifyFirstPersonUsingPose(RenderHandEvent event, boolean leftHand) {
-        PoseStack poseStack = event.getPoseStack();
-        Player player = Minecraft.getInstance().player;
-        int handOffset = !leftHand ? 1 : -1;
-
-        poseStack.translate((float) handOffset * -0.2785682F, 0.18344387F, 0.15731531F);
-        poseStack.mulPose(Axis.XP.rotationDegrees(-13.935F));
-        poseStack.mulPose(Axis.YP.rotationDegrees((float) handOffset * 35.3F));
-        poseStack.mulPose(Axis.ZP.rotationDegrees((float) handOffset * -9.785F));
-        float drawTime = (float) 72000 - ((float) player.getUseItemRemainingTicks() - event.getPartialTick() + 1.0F);
-        float charge = drawTime / 20.0F;
-        charge = (charge * charge + charge * 2.0F) / 3.0F;
-        if (charge > 1.0F) {
-            charge = 1.0F;
-        }
-
-        if (charge > 0.1F) {
-            float f15 = Mth.sin((drawTime - 0.1F) * 1.3F);
-            float f18 = charge - 0.1F;
-            float animOffset = f15 * f18;
-            poseStack.translate(animOffset * 0.0F, animOffset * 0.004F, animOffset * 0.0F);
-        }
-
-        poseStack.translate(charge * 0.0F, charge * 0.0F, charge * 0.04F);
-        poseStack.scale(1.0F, 1.0F, 1.0F + charge * 0.2F);
-        poseStack.mulPose(Axis.YN.rotationDegrees((float) handOffset * 45.0F));
+        // port-26.1.2: PoseStack-код вынесен в DEClientHooks (dist-clean)
+        com.brandon3055.draconicevolution.client.DEClientHooks.treeHarvestFirstPersonPose(event, leftHand);
     }
 
     @Override
     public void modifyPlayerModelPose(Player player, PlayerModel model, boolean leftHand) {
-        if (!leftHand) {
-            model.rightArm.yRot = -0.1F + model.head.yRot;
-            model.leftArm.yRot = 0.1F + model.head.yRot + 0.4F;
-            model.rightArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot;
-            model.leftArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot;
-        } else {
-            model.rightArm.yRot = -0.1F + model.head.yRot - 0.4F;
-            model.leftArm.yRot = 0.1F + model.head.yRot;
-            model.rightArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot;
-            model.leftArm.xRot = (-(float) Math.PI / 2F) + model.head.xRot;
-        }
-
-        model.leftPants.loadPose(model.leftLeg.storePose()); // port-26.1.2: ModelPart.copyFrom удалён;
-        model.rightPants.loadPose(model.rightLeg.storePose());
-        model.leftSleeve.loadPose(model.leftArm.storePose());
-        model.rightSleeve.loadPose(model.rightArm.storePose());
-        model.jacket.loadPose(model.body.storePose());
+        // port-26.1.2: PlayerModel-код вынесен в DEClientHooks (dist-clean)
+        com.brandon3055.draconicevolution.client.DEClientHooks.treeHarvestModelPose(player, model, leftHand);
     }
 
     @Override

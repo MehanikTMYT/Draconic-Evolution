@@ -2,7 +2,7 @@ package com.brandon3055.draconicevolution.blocks.energynet.rendering;
 
 import com.brandon3055.draconicevolution.api.energy.ICrystalLink;
 import com.brandon3055.draconicevolution.api.energy.IENetEffectTile;
-import com.brandon3055.draconicevolution.client.DEParticles;
+import com.brandon3055.draconicevolution.client.DEParticlesClient;
 import com.brandon3055.draconicevolution.client.render.effect.CrystalFXBase;
 import com.brandon3055.draconicevolution.client.render.effect.CrystalFXBeam;
 import com.brandon3055.draconicevolution.network.CrystalUpdateBatcher.BatchedCrystalUpdate;
@@ -30,7 +30,7 @@ public class ENetFXHandlerClient<T extends BlockEntity & IENetEffectTile> extend
         if (tile.hasStaticFX()) {
             if (staticFX == null || !staticFX.isAlive()) {
                 staticFX = tile.createStaticFX();
-                DEParticles.addParticleDirect(tile.getLevel(), staticFX);
+                DEParticlesClient.addParticleDirect(tile.getLevel(), staticFX);
             }
             staticFX.updateFX(0.5F);
         }
@@ -85,7 +85,7 @@ public class ENetFXHandlerClient<T extends BlockEntity & IENetEffectTile> extend
             }
             CrystalFXBeam beam = new CrystalFXBeam(tile.getLevel(), tile, (ICrystalLink) target);
             beamFXList.add(beam);
-            DEParticles.addParticleDirect(tile.getLevel(), beam);
+            DEParticlesClient.addParticleDirect(tile.getLevel(), beam);
         }
 
     }

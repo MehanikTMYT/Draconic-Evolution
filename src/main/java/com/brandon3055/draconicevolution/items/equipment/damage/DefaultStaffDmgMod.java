@@ -8,7 +8,6 @@ import com.brandon3055.draconicevolution.api.modules.lib.IDamageModifier;
 
 import com.brandon3055.draconicevolution.api.modules.lib.ModuleContext;
 
-import com.brandon3055.draconicevolution.client.render.effect.StaffBeamEffect;
 
 import com.brandon3055.draconicevolution.handlers.DESounds;
 
@@ -18,11 +17,8 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.Minecraft;
 
-import net.minecraft.client.multiplayer.ClientLevel;
 
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 
 import net.minecraft.network.chat.Component;
 
@@ -42,9 +38,7 @@ import net.minecraft.world.phys.HitResult;
 
 import net.minecraft.world.phys.Vec3;
 
-import net.neoforged.api.distmarker.Dist;
 
-import net.neoforged.api.distmarker.OnlyIn;
 
 
 
@@ -93,10 +87,7 @@ public class DefaultStaffDmgMod implements IDamageModifier {
     }
 
     public static void handleEffect(LivingEntity source, MCDataInput data) {
-        Vector3 pos = data.readVector();
-        ClientLevel world = (ClientLevel) source.level();
-        Minecraft mc = Minecraft.getInstance();
-        mc.getSoundManager().play(new SimpleSoundInstance(DESounds.STAFF_HIT_DEFAULT.get(), SoundSource.PLAYERS, 10, 1, world.getRandom(), pos.pos()));
-        mc.particleEngine.add(new StaffBeamEffect(world, source, pos));
+        // port-26.1.2: клиентский код вынесен в DEClientHooks (dist-clean)
+        com.brandon3055.draconicevolution.client.DEClientHooks.handleStaffHitEffect(source, data);
     }
 }

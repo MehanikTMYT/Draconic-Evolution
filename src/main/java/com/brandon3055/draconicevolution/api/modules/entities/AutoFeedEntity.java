@@ -37,9 +37,7 @@ import java.util.Objects;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.Minecraft;
 
-import net.minecraft.client.gui.screens.Screen;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 
@@ -201,7 +199,7 @@ public class AutoFeedEntity extends ModuleEntity<AutoFeedData> {
 
     @Override
     public void addHostHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        if (Minecraft.getInstance().hasShiftDown()) {
+        if (com.brandon3055.draconicevolution.client.DEClientHooks.hasShiftDown()) {
             tooltip.add(Component.translatable("module.draconicevolution.auto_feed.stored").withStyle(ChatFormatting.GRAY).append(" ").append(Component.translatable("module.draconicevolution.auto_feed.stored.value", (int)getStoredFood()).withStyle(ChatFormatting.DARK_GREEN)));
         }
     }

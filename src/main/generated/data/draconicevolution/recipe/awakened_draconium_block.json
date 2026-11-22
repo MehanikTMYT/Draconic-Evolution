@@ -1,10 +1,6 @@
 {
   "type": "draconicevolution:fusion_crafting",
-  "catalyst": {
-    "type": "draconicevolution:stack",
-    "count": 4,
-    "items": "draconicevolution:draconium_block"
-  },
+  "catalyst": "draconicevolution:draconium_block",
   "ingredients": [
     {
       "consume": true,

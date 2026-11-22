@@ -40,7 +40,6 @@ import java.util.*;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.multiplayer.ClientLevel;
 
 import net.minecraft.core.BlockPos;
 
@@ -344,7 +343,8 @@ public class TileCrystalWirelessIO extends TileCrystalBase {
 
     @Override
     public CrystalFXBase createStaticFX() {
-        return new CrystalFXRing((ClientLevel)level, this);
+        // port-26.1.2: клиентский FX вынесен в DEClientHooks (dist-clean)
+        return com.brandon3055.draconicevolution.client.DEClientHooks.crystalFXRing(this);
     }
 
     @Override

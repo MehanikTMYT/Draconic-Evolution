@@ -26,7 +26,6 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 
-import net.minecraft.client.multiplayer.ClientLevel;
 
 import net.minecraft.core.BlockPos;
 
@@ -122,7 +121,8 @@ public class TileCrystalDirectIO extends TileCrystalBase   {
 
     @Override
     public CrystalFXBase createStaticFX() {
-        return new CrystalFXIO((ClientLevel)level, this);
+        // port-26.1.2: клиентский FX вынесен в DEClientHooks (dist-clean)
+        return com.brandon3055.draconicevolution.client.DEClientHooks.crystalFXIO(this);
     }
 
     @Override
