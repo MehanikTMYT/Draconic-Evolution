@@ -342,7 +342,6 @@ public class TileCrystalWirelessIO extends TileCrystalBase {
         return EnergyCrystal.CrystalType.WIRELESS;
     }
 
-    @OnlyIn (Dist.CLIENT)
     @Override
     public CrystalFXBase createStaticFX() {
         return new CrystalFXRing((ClientLevel)level, this);
@@ -382,7 +381,6 @@ public class TileCrystalWirelessIO extends TileCrystalBase {
         return new ENetFXHandlerServerWireless(this);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public ENetFXHandler createClientFXHandler() {
         return new ENetFXHandlerClientWireless(this);

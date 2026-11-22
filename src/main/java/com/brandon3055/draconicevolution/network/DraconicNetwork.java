@@ -40,7 +40,7 @@ public class DraconicNetwork {
     public static final Identifier CHANNEL_NAME = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "network");
     public static final PacketCustomChannel CHANNEL = new PacketCustomChannel(CHANNEL_NAME)
             .optional()
-            .versioned(BrandonsCore.container().getModInfo().getVersion().toString())
+            .versioned(com.brandon3055.brandonscore.BrandonsCore.VERSION) // port-26.1.2: BrandonsCore.container() нет — берём версию из константы
             .client(() -> ClientPacketHandler::new)
             .server(() -> ServerPacketHandler::new);
 

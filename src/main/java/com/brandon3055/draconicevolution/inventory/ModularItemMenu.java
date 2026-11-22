@@ -185,7 +185,6 @@ public class ModularItemMenu extends ModularGuiContainerMenu implements ModuleHo
         return moduleGrid;
     }
 
-    @OnlyIn (Dist.CLIENT)
     public void clientTick() {
         ItemStack stack = slot.getStackInSlot(player);
         if (stack != hostStack && !stack.isEmpty() && stack.getCapability(DECapabilities.Host.ITEM) != null) {

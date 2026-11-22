@@ -961,7 +961,6 @@ public class DraconicGuardianEntity extends Mob implements Enemy {
         return 5.0F;
     }
 
-    @OnlyIn (Dist.CLIENT)
     public float getHeadPartYOffset(int p_184667_1_, double[] spineEndOffsets, double[] headPartOffsets) {
         IPhase iphase = this.phaseManager.getCurrentPhase();
         PhaseType<? extends IPhase> phasetype = iphase.getType();

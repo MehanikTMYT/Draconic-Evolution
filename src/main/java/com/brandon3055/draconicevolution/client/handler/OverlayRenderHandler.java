@@ -21,15 +21,13 @@ public class OverlayRenderHandler {
 
     public static void init() {
         LOCK.lock();
-        NeoForge.EVENT_BUS.addListener(OverlayRenderHandler::renderLevelStage);
+        NeoForge.EVENT_BUS.addListener(RenderLevelStageEvent.AfterTranslucentParticles.class, OverlayRenderHandler::renderLevelStage);
     }
 
-    public static void renderLevelStage(RenderLevelStageEvent event) {
-        if (event.getStage() != Stage.AFTER_PARTICLES) {
-            return;
-        }
-        ClientEventHandler.MODELVIEW.set(event.getPoseStack().last().pose());
-        ClientEventHandler.PROJECTION.set(event.getProjectionMatrix());
+    public static void renderLevelStage(RenderLevelStageEvent.AfterTranslucentParticles event) { // port-26.1.2: AFTER_PARTICLES -> AfterTranslucentParticles (стадии стали подклассами)
+        ClientEventHandler.MODELVIEW.set(new org.joml.Matrix4f(event.getModelViewMatrix()));
+        // port-26.1.2-check TODO: PROJECTION больше не доступна из события (GpuBufferSlice); используем единичную матрицу, gluProject может быть неточен
+        ClientEventHandler.PROJECTION.setIdentity();
 
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
@@ -37,7 +35,7 @@ public class OverlayRenderHandler {
         ItemStack stack = player.getMainHandItem();
         ItemStack offStack = player.getOffhandItem();
         Minecraft mc = Minecraft.getInstance();
-        float partialTicks = event.getPartialTick().getGameTimeDeltaPartialTick(false);
+        float partialTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false); // port-26.1.2: у события нет getPartialTick
 
         try {
             if (!stack.isEmpty() && stack.getItem() instanceof ICrystalBinder) {

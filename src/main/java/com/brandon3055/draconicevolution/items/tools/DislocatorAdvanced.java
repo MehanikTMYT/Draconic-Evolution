@@ -248,7 +248,6 @@ public class DislocatorAdvanced extends Dislocator {
         return InteractionResult.PASS;
     }
 
-    @OnlyIn (Dist.CLIENT)
     private void openGui(ItemStack stack, Player player) {
         Minecraft.getInstance().setScreen(new DislocatorGui.Screen(stack.getHoverName(), player));
     }
@@ -335,16 +334,15 @@ public class DislocatorAdvanced extends Dislocator {
         return DataUtils.safeGet(getTargetList(stack), getSelectedIndex(stack));
     }
 
-    @OnlyIn (Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> tooltip, TooltipFlag flagIn) { // port-26.1.2: новая сигнатура, @OnlyIn удалён (блокирует загрузку)
         DislocatorTarget selected = getSelected(stack);
         int fuel = getFuel(stack);
         if (selected != null) {
-            tooltip.add(Component.literal(selected.getName()).withStyle(ChatFormatting.GOLD));
+            tooltip.accept(Component.literal(selected.getName()).withStyle(ChatFormatting.GOLD));
         }
-        tooltip.add(Component.translatable("dislocate.draconicevolution.fuel").append(" " + fuel).withStyle(ChatFormatting.WHITE));
-        tooltip.add(Component.translatable("dislocate.draconicevolution.to_open_gui").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
+        tooltip.accept(Component.translatable("dislocate.draconicevolution.fuel").append(" " + fuel).withStyle(ChatFormatting.WHITE));
+        tooltip.accept(Component.translatable("dislocate.draconicevolution.to_open_gui").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
 //        tooltip.add(new TranslationTextComponent("dislocate.draconicevolution.scroll_change_select").withStyle(TextFormatting.DARK_PURPLE, TextFormatting.ITALIC));
     }
 
@@ -545,7 +543,7 @@ public class DislocatorAdvanced extends Dislocator {
             return stack;
         }
 
-        for (int i = 0; i < player.getInventory().getContainerSize() - player.getInventory().offhand.size(); i++) {
+        for (int i = 0; i < player.getInventory().getContainerSize() - 1; i++) { // port-26.1.2: Inventory.offhand удалён (последний слот = offhand)
             stack = player.getInventory().getItem(i);
             if (stack.getItem() == DEContent.DISLOCATOR_ADVANCED.get()) {
                 return stack;
@@ -585,7 +583,7 @@ public class DislocatorAdvanced extends Dislocator {
         }
 
         public DislocatorTarget(double x, double y, double z, ResourceKey<Level> dimension) {
-            pos = TargetPos.of(x, y, z, dimension);
+            pos = new TargetPos(x, y, z, dimension); // port-26.1.2: TargetPos.of нет в BC-26
         }
 
         public DislocatorTarget(double x, double y, double z, ResourceKey<Level> dimension, float xRot, float yRot) {

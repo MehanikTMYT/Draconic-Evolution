@@ -231,7 +231,6 @@ public class UndyingEntity extends ModuleEntity<UndyingData> {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void renderModule(GuiElement<?> parent, GuiRender render, int x, int y, int width, int height, double mouseX, double mouseY, boolean renderStack, float partialTicks) {
         super.renderModule(parent, render, x, y, width, height, mouseX, mouseY, renderStack, partialTicks);
 

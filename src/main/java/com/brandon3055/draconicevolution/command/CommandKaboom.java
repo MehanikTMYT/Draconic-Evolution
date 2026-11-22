@@ -54,7 +54,7 @@ public class CommandKaboom {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal("de_kaboom")
-                        .requires(cs -> cs.hasPermission(2))
+                        .requires(cs -> cs.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_MODERATOR))
                         .then(Commands.argument("radius", IntegerArgumentType.integer(10, 50000))
 //                                .executes(ctx -> calculate(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "radius"), new BlockPos(ctx.getSource().getPos()), false))
                                         .then(Commands.argument("position", BlockPosArgument.blockPos())
@@ -135,14 +135,14 @@ public class CommandKaboom {
 ////            guardian.getPhaseManager().setPhase(PhaseType.HOLDING_PATTERN);
 ////            guardian.setPosition(0, 128, 0);
 ////            player.world.addEntity(guardian);
-//            ChaosWorldGenHandler.generateObelisk((ServerWorld)player.world, player.position().add(0, 0, 40), player.world.rand);
+//            ChaosWorldGenHandler.generateObelisk((ServerWorld)player.world, player.getPosition().add(0, 0, 40), player.world.rand);
 //        } catch (Throwable e) {
 //            e.printStackTrace();
 //        }
 
 
-//        ShortPos shortPos = new ShortPos(player.position());
-//        ExplosionHelper helper = new ExplosionHelper((ServerWorld) player.world, player.position(), shortPos);
+//        ShortPos shortPos = new ShortPos(player.getPosition());
+//        ExplosionHelper helper = new ExplosionHelper((ServerWorld) player.world, player.getPosition(), shortPos);
 //        LinkedList<HashSet<Integer>> list = new LinkedList<>();
 //        HashSet<Integer> set= new HashSet<>();
 //
@@ -177,7 +177,7 @@ public class CommandKaboom {
     }
 
     private static int relight(CommandSourceStack source) {
-        BlockPos pos = BlockPos.containing(source.position());
+        BlockPos pos = BlockPos.containing(source.getPosition());
         ServerLevel world = source.getLevel();
         while (world.isEmptyBlock(pos)) pos = pos.below();
 

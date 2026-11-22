@@ -58,7 +58,7 @@ import net.minecraft.world.level.saveddata.SavedDataType;
  */
 public class DislocatorSaveData extends SavedData {
     private static final Identifier ID = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "draconic_dislocator_data");
-    private static final Codec<DislocatorSaveData> CODEC = Codec.unit(DislocatorSaveData::new); // port-26.1.2: codec простой, данные не хранятся в NBT через SavedData
+    private static final Codec<DislocatorSaveData> CODEC = com.mojang.serialization.MapCodec.unitCodec(DislocatorSaveData::new); // port-26.1.2: codec простой, данные не хранятся в NBT через SavedData
     private static final SavedDataType<DislocatorSaveData> TYPE = new SavedDataType<>(ID, DislocatorSaveData::new, CODEC); // port-26.1.2: SavedData.Factory удалён
 
     private Map<UUID, Map<UUID, DislocatorTarget>> linkTargetMap = new HashMap<>();
@@ -137,8 +137,7 @@ public class DislocatorSaveData extends SavedData {
         return data;
     }
 
-    @Override
-    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) {
+    public CompoundTag save(CompoundTag nbt, HolderLookup.Provider provider) { // port-26.1.2: SavedData.save удалён (кодек в SavedDataType)
         ListTag linkList = new ListTag();
         for (UUID linkID : linkTargetMap.keySet()) {
             Map<UUID, DislocatorTarget> targetMap = linkTargetMap.get(linkID);

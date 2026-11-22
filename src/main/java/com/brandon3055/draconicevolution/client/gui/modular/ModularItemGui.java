@@ -123,7 +123,7 @@ public class ModularItemGui extends ContainerGuiProvider<ModularItemMenu> {
         GuiSlots slots = new GuiSlots(scroll.getContentElement(), screenAccess, menu.curios, 1)
                 .setSlotOverlay(this::renderSlotOverlay)
                 .setSlotTexture(slot -> BCGuiTextures.getThemed("slot"))
-                .setEmptyIconI(i -> RenderUtils.fromRawTexture(EquipmentManager.getIcons(menu.inventory.player).get(i)))
+                .setEmptyIconI(i -> com.brandon3055.brandonscore.client.gui.modular.sprite.Material.fromAtlas(net.minecraft.client.renderer.Sheets.GUI_SHEET, EquipmentManager.getIcons(menu.inventory.player).get(i).toString())) // port-26.1.2: RenderUtils.fromRawTexture удалён
                 .constrain(LEFT, match(scroll.getContentElement().get(LEFT)))
                 .constrain(TOP, match(scroll.getContentElement().get(TOP)));
 

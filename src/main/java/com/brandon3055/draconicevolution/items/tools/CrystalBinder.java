@@ -28,8 +28,7 @@ public class CrystalBinder extends Item implements ICrystalBinder {
         super(properties);
     }
 
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
+    public boolean isEnchantable(ItemStack stack) { // port-26.1.2: Item.isEnchantable удалён — анчантинг через компоненты
         return true;
     }
 

@@ -328,7 +328,6 @@ public class TileEnergyCoreStabilizer extends TileBCore implements IInteractTile
         }
     }
 
-    @OnlyIn (Dist.CLIENT)
     private void updateVisual() {
         Vec3D spawn = new Vec3D(worldPosition);
         spawn.add(0.5, 0.5, 0.5);

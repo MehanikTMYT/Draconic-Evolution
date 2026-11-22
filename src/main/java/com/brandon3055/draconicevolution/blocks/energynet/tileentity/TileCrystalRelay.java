@@ -40,7 +40,6 @@ public class TileCrystalRelay extends TileCrystalBase {
         return EnergyCrystal.CrystalType.RELAY;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public CrystalFXBase createStaticFX() {
         return new CrystalFXRing((ClientLevel)level, this);

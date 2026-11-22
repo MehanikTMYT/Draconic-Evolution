@@ -52,7 +52,6 @@ public class TilePortal extends TileBCore {
     // Client Stiff
 
     @Override
-    @OnlyIn (Dist.CLIENT)
     public void tick() {
         if (hidden && player != null) {
             BlockState state = getBlockState();

@@ -210,7 +210,6 @@ public interface IModularItem extends IItemExtension, IFusionDataTransfer {
     @NotNull
     ModularOPStorage instantiateOPStorage(ItemStack stack, Supplier<ModuleHost> hostSupplier);
 
-    @OnlyIn (Dist.CLIENT)
     default void addModularItemInformation(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
         if (!Minecraft.getInstance().hasShiftDown()) {
             tooltip.add(Component.translatable("[Modular Item]").withStyle(ChatFormatting.BLUE));

@@ -119,7 +119,6 @@ public class ServerPacketHandler implements ICustomPacketHandler.IServerPacketHa
                 dislocatorScroll(sender, packet);
                 break;
             // port-26.1.2: S_JEI_FUSION_TRANSFER removed (EMI-only policy)
-                break;
             case DraconicNetwork.S_PLACE_ITEM:
                 placeItem(sender, packet);
                 break;

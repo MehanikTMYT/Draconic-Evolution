@@ -180,7 +180,6 @@ public class TileEntityDetector extends TileBCore implements MenuProvider, IInte
         }
     }
 
-    @OnlyIn (Dist.CLIENT)
     private void updateAnimation() {
         //region Targeting
 

@@ -41,14 +41,13 @@ public class GuardianWither extends WitherBoss {
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
     }
 
-    @Override
-    protected boolean shouldDropLoot() {
+    protected boolean shouldDropLoot() { // port-26.1.2: Mob.shouldDropLoot удалён (dropCustomDeathLoot(ServerLevel,...))
         return false;
     }
 
     @Override
-    protected void customServerAiStep() {
+    protected void customServerAiStep(net.minecraft.server.level.ServerLevel level) { // port-26.1.2: сигнатура с ServerLevel
         destroyBlocksTick = 500;
-        super.customServerAiStep();
+        super.customServerAiStep(level);
     }
 }

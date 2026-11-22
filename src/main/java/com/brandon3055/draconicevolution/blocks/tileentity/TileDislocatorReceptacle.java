@@ -152,7 +152,7 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
 
     public static void register(RegisterCapabilitiesEvent event) {
         com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_DISLOCATOR_RECEPTACLE.get());
-        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_DISLOCATOR_RECEPTACLE, (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_DISLOCATOR_RECEPTACLE.get(), (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
     }
 
     @Override
@@ -167,10 +167,10 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
     @Override
     public InteractionResult onBlockUse(BlockState state, Player player, net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
         if (hasRSSignal()) {
-            return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.TRY_WITH_EMPTY_HAND; // port-26.1.2: PASS_TO_DEFAULT_BLOCK_INTERACTION удалён
         }
 
-        if (stack.getItem() == DEContent.INFUSED_OBSIDIAN.get().asItem()) {
+        if (player.getItemInHand(hand).getItem() == DEContent.INFUSED_OBSIDIAN.get().asItem()) {
             level.setBlockAndUpdate(worldPosition, state.setValue(DislocatorReceptacle.CAMO, !state.getValue(DislocatorReceptacle.CAMO)));
             return InteractionResult.SUCCESS;
         }
@@ -649,7 +649,6 @@ public class TileDislocatorReceptacle extends TileBCore implements IInteractTile
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public ENetFXHandler createClientFXHandler() {
         return new ENetFXHandlerClient(this);
     }

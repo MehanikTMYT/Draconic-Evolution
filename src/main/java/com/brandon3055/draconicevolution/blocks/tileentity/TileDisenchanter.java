@@ -58,7 +58,7 @@ public class TileDisenchanter extends TileBCore implements MenuProvider, IIntera
     }
 
     public static void register(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_DISENCHANTER, (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_DISENCHANTER.get(), (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
     }
 
     @Override

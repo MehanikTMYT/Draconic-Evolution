@@ -175,7 +175,6 @@ public class AutoFeedEntity extends ModuleEntity<AutoFeedData> {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void renderModule(GuiElement<?> parent, GuiRender render, int x, int y, int width, int height, double mouseX, double mouseY, boolean renderStack, float partialTicks) {
         super.renderModule(parent, render, x, y, width, height, mouseX, mouseY, renderStack, partialTicks);
         AutoFeedData data = module.getData();
@@ -201,7 +200,6 @@ public class AutoFeedEntity extends ModuleEntity<AutoFeedData> {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void addHostHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (Minecraft.getInstance().hasShiftDown()) {
             tooltip.add(Component.translatable("module.draconicevolution.auto_feed.stored").withStyle(ChatFormatting.GRAY).append(" ").append(Component.translatable("module.draconicevolution.auto_feed.stored.value", (int)getStoredFood()).withStyle(ChatFormatting.DARK_GREEN)));

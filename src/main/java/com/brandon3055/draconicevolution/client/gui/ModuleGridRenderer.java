@@ -129,7 +129,7 @@ public class ModuleGridRenderer extends GuiElement<ModuleGridRenderer> implement
 
 
                 render.pose().pushPose();
-                entity.renderModule(this, render, x - (mw / 2), y - (mh / 2), mw, mh, x, y, true, RenderUtils.partialTick());
+                entity.renderModule(this, render, x - (mw / 2), y - (mh / 2), mw, mh, x, y, true, mc().getDeltaTracker().getGameTimeDeltaPartialTick(false)); // port-26.1.2: RenderUtils.partialTick() удалён
                 if (stack.getCount() > 1 || altText != null) {
                     String s = altText == null ? String.valueOf(stack.getCount()) : altText;
                     render.drawString(s, (float) (x - font().width(s)) + (mw / 2F) + 1, (float) (y - font().lineHeight) + (mh / 2F) + 2, 0xffffff, true);
@@ -176,7 +176,7 @@ public class ModuleGridRenderer extends GuiElement<ModuleGridRenderer> implement
                         if (pickBlock) {
                             handleGridClick(host, cell, mouseX, mouseY, button, ContainerInput.CLONE); //Creative Clone
                         } else {
-                            boolean shiftClick = (InputConstants.isKeyDown(mc().getWindow().getWindow(), 340) || InputConstants.isKeyDown(mc().getWindow().getWindow(), 344));
+                            boolean shiftClick = (InputConstants.isKeyDown(mc().getWindow(), 340) || InputConstants.isKeyDown(mc().getWindow(), 344));
                             ContainerInput clicktype = ContainerInput.PICKUP;
                             if (shiftClick) {
                                 clicktype = ContainerInput.QUICK_MOVE;

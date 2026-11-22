@@ -48,12 +48,10 @@ public abstract class TileFlowGate extends TileBCore implements IChangeListener,
 
     public abstract String getUnits();
 
-    @OnlyIn(Dist.CLIENT)
     public void setMin(String value) {
         sendPacketToServer(output -> output.writeString(value), 0);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public void setMax(String value) {
         sendPacketToServer(output -> output.writeString(value), 1);
     }

@@ -41,7 +41,6 @@ public interface MultiBlockController {
         return Shapes.block();
     }
 
-    @OnlyIn (Dist.CLIENT)
     default boolean renderSelectionBox(ExtractBlockOutlineRenderStateEvent event) {
         return true;
     }

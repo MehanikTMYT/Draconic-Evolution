@@ -156,7 +156,7 @@ public class DraconiumCapacitor extends Item implements IInvCharge, IModularEner
         }
 
         if (armor) {
-            for (EquipmentSlot armorSlot : ModularArmorEventHandler.ARMOR_SLOTS) {
+            for (EquipmentSlot armorSlot : com.brandon3055.draconicevolution.handlers.ModularArmorEventHandler.ARMOR_SLOTS) {
                 stacks.add(entity.getItemBySlot(armorSlot));
             }
         }
@@ -174,7 +174,7 @@ public class DraconiumCapacitor extends Item implements IInvCharge, IModularEner
             for (ItemStack stack : stacks) {
                 if (EnergyUtils.canReceiveEnergy(stack)) {
                     Item item = stack.getItem();
-                    if (item instanceof IInvCharge && !((IInvCharge) item).canCharge(stack, player, DataUtils.contains(player.getHandSlots(), stack))) {
+                    if (item instanceof IInvCharge && !((IInvCharge) item).canCharge(stack, player, DataUtils.contains(java.util.List.of(player.getItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND), player.getItemInHand(net.minecraft.world.InteractionHand.OFF_HAND)), stack))) { // port-26.1.2: getHandSlots удалён
                         continue;
                     }
                     EnergyUtils.insertEnergy(stack, EnergyUtils.extractEnergy(capacitor, EnergyUtils.insertEnergy(stack, storage.getOPStored(), true), false), false);
@@ -190,13 +190,11 @@ public class DraconiumCapacitor extends Item implements IInvCharge, IModularEner
         tooltip.forEach(builder);
     }
 
-    @Override
-    public int getEnchantmentValue() {
+    public int getEnchantmentValue() { // port-26.1.2: Item.getEnchantmentValue удалён
         return DETier.getEnchantability(techLevel);
     }
 
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
+    public boolean isEnchantable(ItemStack stack) { // port-26.1.2: Item.isEnchantable удалён
         return true;
     }
 

@@ -64,7 +64,6 @@ public interface ModuleData<D extends ModuleData<D>> {
      * @param level The current level
      * @param tooltip The tooltip list
      */
-    @OnlyIn(Dist.CLIENT)
     default void addHostHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {}
 
     /**

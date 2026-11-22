@@ -24,6 +24,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.world.BossEvent;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
@@ -47,7 +48,7 @@ public class CustomBossInfoHandler {
     private static final Map<UUID, BossShieldInfo> events = Maps.newLinkedHashMap();
 
     private static final Identifier ENDER_CRYSTAL_TEXTURES = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/entity/guardian_crystal.png");
-    private static final RenderType RENDER_TYPE = RenderType.entityCutoutNoCull(ENDER_CRYSTAL_TEXTURES);
+    private static final RenderType RENDER_TYPE = RenderTypes.entityCutout(ENDER_CRYSTAL_TEXTURES); // port-26.1.2: entityCutoutNoCull удалён, RenderTypes
     private static final float SIN_45 = (float) Math.sin((Math.PI / 4D));
 
     private static final ModelPart glass;
@@ -82,9 +83,7 @@ public class CustomBossInfoHandler {
         int x = event.getX();
         int y = event.getY();
 
-        RenderSystem.enableDepthTest();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, GUI_BARS_LOCATION);
+        // port-26.1.2: RenderSystem.enableDepthTest/setShaderColor/setShaderTexture удалены — состояние управляется RenderPipelines
         drawBar(event.getGuiGraphics(), x, y, info);
 
         float shield = shieldInfo.isImmune() ? 1 : shieldInfo.getShield();
@@ -198,7 +197,7 @@ public class CustomBossInfoHandler {
     }
 
     public static void drawRect(GuiGraphicsExtractor render, int x, int y, int u, int v, int width, int height) {
-        event.getGuiGraphics().blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, GUI_BARS_LOCATION, x, y, (int)u, (int)v, width, height, 256, 256);
+        render.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, GUI_BARS_LOCATION, x, y, (float)u, (float)v, width, height, 256, 256); // port-26.1.2: GuiGraphicsExtractor.blit
     }
 
     public static void drawShieldRect(VertexConsumer builder, int x, int y, int width, int height) {

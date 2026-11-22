@@ -229,7 +229,7 @@ public class ExplosionHelper {
                         ((FallingBlockEntity) fallingEntity).tick();
                     }
 //                    list.add(Vector3.fromBlockPos(mPos.set(pos)));
-                    helper.serverWorld.neighborChanged(mPos2, state.getBlock(), Orientation.of(Direction.UP, Direction.UP, net.minecraft.world.level.redstone.Orientation.SideBias.LEFT), false);
+                    helper.serverWorld.neighborChanged(mPos2, state.getBlock(), Orientation.of(Direction.UP, Direction.UP, net.minecraft.world.level.redstone.Orientation.SideBias.LEFT));
                 }
 //                BCClientEventHandler.debugBlockList = list;
                 LogHelper.dev("Total Falling Blocks " + i);

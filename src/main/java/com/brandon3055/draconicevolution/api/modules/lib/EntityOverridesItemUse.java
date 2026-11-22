@@ -42,12 +42,10 @@ public interface EntityOverridesItemUse {
      * The event is provides as a convenient way to retrieve the PoseStack and other relevant fields.
      * Note: The event is already canceled at this point and it needs to stay that way.
      */
-    @OnlyIn(Dist.CLIENT)
     default void modifyFirstPersonUsingPose(RenderHandEvent event, boolean leftHand) {}
 
     /**
      * Counterpart to modifyFirstPersonUsingPose that lets you modify the third person player model.
      */
-    @OnlyIn(Dist.CLIENT)
     default void modifyPlayerModelPose(Player player, PlayerModel model, boolean leftHand) {}
 }

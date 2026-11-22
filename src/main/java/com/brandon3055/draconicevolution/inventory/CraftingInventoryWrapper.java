@@ -1,6 +1,5 @@
 package com.brandon3055.draconicevolution.inventory;
 
-import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -78,7 +77,7 @@ public class CraftingInventoryWrapper extends TransientCraftingContainer {
     }
 
     @Override
-    public void fillStackedContents(StackedContents itemHelper) {
+    public void fillStackedContents(net.minecraft.world.entity.player.StackedItemContents itemHelper) { // port-26.1.2: StackedContents -> StackedItemContents
         for (int i = 0; i < wrapped.getSlots(); i++) {
             itemHelper.accountSimpleStack(wrapped.getStackInSlot(i));
         }

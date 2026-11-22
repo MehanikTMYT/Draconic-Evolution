@@ -190,7 +190,6 @@ public class EnergyLinkEntity extends ModuleEntity<EnergyLinkData> {
     }
 
     @Override
-    @OnlyIn (Dist.CLIENT)
     public void renderModule(GuiElement<?> parent, GuiRender render, int x, int y, int width, int height, double mouseX, double mouseY, boolean stackRender, float partialTicks) {
         super.renderModule(parent, render, x, y, width, height, mouseX, mouseY, stackRender, partialTicks);
 

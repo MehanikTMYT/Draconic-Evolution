@@ -33,6 +33,8 @@ public abstract class EquipmentManager implements IEquipmentManager {
     private static boolean curiosLoaded;
     private static EquipmentManager instance = null;
 
+    public abstract void registerCap(RegisterCapabilitiesEvent event, Item item);
+
     public static void initialize(IEventBus modBus) {
         curiosLoaded = ModList.get().isLoaded("curios");
 

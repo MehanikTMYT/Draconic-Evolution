@@ -74,7 +74,7 @@ public class TileFusionCraftingInjector extends TileBCore implements IFusionInje
 
     public static void register(RegisterCapabilitiesEvent event) {
         com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_CRAFTING_INJECTOR.get());
-        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_CRAFTING_INJECTOR, (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_CRAFTING_INJECTOR.get(), (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
     }
 
     public boolean setCore(@Nullable TileFusionCraftingCore core) {

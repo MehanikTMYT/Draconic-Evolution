@@ -28,7 +28,7 @@ public class ItemConfigDataHandler {
         Minecraft mc = Minecraft.getInstance();
         if (mc.hasSingleplayerServer()) {
             ServerLevel world = mc.getSingleplayerServer().getLevel(Level.OVERWORLD);
-            SinglePlayerWorldData data = world.getDataStorage().computeIfAbsent(new SavedData.Factory<>(SinglePlayerWorldData::new, SinglePlayerWorldData::load), SinglePlayerWorldData.FILE_NAME);
+            SinglePlayerWorldData data = world.getDataStorage().computeIfAbsent(SinglePlayerWorldData.TYPE);
             return data.data;
         } else {
             Path file = Paths.get("./config/brandon3055/servers/" + DEConfig.serverID + ".dat");
@@ -47,7 +47,7 @@ public class ItemConfigDataHandler {
         Minecraft mc = Minecraft.getInstance();
         if (mc.hasSingleplayerServer()) {
             ServerLevel world = mc.getSingleplayerServer().getLevel(Level.OVERWORLD);
-            SinglePlayerWorldData data = world.getDataStorage().computeIfAbsent(new SavedData.Factory<>(SinglePlayerWorldData::new, SinglePlayerWorldData::load), SinglePlayerWorldData.FILE_NAME);
+            SinglePlayerWorldData data = world.getDataStorage().computeIfAbsent(SinglePlayerWorldData.TYPE);
             data.data = nbt;
             data.setDirty();
         } else {
@@ -68,7 +68,9 @@ public class ItemConfigDataHandler {
 
 
     private static class SinglePlayerWorldData extends SavedData {
-        private static String FILE_NAME = "draconic_item_config";
+        private static final String FILE_NAME = "draconic_item_config";
+        private static final net.minecraft.resources.Identifier ID = net.minecraft.resources.Identifier.fromNamespaceAndPath(com.brandon3055.draconicevolution.DraconicEvolution.MODID, FILE_NAME); // port-26.1.2
+        private static final net.minecraft.world.level.saveddata.SavedDataType<SinglePlayerWorldData> TYPE = new net.minecraft.world.level.saveddata.SavedDataType<>(ID, SinglePlayerWorldData::new, com.mojang.serialization.MapCodec.unitCodec(() -> new SinglePlayerWorldData())); // port-26.1.2: SavedData.Factory -> SavedDataType
         private CompoundTag data;
 
         public SinglePlayerWorldData() {
@@ -83,8 +85,7 @@ public class ItemConfigDataHandler {
             return new SinglePlayerWorldData(nbt);
         }
 
-        @Override
-        public CompoundTag save(CompoundTag compound, HolderLookup.Provider provider) {
+        public CompoundTag save(CompoundTag compound, HolderLookup.Provider provider) { // port-26.1.2: SavedData.save удалён
             return data;
         }
     }

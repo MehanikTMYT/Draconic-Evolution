@@ -336,7 +336,6 @@ public class TileCelestialManipulator extends TileBCore implements IChangeListen
 
     //endregion
 
-    @OnlyIn (Dist.CLIENT)
     private CelestialModifierSound sound;
 
     //region Weather Effect

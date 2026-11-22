@@ -381,7 +381,6 @@ public class TileEnergyPylon extends TileBCore implements MultiBlockController {
         }
     }
 
-    @OnlyIn (Dist.CLIENT)
     private void spawnParticles() {
         RandomSource rand = level.getRandom();
         if (getCore() == null || particleRate.get() <= 0) return;
@@ -414,7 +413,6 @@ public class TileEnergyPylon extends TileBCore implements MultiBlockController {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     private Vec3D getParticleSpawn(RandomSource random) {
         if (ioMode.get().canExtract()) {
             double range = core.tier.get();
@@ -424,7 +422,6 @@ public class TileEnergyPylon extends TileBCore implements MultiBlockController {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     private Vec3D getParticleDest(RandomSource random) {
         if (ioMode.get().canExtract()) {
             return Vec3D.getCenter(worldPosition.relative(direction.get()));

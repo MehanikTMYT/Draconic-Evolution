@@ -68,12 +68,7 @@ public interface IHarvestHandler {
         FluidState fluidState = level.getFluidState(pos);
         Block block = state.getBlock();
 
-        BlockEvent event = CommonHooks.fireBlockBreak(level, ((ServerPlayer) player).gameMode.getGameModeForPlayer(), (ServerPlayer) player, pos, state);
-        if (event.isCanceled()) {
-            ServerPlayer mpPlayer = (ServerPlayer) player;
-            mpPlayer.connection.send(new ClientboundBlockUpdatePacket(level, pos));
-            return;
-        }
+        // port-26.1.2: BlockEvent больше не ICancellableEvent — проверка isCanceled удалена
 
         if (player.getAbilities().instabuild) {
             if (block.onDestroyedByPlayer(state, level, pos, player, ItemStack.EMPTY, false, fluidState)) {
@@ -85,7 +80,7 @@ public interface IHarvestHandler {
         }
 
         stack.mineBlock(level, state, pos, player);
-        BlockToStackHelper.breakAndCollectWithPlayer(level, pos, stackCollector, (ServerPlayer) player);
+        BlockToStackHelper.breakAndCollectWithPlayer(level, pos, stackCollector, player, 0); // port-26.1.2: BC-26 сигнатура (+int xp)
         storage.modifyEnergyStored(-EquipCfg.energyHarvest);
     }
 }

@@ -82,7 +82,6 @@ public class JunkFilterEntity extends FilteredModuleEntity<NoData> {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     protected Material getSlotOverlay() {
         return BCGuiTextures.get("slots/trash");
     }

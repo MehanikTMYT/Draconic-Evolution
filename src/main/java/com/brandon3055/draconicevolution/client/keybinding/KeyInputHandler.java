@@ -39,7 +39,6 @@ import net.neoforged.neoforge.client.event.InputEvent;
  */
 public class KeyInputHandler {
 
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void onKeyInput(InputEvent.Key event) {
         Player player = Minecraft.getInstance().player;
@@ -50,7 +49,6 @@ public class KeyInputHandler {
         onInput(player);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void onMouseInput(InputEvent.MouseButton.Pre event) {
         Player player = Minecraft.getInstance().player;
@@ -61,7 +59,6 @@ public class KeyInputHandler {
         onInput(player);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public void onMouseInput(InputEvent.MouseScrollingEvent event) {
         Player player = Minecraft.getInstance().player;
@@ -153,7 +150,6 @@ public class KeyInputHandler {
     }
 
 
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void priorityKeyInput(InputEvent.Key event) {
         Minecraft mc = Minecraft.getInstance();

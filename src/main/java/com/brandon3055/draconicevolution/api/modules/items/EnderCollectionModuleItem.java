@@ -140,17 +140,19 @@ public class EnderCollectionModuleItem extends ModuleItem<NoData> {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, context, tooltip, flagIn);
+    public void appendHoverText(ItemStack stack, TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> tooltip, TooltipFlag flagIn) { // port-26.1.2: новая сигнатура
+        super.appendHoverText(stack, context, display, tooltip, flagIn);
+        List<Component> extra = new java.util.ArrayList<>();
 
         CompoundTag tag = stack.getOrDefault(ItemData.ENDER_MODULE_FREQUENCY, CustomData.EMPTY).copyTag();
         if (ModHelper.ENDERSTORAGE && tag.contains("frequency")) {
-            addEnderStorageInfo(tag, tooltip, context.registries());
+            addEnderStorageInfo(tag, extra, context.registries());
         }
 
-        tooltip.add(Component.translatable("module." + MODID + ".ender_storage.about").withStyle(ChatFormatting.DARK_GRAY));
-        tooltip.add(Component.translatable("module." + MODID + ".ender_storage.about_compat").withStyle(ChatFormatting.DARK_GRAY));
-        tooltip.add(Component.translatable("module." + MODID + ".ender_storage.about_compat2").withStyle(ChatFormatting.DARK_GRAY));
+        extra.add(Component.translatable("module." + MODID + ".ender_storage.about").withStyle(ChatFormatting.DARK_GRAY));
+        extra.add(Component.translatable("module." + MODID + ".ender_storage.about_compat").withStyle(ChatFormatting.DARK_GRAY));
+        extra.add(Component.translatable("module." + MODID + ".ender_storage.about_compat2").withStyle(ChatFormatting.DARK_GRAY));
+        extra.forEach(tooltip::accept);
     }
 
     private void addEnderStorageInfo(CompoundTag tag, List<Component> tooltip, HolderLookup.Provider registries) {

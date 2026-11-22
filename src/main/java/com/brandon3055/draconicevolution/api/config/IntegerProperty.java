@@ -5,6 +5,7 @@ import com.brandon3055.draconicevolution.client.gui.modular.itemconfig.PropertyD
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.UUIDUtil;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -42,7 +43,7 @@ public class IntegerProperty extends ConfigProperty {
             IntegerFormatter.CODEC.fieldOf("formatter").forGetter(e -> e.formatter)
     ).apply(builder, IntegerProperty::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, IntegerProperty> STREAM_CODEC = StreamCodec.composite(
+    public static final StreamCodec<ByteBuf, IntegerProperty> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.STRING_UTF8, e -> e.name,
             ByteBufCodecs.BOOL, e -> e.showOnHud,
             ByteBufCodecs.optional(UUIDUtil.STREAM_CODEC), ConfigProperty::getOptionalUniqueName,

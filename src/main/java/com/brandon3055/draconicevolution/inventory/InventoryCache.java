@@ -97,12 +97,12 @@ public class InventoryCache implements Container {
     }
 
     @Override
-    public void startOpen(Player player) {
+    public void startOpen(net.minecraft.world.entity.ContainerUser player) { // port-26.1.2: Container.startOpen(ContainerUser)
 
     }
 
     @Override
-    public void stopOpen(Player player) {
+    public void stopOpen(net.minecraft.world.entity.ContainerUser player) { // port-26.1.2
 
     }
 

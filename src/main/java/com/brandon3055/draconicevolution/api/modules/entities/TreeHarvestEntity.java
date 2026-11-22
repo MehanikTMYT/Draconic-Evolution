@@ -142,7 +142,7 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
 
     @Override
     public ModuleEntity<?> copy() {
-        return new TreeHarvestEntity(module, getGridX(), getGridY(), itemBuffer.copy(), harvestLeaves.copy(), harvestRange.copy());
+        return new TreeHarvestEntity(module, getGridX(), getGridY(), DECodecs.copy(itemBuffer), harvestLeaves.copy(), harvestRange.copy());
     }
 
     @Override
@@ -236,7 +236,6 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
     }
 
     @Override
-    @OnlyIn (Dist.CLIENT)
     public void addHostHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         if (Minecraft.getInstance().hasShiftDown()) {
             tooltip.add(Component.translatable("module." + MODID + ".tree_harvest.single").withStyle(ChatFormatting.DARK_GRAY));
@@ -247,7 +246,6 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
     }
 
     @Override
-    @OnlyIn (Dist.CLIENT)
     public void modifyFirstPersonUsingPose(RenderHandEvent event, boolean leftHand) {
         PoseStack poseStack = event.getPoseStack();
         Player player = Minecraft.getInstance().player;
@@ -277,7 +275,6 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
     }
 
     @Override
-    @OnlyIn (Dist.CLIENT)
     public void modifyPlayerModelPose(Player player, PlayerModel model, boolean leftHand) {
         if (!leftHand) {
             model.rightArm.yRot = -0.1F + model.head.yRot;
@@ -300,14 +297,14 @@ public class TreeHarvestEntity extends ModuleEntity<TreeHarvestData> implements 
 
     @Override
     public void saveEntityToStack(ItemStack stack, ModuleContext context) {
-        stack.set(ItemData.TREE_MODULE_INVENTORY, itemBuffer.copy());
+        stack.set(ItemData.TREE_MODULE_INVENTORY, DECodecs.copy(itemBuffer));
         stack.set(ItemData.BOOL_ITEM_PROP_1, harvestLeaves.copy());
         stack.set(ItemData.INT_ITEM_PROP_1, harvestRange.copy());
     }
 
     @Override
     public void loadEntityFromStack(ItemStack stack, ModuleContext context) {
-        itemBuffer = stack.getOrDefault(ItemData.TREE_MODULE_INVENTORY, itemBuffer).copy();
+        itemBuffer = DECodecs.copy(stack.getOrDefault(ItemData.TREE_MODULE_INVENTORY, itemBuffer));
         harvestLeaves = stack.getOrDefault(ItemData.BOOL_ITEM_PROP_1, harvestLeaves).copy();
         harvestRange = stack.getOrDefault(ItemData.INT_ITEM_PROP_1, harvestRange).copy();
     }

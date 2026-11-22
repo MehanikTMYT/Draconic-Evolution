@@ -45,6 +45,11 @@ public class CuriosIntegration extends EquipmentManager {
         event.registerItem(CuriosCapability.ITEM, (stack, context) -> new CurioWrapper(stack), item);
     }
 
+    @Override
+    public void addEquipCaps(ItemStack stack, com.brandon3055.brandonscore.capability.MultiCapabilityProvider provider) {
+        // port-26.1.2: curios-кабабилити регистрируются через registerCap (RegisterCapabilitiesEvent) — здесь нечего добавлять
+    }
+
     @Nullable
     @Override
     public Optional<IItemHandlerModifiable> getInventory(LivingEntity entity) {

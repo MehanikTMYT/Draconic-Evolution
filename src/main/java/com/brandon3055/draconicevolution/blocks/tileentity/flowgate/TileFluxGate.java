@@ -44,12 +44,14 @@ public class TileFluxGate extends TileFlowGate {
             return tile.getCapManager().getCapability(CapabilityOP.OP, side).orElse(null); // port-26.1.2: provider возвращает IOPStorage, не Optional
         });
 
-        event.registerBlockEntity(Capabilities.Energy.BLOCK, DEContent.TILE_FLUX_GATE.get(), (tile, side) -> {
+        event.registerBlockEntity(Capabilities.Energy.BLOCK, DEContent.TILE_FLUX_GATE.get(), (tile, side) -> { // port-26.1.2: Energy.BLOCK = EnergyHandler (BC CapabilityOP паттерн)
             if (!tile.capsLoaded) {
                 tile.updateCapabilities();
                 tile.capsLoaded = true;
             }
-            return tile.getCapManager().getCapability(CapabilityOP.OP, side).orElse(null); // port-26.1.2: см. выше
+            return tile.getCapManager().getCapability(CapabilityOP.OP, side)
+                    .filter(net.neoforged.neoforge.transfer.energy.EnergyHandler.class::isInstance)
+                    .map(net.neoforged.neoforge.transfer.energy.EnergyHandler.class::cast).orElse(null);
         });
     }
 

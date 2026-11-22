@@ -1,5 +1,7 @@
 package com.brandon3055.draconicevolution.items;
 
+import com.brandon3055.draconicevolution.init.ItemData; // port-26.1.2: импорт
+
 import com.brandon3055.brandonscore.blocks.BlockBCore;
 
 import com.brandon3055.brandonscore.utils.InventoryUtils;
@@ -74,7 +76,7 @@ public class ItemCore extends Item {
 
                 ItemStack spawner = new ItemStack(DEContent.STABILIZED_SPAWNER.get());
                 CompoundTag saveData = new CompoundTag();
-                saveData.put("mob_soul", soul.save(world.registryAccess(), new CompoundTag()));
+                saveData.put("mob_soul", ItemStack.CODEC.encodeStart(world.registryAccess().createSerializationContext(net.minecraft.nbt.NbtOps.INSTANCE), soul).getOrThrow()); // port-26.1.2: ItemStack.save удалён
                 CompoundTag tierData = new CompoundTag();
                 tierData.putByte("value", (byte) tier.ordinal());
                 saveData.put("spawner_tier", tierData);
@@ -82,7 +84,8 @@ public class ItemCore extends Item {
                 CompoundTag managedData = new CompoundTag();
                 managedData.put(BlockBCore.BC_MANAGED_DATA_FLAG, saveData);
 
-                CustomData.set(ItemData.BC_TILE_DATA_TAG, spawner, managedData);
+                // port-26.1.2: BC_TILE_DATA_TAG — строковый ключ в CUSTOM_DATA (паттерн BlockBCore-26)
+                CustomData.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, spawner, managedData);
 
                 world.removeBlock(pos, false);
                 world.addFreshEntity(new ItemEntity(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, spawner));

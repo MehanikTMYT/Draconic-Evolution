@@ -36,6 +36,7 @@ import net.minecraft.world.item.Item;
 
 import net.minecraft.world.item.ItemStack;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
 
 import net.minecraft.world.level.Level;
@@ -116,7 +117,6 @@ public class Magnet extends Item /*implements IBauble*/ {
         this.range = range;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public boolean isFoil(ItemStack stack) {
         return isEnabled(stack);
@@ -235,10 +235,9 @@ public class Magnet extends Item /*implements IBauble*/ {
         return super.use(world, player, hand);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @SuppressWarnings("unchecked")
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List list, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> tooltip, TooltipFlag tooltipFlag) { // port-26.1.2: новая сигнатура, @OnlyIn удалён
 //        list.add(StatCollector.translateToLocal("info.de.shiftRightClickToActivate.txt"));
 //        int range = stack.getItemDamage() == 0 ? 8 : 32;
 //        list.add(InfoHelper.HITC() + range + InfoHelper.ITC() + " " + StatCollector.translateToLocal("info.de.blockRange.txt"));

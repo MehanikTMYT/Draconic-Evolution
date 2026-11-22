@@ -319,18 +319,17 @@ public class BoundDislocator extends Dislocator {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> tooltip, TooltipFlag flagIn) { // port-26.1.2: новая сигнатура, @OnlyIn удалён
         if (stack.getItem() == DEContent.DISLOCATOR_P2P_UNBOUND.get()) {
-            tooltip.add(Component.translatable("dislocate.draconicevolution.bound.click_to_link").withStyle(ChatFormatting.GREEN));
+            tooltip.accept(Component.translatable("dislocate.draconicevolution.bound.click_to_link").withStyle(ChatFormatting.GREEN));
         } else if (stack.getItem() == DEContent.DISLOCATOR_PLAYER_UNBOUND.get()) {
-            tooltip.add(Component.translatable("dislocate.draconicevolution.bound.click_to_link_self").withStyle(ChatFormatting.GREEN));
+            tooltip.accept(Component.translatable("dislocate.draconicevolution.bound.click_to_link_self").withStyle(ChatFormatting.GREEN));
         } else {
             if (isPlayer(stack)) {
-                tooltip.add(Component.translatable("dislocate.draconicevolution.bound.player_link").append(": ").append(stack.getOrDefault(ItemData.DISLOCATOR_PLAYER_NAME, "Unknown Player")).withStyle(ChatFormatting.BLUE));
+                tooltip.accept(Component.translatable("dislocate.draconicevolution.bound.player_link").append(": ").append(stack.getOrDefault(ItemData.DISLOCATOR_PLAYER_NAME, "Unknown Player")).withStyle(ChatFormatting.BLUE));
             } else {
-                tooltip.add(Component.translatable("dislocate.draconicevolution.bound.link_id").append(": ").append(String.valueOf(getLinkId(stack))).withStyle(ChatFormatting.BLUE));
+                tooltip.accept(Component.translatable("dislocate.draconicevolution.bound.link_id").append(": ").append(String.valueOf(getLinkId(stack))).withStyle(ChatFormatting.BLUE));
             }
         }
     }

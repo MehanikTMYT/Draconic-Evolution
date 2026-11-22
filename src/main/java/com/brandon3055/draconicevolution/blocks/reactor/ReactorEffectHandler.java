@@ -20,17 +20,14 @@ import net.neoforged.api.distmarker.OnlyIn;
 public class ReactorEffectHandler {
 
     private TileReactorCore reactor;
-    @OnlyIn (Dist.CLIENT)
     private ReactorBeamFX[] effects;
 
-    @OnlyIn (Dist.CLIENT)
     private ReactorSound reactorSound;
 
     public ReactorEffectHandler(TileReactorCore reactor) {
         this.reactor = reactor;
     }
 
-    @OnlyIn (Dist.CLIENT)
     public void updateEffects() {
         if (effects == null) {
             effects = new ReactorBeamFX[6];

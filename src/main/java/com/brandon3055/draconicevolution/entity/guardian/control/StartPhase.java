@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.random.WeightedList; // port-26.1.2: SimpleWeightedRandomList -> WeightedList
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
@@ -146,7 +147,7 @@ public class StartPhase extends Phase {
         List<Player> targetOptions = guardian.level().players()
                 .stream()
                 .filter(e -> e.distanceToSqr(focus) <= 200 * 200)
-                .filter(e -> AGRO_TARGETS.test(guardian, e))
+                .filter(e -> AGRO_TARGETS.test((ServerLevel) guardian.level(), guardian, e))
                 .map(e -> (Player) e)
                 .toList();
 
@@ -262,7 +263,7 @@ public class StartPhase extends Phase {
         if (manager != null) {
             return manager.getTrackedPlayers().size();
         }
-        return ((ServerLevel) guardian.level()).getNearbyPlayers(AGRO_TARGETS, guardian, guardian.getBoundingBox().inflate(244)).size();
+        return ((ServerLevel) guardian.level()).getEntities(net.minecraft.world.entity.EntityType.PLAYER, guardian.getBoundingBox().inflate(244), p -> AGRO_TARGETS.test((ServerLevel) guardian.level(), guardian, p)).size();
     }
 
     public StartPhase prevAttackFailed() {

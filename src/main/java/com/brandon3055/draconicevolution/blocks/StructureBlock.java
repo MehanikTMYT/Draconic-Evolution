@@ -219,7 +219,6 @@ public class StructureBlock extends EntityBlockBCore implements StructurePart, C
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     public boolean renderSelectionBox(ExtractBlockOutlineRenderStateEvent event, Level level) { // port-26.1.2: не переопределяет метод vanilla (нет такого в Block/BlockBehaviour 26); event.getTarget() удалён — используем getHitResult().getBlockPos()
         if (level.getBlockEntity(event.getHitResult().getBlockPos()) instanceof TileStructureBlock tile) {
             return tile.renderSelectionBox(event);

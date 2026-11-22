@@ -201,11 +201,9 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
 
     //Render
 
-    @OnlyIn (Dist.CLIENT)
     protected abstract Material getSlotOverlay();
 
     @Override
-    @OnlyIn (Dist.CLIENT)
     public void renderModule(GuiElement<?> parent, GuiRender render, int x, int y, int width, int height, double mouseX, double mouseY, boolean renderStack, float partialTicks) {
         if (slotsCount == 0) {
             super.renderModule(parent, render, x, y, width, height, mouseX, mouseY, renderStack, partialTicks);
@@ -280,7 +278,6 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
     }
 
     @Override
-    @OnlyIn (Dist.CLIENT)
     public boolean renderModuleOverlay(GuiElement<?> parent, ModuleContext context, GuiRender render, int x, int y, int width, int height, double mouseX, double mouseY, float partialTicks, int hoverTicks) {
         if (slotsCount == 0) {
             return super.renderModuleOverlay(parent, context, render, x, y, width, height, mouseX, mouseY, partialTicks, hoverTicks);
@@ -329,7 +326,6 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
     //Interact
 
     @Override
-    @OnlyIn (Dist.CLIENT)
     public boolean clientModuleClicked(GuiElement<?> parent, Player player, int x, int y, int width, int height, double mouseX, double mouseY, int button) {
         if (slotsCount == 0) {
             return false;
@@ -367,7 +363,6 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
         return true;
     }
 
-    @OnlyIn (Dist.CLIENT)
     private void displayTagDialog(GuiElement<?> parent, int index) {
         Minecraft mc = parent.mc();
         GuiDialogBase dialog = new GuiDialogBase(parent);
@@ -446,7 +441,7 @@ public abstract class FilteredModuleEntity<T extends ModuleData<T>> extends Modu
         List<TagKey<Item>> tagOps = new ArrayList<>();
         ItemStack filterStack = getStackFilter(index);
         if (!filterStack.isEmpty()) {
-            tagOps.addAll(stack.getItem().builtInRegistryHolder().tags().toList());
+            tagOps.addAll(filterStack.getItem().builtInRegistryHolder().tags().toList());
         }
 
         if (!tagOps.isEmpty()) {

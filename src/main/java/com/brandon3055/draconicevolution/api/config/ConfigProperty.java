@@ -260,9 +260,9 @@ public abstract class ConfigProperty {
         public static final StreamCodec<ByteBuf, Type> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, Type::ordinal);
 
         private final Codec<? extends ConfigProperty> codec;
-        private final StreamCodec<RegistryFriendlyByteBuf, ? extends ConfigProperty> streamCodec;
+        private final StreamCodec<ByteBuf, ? extends ConfigProperty> streamCodec; // port-26.1.2:(property стрим-кодеки переехали на ByteBuf)
 
-        Type(Codec<? extends ConfigProperty> codec, StreamCodec<RegistryFriendlyByteBuf, ? extends ConfigProperty> streamCodec) {
+        Type(Codec<? extends ConfigProperty> codec, StreamCodec<ByteBuf, ? extends ConfigProperty> streamCodec) {
             this.codec = codec;
             this.streamCodec = streamCodec;
         }
@@ -271,8 +271,8 @@ public abstract class ConfigProperty {
             return (Codec<ConfigProperty>) codec;
         }
 
-        public StreamCodec<RegistryFriendlyByteBuf, ConfigProperty> getStreamCodec() {
-            return (StreamCodec<RegistryFriendlyByteBuf, ConfigProperty>) streamCodec;
+        public StreamCodec<ByteBuf, ConfigProperty> getStreamCodec() {
+            return (StreamCodec<ByteBuf, ConfigProperty>) streamCodec;
         }
 
         public static Type getSafe(int index) {

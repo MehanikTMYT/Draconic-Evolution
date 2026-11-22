@@ -219,13 +219,11 @@ public class PlacedItem extends EntityBlockBCore implements CustomTabHandling {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public boolean addLandingEffects(BlockState state1, ServerLevel worldserver, BlockPos pos, BlockState state2, LivingEntity entity, int numberOfParticles) {
         return true;
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public boolean addRunningEffects(BlockState state, Level world, BlockPos pos, Entity entity) {
         return true;
     }

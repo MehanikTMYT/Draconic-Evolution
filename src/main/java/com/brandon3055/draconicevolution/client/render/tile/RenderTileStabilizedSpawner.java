@@ -56,7 +56,7 @@ public class RenderTileStabilizedSpawner implements BlockEntityRenderer<TileStab
         if (entity != null) {
             state.displayEntity = entityRenderer.extractEntity(entity, partialTicks);
             state.displayEntity.lightCoords = state.lightCoords;
-            state.spin = (float) Mth.lerp(partialTicks, logic.getoSpin(), logic.getSpin()) * 10F;
+            state.spin = (float) Mth.lerp(partialTicks, logic.getOSpin(), logic.getSpin()) * 10F;
             state.scale = 0.53125F / Math.max(1F, Math.max(entity.getBbWidth(), entity.getBbHeight()));
         }
         itemModels.updateForTopItem(state.core, CORE_RENDER_ITEMS[tile.spawnerTier.get().ordinal()], ItemDisplayContext.FIXED,

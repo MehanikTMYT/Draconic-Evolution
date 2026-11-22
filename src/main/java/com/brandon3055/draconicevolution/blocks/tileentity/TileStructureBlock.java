@@ -146,7 +146,6 @@ public class TileStructureBlock extends TileBCore implements IInteractTile {
         return controller == null ? Shapes.empty() : controller.getShapeForPart(getBlockPos(), context);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public boolean renderSelectionBox(ExtractBlockOutlineRenderStateEvent event) {
         MultiBlockController controller = getController();
         return controller == null || controller.renderSelectionBox(event);

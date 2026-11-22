@@ -93,7 +93,7 @@ import org.jetbrains.annotations.Nullable;
  * Created by Brandon on 13/11/2014.
  */
 public class ModularArmorEventHandler {
-    private static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD};
+    public static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[]{EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD}; // port-26.1.2: доступ из DraconiumCapacitor
 
     public static final Identifier WALK_SPEED_ID = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "walk_speed");
     public static final Identifier STEP_HEIGHT_ID = Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "step_height");

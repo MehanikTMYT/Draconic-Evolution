@@ -132,7 +132,7 @@ public class DraconicGuardianRenderer extends EntityRenderer<DraconicGuardianEnt
         VertexConsumer builder;
 
         GUARDIAN_SHIELD.getTimeUniform().glUniform1f((com.brandon3055.brandonscore.api.TimeKeeper.getClientTick() + partialTicks) / 20F);
-        boolean isImmune = guardian.getPhaseManager().getCurrentPhase().isInvulnerable();
+        boolean isImmune = guardian.getPhaseManager().getCurrentPhase().isInvulnerable(guardian.damageSources().generic()); // port-26.1.2: isInvulnerable(DamageSource)
         float shieldState = guardian.getEntityData().get(DraconicGuardianEntity.SHIELD_POWER) / (float) DEConfig.guardianShield;
         if (shieldState > 0 || isImmune) {
             if (isImmune) {

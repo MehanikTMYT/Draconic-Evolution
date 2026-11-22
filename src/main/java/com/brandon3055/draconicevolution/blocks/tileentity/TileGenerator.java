@@ -282,7 +282,6 @@ public class TileGenerator extends TileBCore implements IRSSwitchable, MenuProvi
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     private void spawnGrillParticle(RandomSource rand, double x, double y, double z) {
         level.addParticle(ParticleTypes.SMOKE, x, y, z, 0.0D, 0.0D, 0.0D);
         if (mode.get() != Mode.PERFORMANCE_PLUS && rand.nextInt(8) == 0) {
@@ -290,7 +289,6 @@ public class TileGenerator extends TileBCore implements IRSSwitchable, MenuProvi
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     private void spawnExhaustParticle(RandomSource rand, double x, double y, double z, Vec3D velocity) {
         if (rand.nextBoolean()) {
             level.addParticle(ParticleTypes.SMOKE, x, y, z, velocity.x, velocity.y, velocity.z);

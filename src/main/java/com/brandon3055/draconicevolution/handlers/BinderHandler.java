@@ -197,7 +197,6 @@ public class BinderHandler {
 
     public static Map<AABB, CCModel> modelCache = new HashMap<>();
 
-    @OnlyIn(Dist.CLIENT)
     public static void renderWorldOverlay(LocalPlayer player, PoseStack pStack, Level level, ItemStack stack, Minecraft mc, float partialTicks) {
         if (!isBound(stack)) {
             return;

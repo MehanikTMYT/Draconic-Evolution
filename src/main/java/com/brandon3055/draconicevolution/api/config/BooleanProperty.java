@@ -2,6 +2,8 @@ package com.brandon3055.draconicevolution.api.config;
 
 import com.brandon3055.draconicevolution.client.gui.modular.itemconfig.PropertyData;
 import com.mojang.serialization.Codec;
+
+import io.netty.buffer.ByteBuf;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -37,7 +39,7 @@ public class BooleanProperty extends ConfigProperty {
             BooleanFormatter.CODEC.fieldOf("formatter").forGetter(e -> e.formatter)
     ).apply(builder, BooleanProperty::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, BooleanProperty> STREAM_CODEC = StreamCodec.composite(
+    public static final StreamCodec<ByteBuf, BooleanProperty> STREAM_CODEC = StreamCodec.composite( // port-26.1.2: B=ByteBuf (RegistryFriendly не нужен)
             ByteBufCodecs.STRING_UTF8, e -> e.name,
             ByteBufCodecs.BOOL, e -> e.showOnHud,
             ByteBufCodecs.optional(UUIDUtil.STREAM_CODEC), ConfigProperty::getOptionalUniqueName,

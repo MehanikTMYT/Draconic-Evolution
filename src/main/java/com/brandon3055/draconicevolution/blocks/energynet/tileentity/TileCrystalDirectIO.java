@@ -120,7 +120,6 @@ public class TileCrystalDirectIO extends TileCrystalBase   {
         return EnergyCrystal.CrystalType.CRYSTAL_IO;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public CrystalFXBase createStaticFX() {
         return new CrystalFXIO((ClientLevel)level, this);

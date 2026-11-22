@@ -22,7 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.MCDataInput;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -50,15 +50,15 @@ import java.util.stream.Stream;
 public abstract class ModuleEntity<T extends ModuleData<T>> {
 
     public static final Codec<ModuleEntity<?>> CODEC = new ModuleEntityCodec();
-    public static final StreamCodec<MCDataInput, ModuleEntity<?>> STREAM_CODEC = new StreamCodec<>() {
+    public static final StreamCodec<RegistryFriendlyByteBuf, ModuleEntity<?>> STREAM_CODEC = new StreamCodec<>() { // port-26.1.2: тип буфера — RegistryFriendlyByteBuf (MCDataInput только для CCL-пакетов)
         @Override
-        public ModuleEntity<?> decode(MCDataInput buf) {
+        public ModuleEntity<?> decode(RegistryFriendlyByteBuf buf) {
             Module<?> module = DEModules.streamCodec().decode(buf);
             return module.entityStreamCodec().decode(buf);
         }
 
         @Override
-        public void encode(MCDataInput buf, ModuleEntity<?> entity) {
+        public void encode(RegistryFriendlyByteBuf buf, ModuleEntity<?> entity) {
             DEModules.streamCodec().encode(buf, entity.getModule());
             entity.getModule().entityStreamCodec().encode(buf, entity);
         }
@@ -321,7 +321,6 @@ public abstract class ModuleEntity<T extends ModuleData<T>> {
 
     //end
 
-    @OnlyIn (Dist.CLIENT)
     public void renderModule(GuiElement<?> parent, GuiRender render, int x, int y, int width, int height, double mouseX, double mouseY, boolean stackRender, float partialTicks) {
         if (stackRender) {
 //            render.pose().translate(0, 0, 210);
@@ -367,7 +366,6 @@ public abstract class ModuleEntity<T extends ModuleData<T>> {
      *
      * @return true to block further overlay rendering. (Equivalent to returning true in {@link GuiElement#renderOverlay(GuiRender, double, double, float, boolean)} )
      */
-    @OnlyIn (Dist.CLIENT)
     public boolean renderModuleOverlay(GuiElement<?> parent, ModuleContext context, GuiRender render, int x, int y, int width, int height, double mouseX, double mouseY, float partialTicks, int hoverTicks) {
         if (hoverTicks > 10) {
             Minecraft mc = Minecraft.getInstance();
@@ -403,7 +401,6 @@ public abstract class ModuleEntity<T extends ModuleData<T>> {
      * @param context The current level
      * @param tooltip The tooltip list
      */
-    @OnlyIn (Dist.CLIENT)
     public void addHostHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
     }
 
@@ -547,7 +544,6 @@ public abstract class ModuleEntity<T extends ModuleData<T>> {
     //Render Utils
 
     @Deprecated //TODO, Can probably use RenderUtils version... maybe.
-    @OnlyIn (Dist.CLIENT)
     protected void drawChargeProgress(GuiRender render, int x, int y, int width, int height, double progress, @Nullable Component text1, @Nullable Component text2) {
         double diameter = Math.min(width, height) * 0.425;
 
@@ -570,7 +566,6 @@ public abstract class ModuleEntity<T extends ModuleData<T>> {
         }
     }
 
-    @OnlyIn (Dist.CLIENT)
     public static void drawBackgroundString(GuiRender render, Component text, float x, float y, int colour, int background, int padding, boolean shadow, boolean centered) {
         int width = render.font().width(text);
         x = centered ? x - width / 2F : x;

@@ -92,7 +92,6 @@ public class DefaultStaffDmgMod implements IDamageModifier {
         DraconicNetwork.sendStaffEffect(source, 0, e -> e.writeVector(new Vector3(finalPos)));
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static void handleEffect(LivingEntity source, MCDataInput data) {
         Vector3 pos = data.readVector();
         ClientLevel world = (ClientLevel) source.level();

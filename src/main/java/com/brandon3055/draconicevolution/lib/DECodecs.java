@@ -3,6 +3,8 @@ package com.brandon3055.draconicevolution.lib;
 import com.brandon3055.brandonscore.utils.TargetPos;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
+
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
@@ -40,10 +42,14 @@ public class DECodecs {
             DECodecs::toList
     );
 
-    public static final StreamCodec<ByteBuf, InventoryDynamic> INVENTORY_DYNAMIC_STREAM = ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()).map(
+    public static final StreamCodec<RegistryFriendlyByteBuf, InventoryDynamic> INVENTORY_DYNAMIC_STREAM = ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()).map(
             DECodecs::fromList,
             DECodecs::toList
     );
+
+    public static InventoryDynamic copy(InventoryDynamic inv) { // port-26.1.2: InventoryDynamic.copy удалён из BC-26
+        return fromList(toList(inv));
+    }
 
     private static InventoryDynamic fromList(List<ItemStack> stacks) {
         InventoryDynamic inv = new InventoryDynamic();

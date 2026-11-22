@@ -79,7 +79,8 @@ public class GeneratorGui extends ContainerGuiProvider<GeneratorMenu> {
     public static final int GUI_WIDTH = 176;
     public static final int GUI_HEIGHT = 166;
 
-    private static final RenderType modelType = RenderType.entitySolid(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/generator/generator_2.png"));
+    private static final RenderType modelType = net.minecraft.client.renderer.rendertype.RenderTypes.entitySolid( // port-26.1.2: RenderType.entitySolid -> RenderTypes
+        Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "textures/block/generator/generator_2.png"));
     private static final CCModel storageModel;
 
 //    private ModuleGridPanel gridPanel;

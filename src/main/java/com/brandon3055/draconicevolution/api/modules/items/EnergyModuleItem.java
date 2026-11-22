@@ -38,18 +38,20 @@ public class EnergyModuleItem extends ModuleItem<EnergyData> {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
-        super.appendHoverText(stack, context, tooltip, flagIn);
+    public void appendHoverText(ItemStack stack, TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> tooltip, TooltipFlag flagIn) { // port-26.1.2: новая сигнатура
+        super.appendHoverText(stack, context, display, tooltip, flagIn);
+        List<Component> extra = new java.util.ArrayList<>();
         long energy = stack.getOrDefault(ItemData.ENERGY_MODULE_ENERGY, 0L);
 
         if (energy > 0) {
 
-            tooltip.add(Component.translatable("module.draconicevolution.energy.stored_energy")
+            extra.add(Component.translatable("module.draconicevolution.energy.stored_energy")
                     .append(": ")
                     .append(Utils.formatNumber(energy))
                     .append(" ")
                     .append(Component.translatable("op.brandonscore." + (Minecraft.getInstance().hasShiftDown() ? "operational_potential" : "op")))
                     .withStyle(ChatFormatting.GRAY));
         }
+        extra.forEach(tooltip::accept);
     }
 }

@@ -176,13 +176,11 @@ public class StabilizedSpawnerLogic extends BaseSpawner {
         this.broadcastEvent(tile.getLevel(), tile.getBlockPos(), 1);
     }
 
-    @OnlyIn (Dist.CLIENT)
     @Override
     public double getSpin() {
         return mobRotation;
     }
 
-    @OnlyIn (Dist.CLIENT)
     @Override
     public double getOSpin() {
         return prevMobRotation;

@@ -310,7 +310,7 @@ public class DislocatorGui implements GuiProvider {
     private DislocatorTarget getTarget() {
         DislocatorTarget target = DataUtils.safeGet(targetList, selectedIndex, () -> new DislocatorTarget(0, 0, 0, Level.OVERWORLD));
         if (target.getPos() == null) {
-            target.setPos(TargetPos.of(0, 0, 0, Level.OVERWORLD));
+            target.setPos(new TargetPos(0, 0, 0, Level.OVERWORLD)); // port-26.1.2: TargetPos.of нет в BC-26
         }
         return target;
     }

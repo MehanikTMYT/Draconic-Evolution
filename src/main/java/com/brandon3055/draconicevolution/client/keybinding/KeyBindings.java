@@ -17,7 +17,6 @@ import java.util.function.Supplier;
 /**
  * Created by Brandon on 14/08/2014.
  */
-@OnlyIn(Dist.CLIENT)
 public class KeyBindings {
 
     public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(net.minecraft.resources.Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "main")); // port-26.1.2: строка-категория -> Category record

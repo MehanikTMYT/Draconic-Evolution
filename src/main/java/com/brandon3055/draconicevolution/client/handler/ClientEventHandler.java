@@ -122,8 +122,10 @@ public class ClientEventHandler {
 
     public static void addPackFinders(AddPackFindersEvent event) {
         if (event.getPackType() == PackType.CLIENT_RESOURCES) {
-            var resourcePath = ModList.get().getModFileById(MODID).getFile().findResource("2d_item_models");
-            var pack = Pack.readMetaAndCreate(new PackLocationInfo("builtin/2d_item_models", Component.literal("Draconic Evolution 2D"), PackSource.BUILT_IN, Optional.empty()), BuiltInPackSource.fromName((path) -> new PathPackResources(path, resourcePath)), PackType.CLIENT_RESOURCES, new PackSelectionConfig(false, Pack.Position.TOP, false));
+            // port-26.1.2: IModFile.findResource удалён; резолвим по filePath (TODO: проверить для jar-упаковки)
+            var resourcePath = ModList.get().getModFileById(MODID).getFile().getFilePath().resolve("assets/" + MODID + "/2d_item_models");
+            var packLocation = new PackLocationInfo("builtin/2d_item_models", Component.literal("Draconic Evolution 2D"), PackSource.BUILT_IN, Optional.empty());
+            var pack = Pack.readMetaAndCreate(packLocation, BuiltInPackSource.fixedResources(new PathPackResources(packLocation, resourcePath)), PackType.CLIENT_RESOURCES, new PackSelectionConfig(false, Pack.Position.TOP, false));
 
             event.addRepositorySource((packConsumer) -> packConsumer.accept(pack));
         }
@@ -407,8 +409,8 @@ public class ClientEventHandler {
         Vector3 winPos = new Vector3();
         winPos.z = o.z();
 
-        winPos.x = o.x() * GlStateManager.Viewport.width();
-        winPos.y = o.y() * GlStateManager.Viewport.height();
+        winPos.x = o.x() * mc.getWindow().getWidth(); // port-26.1.2: GlStateManager.Viewport удалён
+        winPos.y = o.y() * mc.getWindow().getHeight();
         return winPos;
     }
 

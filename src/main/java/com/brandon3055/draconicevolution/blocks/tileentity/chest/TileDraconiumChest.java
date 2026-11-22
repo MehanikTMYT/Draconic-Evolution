@@ -71,7 +71,7 @@ public class TileDraconiumChest extends TileBCore implements IRSSwitchable, Menu
 
     public static void register(RegisterCapabilitiesEvent event) {
         com.brandon3055.brandonscore.capability.CapabilityOP.registerBlockEntity(event, DEContent.TILE_DRACONIUM_CHEST.get());
-        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_DRACONIUM_CHEST, (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
+        event.registerBlockEntity(Capabilities.Item.BLOCK, DEContent.TILE_DRACONIUM_CHEST.get(), (tile, side) -> tile.capManager.getCapability(Capabilities.Item.BLOCK, side).orElse(null)); // port-26.1.2: capability()-хелпер отсутствует; эталон TilePlacedItem.register()
     }
 
     @Override

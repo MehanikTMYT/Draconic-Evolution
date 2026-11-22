@@ -59,7 +59,7 @@ public class AtlasTextureHelper {
             ORB_PARTICLE = atlas.getSprite(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "white_orb"));
             PORTAL_PARTICLE = atlas.getSprite(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "portal"));
         }
-        if (atlas.location().equals(InventoryMenu.BLOCK_ATLAS)) {
+        if (atlas.location().equals(net.minecraft.data.AtlasIds.BLOCKS)) { // port-26.1.2: InventoryMenu.BLOCK_ATLAS удалён
             ENERGY_CORE_OVERLAY = atlas.getSprite(Identifier.fromNamespaceAndPath(DraconicEvolution.MODID, "block/energy_core/energy_core_overlay"));
         }
     }

@@ -11,6 +11,7 @@ import java.util.List;
 import net.minecraft.core.particles.ParticleOptions;
 
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.PowerParticleOption;
 
 import net.minecraft.server.level.ServerLevel;
 
@@ -102,7 +103,7 @@ public class GuardianProjectileEntity extends AbstractHurtingProjectile {
             if (df <= 0) {
                 continue;
             }
-            df *= Explosion.getSeenPercent(position(), entity);
+            df *= net.minecraft.world.level.ServerExplosion.getSeenPercent(position(), entity); // port-26.1.2: переехал в ServerExplosion
             float damage = (float) ((int) ((df * df + df) / 2.0D * 6.0D * power + 1.0D));
             if (entity instanceof LivingEntity living && level() instanceof ServerLevel sl) {
                 living.hurtServer(sl, DEDamage.guardianProjectile(level(), this, shooter), damage);
@@ -134,7 +135,7 @@ public class GuardianProjectileEntity extends AbstractHurtingProjectile {
 
     @Override
     protected ParticleOptions getTrailParticle() {
-        return new SimpleParticleType(ParticleTypes.DRAGON_BREATH.value());
+        return PowerParticleOption.create(ParticleTypes.DRAGON_BREATH, 1.0F); // port-26.1.2: DRAGON_BREATH — ParticleType (сам ParticleOptions), SimpleParticleType-обёртка не нужна
     }
 
     @Override

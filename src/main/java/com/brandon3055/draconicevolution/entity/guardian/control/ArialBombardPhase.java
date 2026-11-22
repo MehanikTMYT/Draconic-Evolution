@@ -26,6 +26,7 @@ import net.minecraft.world.entity.player.Player;
 
 import net.minecraft.world.level.ClipContext;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.HitResult;
 
 import net.minecraft.world.phys.Vec3;
